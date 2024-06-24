@@ -18,5 +18,8 @@ class DailypaperApplicationTests {
     void testFindAll() {
         List<User> list = userMapper.FindAll();
         System.out.println(list);
+
+        list = userMapper.GetAll();
+        System.out.println(list);
     }
 }

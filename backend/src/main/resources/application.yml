@@ -45,5 +45,6 @@ spring:
 mybatis:
   # resources目录下xml的mapper路径
   mapper-locations: classpath:xmlMapper/*Mapper.xml
-  # config-location:
+
+  # entity实体类的路径，用于xml文件中的别名，一般是resultType
   type-aliases-package: com.smlj.dailypaper.entity

@@ -35,12 +35,17 @@ spring:
 ---
 
 # 同一路径下，配置文件优先级： properties > yml > yaml
+
+# web服务器启动端口
 server:
   port: 8089
 
 spring:
   profiles: # 测试、开发、部署环境切换
     active: dev
+
+  thymeleaf:
+    check-template-location: false
 
 mybatis:
   # resources目录下xml的mapper路径

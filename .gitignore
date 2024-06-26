@@ -37,3 +37,5 @@ backend/.vscode/
 /backend/.run
 /backend/.idea
 /backend/.mvn
+/frontend/dailypaper/~$study.docx
+/frontend/dailypaper/.vscode

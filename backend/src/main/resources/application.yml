@@ -1,40 +1,5 @@
----
-spring:
-  config:
-    activate:
-      on-profile: dev
-
-  datasource:
-    url: jdbc:mysql://localhost:3407/dailypaper?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
----
-spring:
-  config:
-    activate:
-      on-profile: test
-
-  datasource:
-    url: jdbc:mysql://10.8.13.152:3407/dailypaper?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
----
-spring:
-  config:
-    activate:
-      on-profile: deploy
-
-  datasource:
-    url: jdbc:mysql://10.8.13.152:3407/dailypaper?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
-    username: root
-    password: root
-    driver-class-name: com.mysql.cj.jdbc.Driver
----
-
 # 同一路径下，配置文件优先级： properties > yml > yaml
+# 多环境配置：https://www.bilibili.com/video/BV14z4y1N7pg?p=44&vd_source=5c9f5bd891aee351c325bcf632b5550f 12:48
 
 # web服务器启动端口
 server:

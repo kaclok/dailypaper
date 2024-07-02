@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper namespace作用是：代码和xml进行关联 -->
+<!-- https://blog.csdn.net/xu962336414/article/details/105624371 -->
+<mapper namespace="com.smlj.dailypaper.mapper.CommitMapper">
+    <!-- id自增，所以使用：useGeneratedKeys="true" keyProperty="id" -->
+    <insert id="Insert" useGeneratedKeys="true" keyProperty="id">
+        insert into t_commit (userId, commitDateTime, content)
+        values (#{userId}, #{commitDateTime}, #{content});
+
+        <!-- 插入行之后，返回id -->
+        <selectKey keyProperty="id" order="AFTER" resultType="int">
+            SELECT LAST_INSERT_ID();
+        </selectKey>
+    </insert>
+
+    <select id="FindById" resultType="com.smlj.dailypaper.entity.po.Commit">
+        select id, userId, commitDateTime, content
+        from t_commit
+        where id = #{id};
+    </select>
+
+    <select id="GetLastId" resultType="int">
+        select max(id)
+        FROM t_commit;
+    </select>
+</mapper>

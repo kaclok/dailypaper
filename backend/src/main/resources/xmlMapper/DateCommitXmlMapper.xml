@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper namespace作用是：代码和xml进行关联 -->
+<!-- https://blog.csdn.net/xu962336414/article/details/105624371 -->
+<mapper namespace="com.smlj.dailypaper.mapper.DateCommitMapper">
+    <select id="FindBy" resultType="com.smlj.dailypaper.entity.po.DateCommit">
+        select * /*date, commitIds*/
+        from t_datecommit
+        where date = #{date};
+    </select>
+    <update id="Update">
+        update t_datecommit
+        <set>
+            ${colName} = #{commitId}
+        </set>
+        where date = #{date};
+    </update>
+    <insert id="Insert">
+        insert into t_datecommit (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
+                                  userId_9, userId_10, userId_11, userId_12, userId_13)
+        values (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    </insert>
+</mapper>

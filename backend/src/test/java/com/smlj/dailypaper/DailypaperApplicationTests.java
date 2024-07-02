@@ -1,8 +1,9 @@
 package com.smlj.dailypaper;
 
-import com.smlj.dailypaper.entity.User;
+import com.smlj.dailypaper.entity.po.User;
 import com.smlj.dailypaper.mapper.UserMapper;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import com.smlj.dailypaper.entity.po.Commit;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,9 +18,6 @@ class DailypaperApplicationTests {
     @Test
     void testFindAll() {
         List<User> list = userMapper.FindAll();
-        System.out.println(list);
-
-        list = userMapper.GetAll();
         System.out.println(list);
     }
 }

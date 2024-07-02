@@ -1,8 +1,20 @@
 package com.smlj.dailypaper.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import com.smlj.dailypaper.entity.po.Commit;
+import com.smlj.dailypaper.entity.vo.to.To_DateCommit;
+import com.smlj.dailypaper.entity.vo.to.To_UserCommit;
+import com.smlj.dailypaper.entity.vo.to.common.Result;
+import com.smlj.dailypaper.mapper.CommitMapper;
+import com.smlj.dailypaper.mapper.DateCommitMapper;
+import com.smlj.dailypaper.mapper.UserMapper;
+import com.smlj.dailypaper.utils.DateTimeUtil;
+import com.smlj.dailypaper.utils.ResultUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 // https://www.bilibili.com/video/BV1Lq4y1J77x?p=16&spm_id_from=pageDriver&vd_source=5c9f5bd891aee351c325bcf632b5550f 整合redis
 
@@ -17,11 +29,83 @@ import org.springframework.web.bind.annotation.RestController;
 // 1、字段@Value
 // 2、Environment， autowired标记
 // 3、@ConfigurationProperties， 自定义bean类类头标记， @component表示是bean类，@ConfigurationProperties一般需要指定前缀。（类名和配置的前缀绑定了，然后controller中autowired自定义bean类实例）
+@Slf4j
 @RestController
+@RequestMapping("/dailypaper")
 public class Entry {
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private DateCommitMapper dateCommitMapper;
+
+    @Autowired
+    private CommitMapper commitMapper;
+
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
-    @GetMapping("/Hello/{id}")
-    public String GetAll(@PathVariable int id) {
-        return "Hello ${id}: " + id;
+    @GetMapping("/getAll")
+    private Result<To_DateCommit> GetAll(@RequestParam("date") long date) {
+        log.info("getAll-> date:{}", date);
+
+        var midNight = DateTimeUtil.convertToMidnightTimestamp(date);
+        var dateCommit = dateCommitMapper.FindBy(midNight);
+
+        var r = new ResultUtil<To_DateCommit>();
+        if (dateCommit == null) {
+            return r.setErrorMsg("getAll don't exist", null);
+        } else {
+            To_DateCommit to = new To_DateCommit();
+            to.setTotal(13);
+            to.setDate(midNight);
+            ArrayList<Integer> commitIds = dateCommit.GetAllIds();
+            for (Integer commitId : commitIds) {
+                if (commitId == 0) {
+                    continue;
+                }
+                Commit c = commitMapper.FindById(commitId);
+                if (c == null) {
+                    continue;
+                }
+                To_UserCommit tu = new To_UserCommit();
+                tu.setUserId(c.userId);
+                tu.setContent(c.content);
+                var user = userMapper.GetUserById(c.userId);
+                tu.setName(user.getName());
+
+                to.getCommits().add(tu);
+            }
+
+            return r.setData(to, "getAll");
+        }
+    }
+
+    @GetMapping("/edit")
+    private Result<To_DateCommit> Edit(@RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content) {
+        log.info("edit-> date:{}, userId:{}, content:{}", date, userId, content);
+
+        var now = System.currentTimeMillis() / 1000;
+        var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
+        var r = new ResultUtil<To_DateCommit>();
+        if (date < todayMidNight) {
+            // 往日的日报信息不能编辑
+            return r.setErrorMsg("Can not edit because not today!", null);
+        } else {
+            var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
+            var dateCommit = dateCommitMapper.FindBy(targetMidNight);
+            if (dateCommit == null) {
+                // 如果date对应的记录不存在的话，立即插入新纪录
+                dateCommitMapper.Insert(targetMidNight);
+            }
+
+            // 插入commit表
+            commitMapper.Insert(userId, (int) DateTimeUtil.nowTimestamp(), content);
+            // todo 并发的时候是否会出现问题？
+            int lastId = commitMapper.GetLastId();
+            // 更新datecommit表
+            log.info("edit-> lastId:{}", lastId);
+            dateCommitMapper.Update(targetMidNight, "userId_" + userId, lastId);
+
+            return r.setSuccessMsg("edit success", null);
+        }
     }
 }

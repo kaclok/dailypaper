@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class Commit {
-    public int id;
-    public int userId;
-    public long commitDateTime;
-    public String content;
+    private int id;
+    private int userId;
+    private long commitDateTime;
+    private String content;
 }

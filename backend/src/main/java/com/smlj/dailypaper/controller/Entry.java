@@ -67,9 +67,9 @@ public class Entry {
                     continue;
                 }
                 To_UserCommit tu = new To_UserCommit();
-                tu.setUserId(c.userId);
-                tu.setContent(c.content);
-                var user = userMapper.GetUserById(c.userId);
+                tu.setUserId(c.getUserId());
+                tu.setContent(c.getContent());
+                var user = userMapper.GetUserById(c.getUserId());
                 tu.setName(user.getName());
 
                 to.getCommits().add(tu);

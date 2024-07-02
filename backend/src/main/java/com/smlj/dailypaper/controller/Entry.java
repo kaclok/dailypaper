@@ -97,12 +97,16 @@ public class Entry {
                 dateCommitMapper.Insert(targetMidNight);
             }
 
+            Commit cm = new Commit();
+            cm.setUserId(userId);
+            cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
+            cm.setContent(content);
+
             // 插入commit表
-            commitMapper.Insert(userId, (int) DateTimeUtil.nowTimestamp(), content);
+            commitMapper.Insert2(cm);
             // todo 并发的时候是否会出现问题？
-            int lastId = commitMapper.GetLastId();
+            int lastId = cm.getId();
             // 更新datecommit表
-            log.info("edit-> lastId:{}", lastId);
             dateCommitMapper.Update(targetMidNight, "userId_" + userId, lastId);
 
             return r.setSuccessMsg("edit success", null);

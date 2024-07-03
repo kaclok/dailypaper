@@ -1,40 +1,17 @@
 <script setup>
+// 需要的组件：
+// 1、滚动列表 https://element-plus.org/zh-CN/component/infinite-scroll.html
+//      滚动条 https://element-plus.org/zh-CN/component/scrollbar.html
+// 2、通知 https://element-plus.org/zh-CN/component/notification.html
+// 3、空状态 https://element-plus.org/zh-CN/component/empty.html
+// 4、输入框 文本域 https://element-plus.org/zh-CN/component/input.html
+// 5、日期选择器 https://element-plus.org/zh-CN/component/date-picker.html
+// 6、按钮 https://element-plus.org/zh-CN/component/button.html
+import cp_date_picker from './components/cp_date_picker.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-    </div>
-  </header>
+  <div>
+    <cp_date_picker/>
+  </div>
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>

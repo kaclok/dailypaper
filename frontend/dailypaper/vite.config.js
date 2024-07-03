@@ -9,7 +9,7 @@ import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.dev/config/
-defineConfig({
+export default defineConfig({
     plugins: [
         vue(),
         AutoImport({
@@ -29,7 +29,3 @@ defineConfig({
         }
     }
 })
-
-export default {
-    defineConfig,
-}

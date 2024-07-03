@@ -5,4 +5,5 @@ import {createApp} from 'vue'
 import App from './App.vue'
 
 const app = createApp(App)
+// mount在最后
 app.mount('#app')

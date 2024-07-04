@@ -11,10 +11,10 @@ const refTargetDate = ref(props.targetDate);
 
 <template>
   <div class="date-picker-root">
-    <div>Value：{{ refTargetDate / 1000 }}</div>
     <div class="date-picker">
       <el-config-provider :locale="zhCn">
         <el-date-picker @change="$emit('onDateChanged', refTargetDate)"
+                        :clearable="false"
                         v-model="refTargetDate"
                         type="date"
                         placeholder="选择日期"
@@ -30,13 +30,14 @@ const refTargetDate = ref(props.targetDate);
 <style scoped>
 .date-picker-root {
   display: flex;
-  width: 100%;
+  width: 240px;
+  height: 60px;
   padding: 0;
   flex-wrap: wrap;
 }
 
 .date-picker-root .date-picker {
-  padding: 30px 0;
+/*  padding: 30px 0;*/
   text-align: center;
   border-right: solid 1px var(--el-border-color);
   flex: 1;

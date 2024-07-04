@@ -2,14 +2,10 @@
 import {ref} from 'vue'
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 
+defineEmits(['onDateChanged']);
 const props = defineProps(['targetDate']);
-const emits = defineEmits(['onDateChanged']);
 
 const refTargetDate = ref(props.targetDate);
-
-function onDateChanged(refDate) {
-  emits('onDateChanged', refDate);
-}
 
 </script>
 

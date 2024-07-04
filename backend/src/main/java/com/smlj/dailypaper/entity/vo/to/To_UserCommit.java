@@ -9,6 +9,7 @@ public class To_UserCommit implements Serializable, Comparable<To_UserCommit> {
     private int userId;
     private String name;
     private String content;
+    private long time;
 
     @Override
     public int compareTo(To_UserCommit toUserCommit) {

@@ -67,7 +67,9 @@ public class Entry {
                 }
                 To_UserCommit tu = new To_UserCommit();
                 tu.setUserId(c.getUserId());
+                tu.setTime(c.getCommitDateTime());
                 tu.setContent(c.getContent());
+                
                 var user = userMapper.GetUserById(c.getUserId());
                 tu.setName(user.getName());
 

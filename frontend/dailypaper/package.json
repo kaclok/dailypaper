@@ -10,6 +10,7 @@
     "start springBootServer": "E:\\Javas\\jdk\\22\\bin\\java.exe -jar F:\\Projects\\SMLJ\\svn\\DailyPaper\\backend\\target\\dailypaper-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.7.2",
     "element-plus": "^2.7.6",
     "vue": "^3.4.29"

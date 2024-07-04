@@ -10,11 +10,11 @@
 import {onMounted, ref} from "vue";
 
 import {ElNotification as ep_notification} from 'element-plus'
-import apiDaily from '@/api/daily.js'
+import apiDaily from '#/daily.js'
 import timeUtil from "@/utils/date_time_util.js";
 
 import cp_date_picker from './components/cp_date_picker.vue'
-import cp_card from './components/cp_card.vue'
+import cp_card from '$/cp_card.vue'
 
 let info = null;
 

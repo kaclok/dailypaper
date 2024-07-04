@@ -10,7 +10,18 @@ const axiosInstance = axios.create({baseURL: springBootURL, timeout: 5000});
 axiosInstance.interceptors.response.use(
     success => {
         // 2xx 范围内的状态码都会触发该函数, 对响应数据做点什么
-        return success.data;
+        return success;
+    }, fail => {
+        console.log(fail);
+        // 异步状态转换为失败状态，走到catch分支
+        return Promise.reject(fail);
+    }
+)
+
+axiosInstance.interceptors.request.use(
+    success => {
+        // 2xx 范围内的状态码都会触发该函数, 对响应数据做点什么
+        return success;
     }, fail => {
         console.log(fail);
         // 异步状态转换为失败状态，走到catch分支

@@ -34,7 +34,6 @@ const requestEdit = async function (date, userId, content) {
 
 function onDateChanged(date) {
     let sec = date / 1000;
-    console.log('onDateChanged:' + sec);
     requestGetAll(sec);
 }
 

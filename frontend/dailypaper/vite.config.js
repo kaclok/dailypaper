@@ -22,10 +22,31 @@ export default defineConfig({
     server: {
         hmr: true, // 开启热更新
         port: 5173, //vite项目启动时自定义端口
+
+        /*proxy: {
+            '/api': {
+                target: 'http://localhost:8089/api/',
+                changeOrigin: true,
+                pathRewrite: {
+                    '/api': ''
+                }
+            }
+        }*/
     },
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
-    }
+    },
+    // devServer: {
+    //     proxy: {
+    //         '/api': {
+    //             target: 'http://localhost:8089/api/',
+    //             changeOrigin: true,
+    //             pathRewrite: {
+    //                 '/api': ''
+    //             }
+    //         }
+    //     }
+    // }
 })

@@ -1,6 +1,6 @@
 package com.smlj.dailypaper.controller;
 
-import com.smlj.dailypaper.entity.po.Commit;
+import com.smlj.dailypaper.entity.po.tCommit;
 import com.smlj.dailypaper.entity.vo.to.To_DateCommit;
 import com.smlj.dailypaper.entity.vo.to.To_UserCommit;
 import com.smlj.dailypaper.entity.vo.to.common.Result;
@@ -61,7 +61,7 @@ public class Entry {
                 if (commitId == 0) {
                     continue;
                 }
-                Commit c = commitMapper.FindById(commitId);
+                tCommit c = commitMapper.FindById(commitId);
                 if (c == null) {
                     continue;
                 }
@@ -98,7 +98,7 @@ public class Entry {
                 dateCommitMapper.Insert(targetMidNight);
             }
 
-            Commit cm = new Commit();
+            tCommit cm = new tCommit();
             cm.setUserId(userId);
             cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
             cm.setContent(content);

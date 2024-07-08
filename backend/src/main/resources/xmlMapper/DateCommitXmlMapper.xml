@@ -3,7 +3,7 @@
 <!-- mapper namespace作用是：代码和xml进行关联 -->
 <!-- https://blog.csdn.net/xu962336414/article/details/105624371 -->
 <mapper namespace="com.smlj.dailypaper.mapper.DateCommitMapper">
-    <select id="FindBy" resultType="com.smlj.dailypaper.entity.po.DateCommit">
+    <select id="FindBy" resultType="com.smlj.dailypaper.entity.po.tDateCommit">
         select * /*date, commitIds*/
         from t_datecommit
         where date = #{date};

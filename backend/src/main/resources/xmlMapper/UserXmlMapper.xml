@@ -3,7 +3,7 @@
 <!-- mapper namespace作用是：代码和xml进行关联 -->
 <!-- https://blog.csdn.net/xu962336414/article/details/105624371 -->
 <mapper namespace="com.smlj.dailypaper.mapper.UserMapper">
-    <select id="GetUserById" resultType="com.smlj.dailypaper.entity.po.User">
+    <select id="GetUserById" resultType="com.smlj.dailypaper.entity.po.tUser">
         select * /*id, name, age, identity*/
         from t_user
         where id = #{userId};

@@ -1,13 +1,11 @@
 package com.smlj.dailypaper.entity.po;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import lombok.Data;
 
 import java.util.ArrayList;
 
 @Data
-public class DateCommit {
+public class tDateCommit {
     private long date;
     private int userId_1;
     private int userId_2;

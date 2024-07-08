@@ -30,4 +30,15 @@ export default defineConfig({
             '$': fileURLToPath(new URL('./src/components', import.meta.url)),
         }
     },
+    // devServer: {
+    //     proxy: {
+    //         '/api': {
+    //             target: 'http://localhost:8089/api/',// 后端接口
+    //             changeOrigin: true, // 是否跨域
+    //             pathRewrite: {
+    //                 '/api': ''
+    //             }
+    //         }
+    //     }
+    // },
 })

@@ -1,6 +1,6 @@
 package com.smlj.dailypaper.mapper;
 
-import com.smlj.dailypaper.entity.po.DateCommit;
+import com.smlj.dailypaper.entity.po.tDateCommit;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -12,5 +12,5 @@ public interface DateCommitMapper {
 
     public void Update(@Param("date") long date, @Param("colName") String colName, @Param("commitId") int commitId);
 
-    public DateCommit FindBy(@Param("date") long date);
+    public tDateCommit FindBy(@Param("date") long date);
 }

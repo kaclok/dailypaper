@@ -9,7 +9,7 @@
         values (#{userId}, #{commitDateTime}, #{content});
     </insert>
 
-    <select id="FindById" resultType="com.smlj.dailypaper.entity.po.Commit">
+    <select id="FindById" resultType="com.smlj.dailypaper.entity.po.tCommit">
         select id, userId, commitDateTime, content
         from t_commit
         where id = #{id};
@@ -21,7 +21,7 @@
     </select>
 
     <!-- id自增，所以使用：useGeneratedKeys="true" keyProperty="id" -->
-    <insert id="Insert2" parameterType="com.smlj.dailypaper.entity.po.Commit" useGeneratedKeys="true" keyProperty="id">
+    <insert id="Insert2" parameterType="com.smlj.dailypaper.entity.po.tCommit" useGeneratedKeys="true" keyProperty="id">
         insert into t_commit (userId, commitDateTime, content)
         values (#{userId}, #{commitDateTime}, #{content});
     </insert>

@@ -1,0 +1,8 @@
+vue项目出现：Access to XMLHttpRequest at 'http://localhost:8089/dailypaper/getAll?date=1720368000' from origin 'http://localhost:5175' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+要解决这个问题，你可以采取以下几种方法：
+1、在后端服务器上设置 CORS 头：在后端服务器的响应中添加 Access-Control-Allow-Origin 头，指定允许访问该资源的源。例如，如果你的前端应用运行在 http://localhost:5175，则可以在后端服务器的响应头中添加 Access-Control-Allow-Origin: http://localhost:5175。这样，浏览器就会允许该跨域请求。
+
+2、使用代理服务器：可以在前端项目中配置代理服务器，将跨域请求转发到后端服务器。这样，浏览器会认为请求是来自代理服务器，而不是原始的源，从而避免 CORS 问题。
+
+后端是springboot项目，怎么设置CORS 头？

@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 public class To_DateCommit implements Serializable {
     private int total = 13;
-    private long date;
+    private long date = 0;
     private ArrayList<To_UserCommit> commits = new ArrayList<To_UserCommit>(13);
 }

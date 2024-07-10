@@ -1,7 +1,6 @@
 // 获取当前时间戳
 function nowTimestamp() {
-    let now = new Date().getTime() / 1000;
-    return now;
+    return new Date().getTime() / 1000;
 }
 
 // 获取当前日期

@@ -1,6 +1,7 @@
 package com.smlj.dailypaper.controller;
 
 import com.smlj.dailypaper.entity.po.tCommit;
+import com.smlj.dailypaper.entity.po.tDateCommit;
 import com.smlj.dailypaper.entity.vo.to.To_DateCommit;
 import com.smlj.dailypaper.entity.vo.to.To_UserCommit;
 import com.smlj.dailypaper.entity.vo.to.common.Result;
@@ -50,34 +51,39 @@ public class Entry {
         var dateCommit = dateCommitMapper.FindBy(midNight);
 
         var r = new ResultUtil<To_DateCommit>();
+
+        To_DateCommit to = new To_DateCommit();
+        to.setTotal(tDateCommit.GetFieldCount());
+        to.setDate(midNight);
+
         if (dateCommit == null) {
-            return r.setErrorMsg("getAll don't exist", null);
-        } else {
-            To_DateCommit to = new To_DateCommit();
-            to.setTotal(13);
-            to.setDate(midNight);
-            ArrayList<Integer> commitIds = dateCommit.GetAllIds();
-            for (Integer commitId : commitIds) {
-                if (commitId == 0) {
-                    continue;
-                }
-                tCommit c = commitMapper.FindById(commitId);
-                if (c == null) {
-                    continue;
-                }
-                To_UserCommit tu = new To_UserCommit();
-                tu.setUserId(c.getUserId());
+            dateCommitMapper.Insert(midNight);
+            dateCommit = new tDateCommit(midNight);
+        }
+
+        ArrayList<Integer> commitIds = dateCommit.GetAllIds();
+        var userIds = dateCommit.GetFieldIds();
+        for (int i = 0; i < commitIds.size(); i++) {
+            var userId = userIds.get(i);
+            To_UserCommit tu = new To_UserCommit();
+            var user = userMapper.GetUserById(userId);
+            tu.setUserId(userId);
+            tu.setName(user.getName());
+
+            var commitId = commitIds.get(i);
+            tCommit c = commitMapper.FindById(commitId);
+            if (c == null) {
+                tu.setEdited(false);
+            } else {
                 tu.setTime(c.getCommitDateTime());
                 tu.setContent(c.getContent());
-                
-                var user = userMapper.GetUserById(c.getUserId());
-                tu.setName(user.getName());
-
-                to.getCommits().add(tu);
+                tu.setEdited(true);
             }
 
-            return r.setData(to, "getAll");
+            to.getCommits().add(tu);
         }
+
+        return r.setData(to, "getAll");
     }
 
     @GetMapping("/edit")

@@ -12,34 +12,64 @@ import {onMounted, ref} from "vue";
 import {ElNotification as ep_notification} from 'element-plus'
 import apiDaily from '#/daily.js'
 import timeUtil from "@/utils/date_time_util.js";
+import timeService from "@/services/time_service.js";
 
 import cp_date_picker from './components/cp_date_picker.vue'
 import cp_card from '$/cp_card.vue'
 
-let info = null;
+let info = ref(null);
+let selectedDate = ref(0);
 
 const requestGetAll = async function (date) {
     let rlt = await apiDaily.GetAll(date);
     if (rlt.data.result) {
-        info = rlt.data.date;
+        info.value = rlt.data.data;
     }
+
+    timeService.initTime(rlt.data.timestamp);
 }
 
 const requestEdit = async function (date, userId, content) {
     let rlt = await apiDaily.Edit(date, userId, content);
     if (rlt.data.result) {
+        for (let i = 0; i < info.value.commits.length; i++) {
+            let cur = info.value.commits[i];
+            if (cur.userId === userId) {
+                cur.time = timeService.getSvrTime();
+                cur.content = content;
 
+                break;
+            }
+        }
+
+        ep_notification({
+            title: '成功',
+            message: '编辑成功',
+            type: 'success',
+            duration: 2000,
+            position: 'top-left',
+        })
+    } else {
+        ep_notification({
+            title: '失败',
+            message: '编辑失败',
+            type: 'warning',
+            duration: 3000,
+            position: 'top-left',
+        })
     }
 }
 
 function onDateChanged(date) {
     let sec = date / 1000;
     requestGetAll(sec);
+
+    selectedDate.value = sec;
 }
 
 function onEdit(userId, content) {
     if (content != null && content.trim() !== "") {
-        requestEdit(info.date, userId, content);
+        requestEdit(info.value.date, userId, content);
     } else {
         ep_notification({
             title: '警告',
@@ -52,20 +82,49 @@ function onEdit(userId, content) {
 }
 
 function getOne(id) {
-    return {
-        id: id,
-        name: "user:" + id,
-        content: (id % 2 !== 0 ? "content: " + id : null),
-        time: (id % 2 === 0 ? 0 : 1720076930),
-        /*time: 1720076930,*/
+    if (info.value == null || info.value.commits == null || info.value.commits.length <= 0) {
+        return {
+            userId: id,
+            name: "",
+            content: null,
+        };
     }
+
+    let rlt = info.value.commits.find((ele) => {
+        return ele.userId === id;
+    });
+    return rlt;
 }
 
 function getUserCount() {
-    if (info == null) {
+    if (info.value == null) {
         return 13;
     }
-    return info.total;
+    return info.value.total;
+}
+
+function getEditList(unedit) {
+    if (info.value == null) {
+        return null;
+    }
+    let arr = [];
+    if (unedit) {
+        for (let i = 0; i < info.value.commits.length; i++) {
+            let one = info.value.commits[i];
+            if (one.time <= 0) {
+                arr.push(one);
+            }
+        }
+    } else {
+        for (let i = 0; i < info.value.commits.length; i++) {
+            let one = info.value.commits[i];
+            if (one.time > 0) {
+                arr.push(one);
+            }
+        }
+    }
+
+    return arr;
 }
 
 onMounted(() => {
@@ -78,9 +137,13 @@ onMounted(() => {
     <div>
         <cp_date_picker @onDateChanged="onDateChanged" :targetDate="timeUtil.nowDate()"/>
         <ul class="infinite-list" style="overflow: auto; justify-content: flex-start; display: flex;">
-            <cp_card v-for="i in getUserCount()" class="infinite-list-item" :key="i" :id="getOne(i).id"
+            <cp_card v-for="i in getUserCount()" class="infinite-list-item"
+                     :key="i"
+                     :date="selectedDate"
+                     :id="getOne(i).userId"
                      :name="getOne(i).name"
-                     :content="getOne(i).content" :time="getOne(i).time" @onEdit="onEdit"/>
+                     :content="getOne(i).content"
+                     @onEdit="onEdit"/>
         </ul>
     </div>
 </template>

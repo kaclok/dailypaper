@@ -6,10 +6,11 @@ import java.io.Serializable;
 
 @Data
 public class To_UserCommit implements Serializable, Comparable<To_UserCommit> {
-    private int userId;
-    private String name;
-    private String content;
-    private long time;
+    private int userId = 0;
+    private String name = null;
+    private String content = null;
+    private long time = 0;
+    private boolean edited = false;
 
     @Override
     public int compareTo(To_UserCommit toUserCommit) {

@@ -1,11 +1,16 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
 import zhCn from "element-plus/es/locale/lang/zh-cn";
+import timeUtil from "@/utils/date_time_util";
 
 defineEmits(['onDateChanged']);
 const props = defineProps(['targetDate']);
 
 const refTargetDate = ref(props.targetDate);
+
+function overToday() {
+    return refTargetDate.value.getTime() >= timeUtil.nowDate().getTime() + 86400;
+}
 
 </script>
 

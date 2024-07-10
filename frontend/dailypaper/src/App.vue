@@ -9,7 +9,7 @@
 // 6、按钮 https://element-plus.org/zh-CN/component/button.html
 import {onMounted, ref} from "vue";
 
-import {ElNotification as ep_notification} from 'element-plus'
+import {ElMessage} from 'element-plus'
 import apiDaily from '#/daily.js'
 import timeUtil from "@/utils/date_time_util.js";
 import timeService from "@/services/time_service.js";
@@ -19,9 +19,12 @@ import cp_card from '$/cp_card.vue'
 
 let info = ref(null);
 let selectedDate = ref(0);
+let loading = ref(false);
 
 const requestGetAll = async function (date) {
+    loading.value = true;
     let rlt = await apiDaily.GetAll(date);
+    loading.value = false;
     if (rlt.data.result) {
         info.value = rlt.data.data;
     }
@@ -30,7 +33,10 @@ const requestGetAll = async function (date) {
 }
 
 const requestEdit = async function (date, userId, content) {
+    loading.value = true;
     let rlt = await apiDaily.Edit(date, userId, content);
+    loading.value = false;
+
     if (rlt.data.result) {
         for (let i = 0; i < info.value.commits.length; i++) {
             let cur = info.value.commits[i];
@@ -40,20 +46,16 @@ const requestEdit = async function (date, userId, content) {
             }
         }
 
-        ep_notification({
-            title: '成功',
+        ElMessage({
+            showClose: false,
             message: '编辑成功',
             type: 'success',
-            duration: 2000,
-            position: 'top-left',
         })
     } else {
-        ep_notification({
-            title: '失败',
+        ElMessage({
+            showClose: false,
             message: '编辑失败',
-            type: 'warning',
-            duration: 3000,
-            position: 'top-left',
+            type: 'error',
         })
     }
 }
@@ -67,14 +69,12 @@ function onDateChanged(date) {
 
 function onEdit(userId, content) {
     if (content != null && content.trim() !== "") {
-        requestEdit(info.value.date, userId, content);
+        requestEdit(selectedDate.value, userId, content);
     } else {
-        ep_notification({
-            title: '警告',
+        ElMessage({
+            showClose: false,
             message: '编辑内容不能为空',
             type: 'warning',
-            duration: 3000,
-            position: 'bottom-left',
         })
     }
 }
@@ -110,7 +110,8 @@ onMounted(() => {
 <template>
     <div>
         <cp_date_picker @onDateChanged="onDateChanged" :targetDate="timeUtil.nowDate()"/>
-        <ul class="infinite-list" style="overflow: auto; justify-content: flex-start; display: flex;">
+        <ul class="infinite-list" style="overflow: auto; justify-content: flex-start; display: flex;"
+            v-loading="loading">
             <cp_card v-for="i in getUserCount()" class="infinite-list-item"
                      :key="i"
                      :date="selectedDate"

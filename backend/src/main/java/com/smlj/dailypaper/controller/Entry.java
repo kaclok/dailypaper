@@ -72,12 +72,9 @@ public class Entry {
 
             var commitId = commitIds.get(i);
             tCommit c = commitMapper.FindById(commitId);
-            if (c == null) {
-                tu.setEdited(false);
-            } else {
+            if (c != null) {
                 tu.setTime(c.getCommitDateTime());
                 tu.setContent(c.getContent());
-                tu.setEdited(true);
             }
 
             to.getCommits().add(tu);

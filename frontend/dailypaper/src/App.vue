@@ -35,9 +35,7 @@ const requestEdit = async function (date, userId, content) {
         for (let i = 0; i < info.value.commits.length; i++) {
             let cur = info.value.commits[i];
             if (cur.userId === userId) {
-                cur.time = timeService.getSvrTime();
                 cur.content = content;
-
                 break;
             }
         }
@@ -101,30 +99,6 @@ function getUserCount() {
         return 13;
     }
     return info.value.total;
-}
-
-function getEditList(unedit) {
-    if (info.value == null) {
-        return null;
-    }
-    let arr = [];
-    if (unedit) {
-        for (let i = 0; i < info.value.commits.length; i++) {
-            let one = info.value.commits[i];
-            if (one.time <= 0) {
-                arr.push(one);
-            }
-        }
-    } else {
-        for (let i = 0; i < info.value.commits.length; i++) {
-            let one = info.value.commits[i];
-            if (one.time > 0) {
-                arr.push(one);
-            }
-        }
-    }
-
-    return arr;
 }
 
 onMounted(() => {

@@ -138,6 +138,7 @@ onUnmounted(() => {
                      :date="selectedDate"
                      :id="getOne(i).userId"
                      :name="getOne(i).name"
+                     :time="getOne(i).time"
                      :content="getOne(i).content"
                      @onEdit="onEdit"/>
         </ul>

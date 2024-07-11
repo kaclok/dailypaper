@@ -6,7 +6,7 @@ import {
 
 import timeUtil from "@/utils/date_time_util.js";
 
-const props = defineProps(["date", "id", "name", "content"]);
+const props = defineProps(["date", "id", "name", "time", "content"]);
 defineEmits(['onEdit']);
 
 // https://cn.vuejs.org/guide/components/props.html
@@ -24,6 +24,10 @@ function hasContent() {
     return props.content != null && props.content.trim() !== "";
 }
 
+function hasEdited() {
+    return props.time !== 0;
+}
+
 onBeforeUpdate(() => {
     // 父组件变更的时候，通知子组件的props, 但是子组件的v-model绑定的不是props, 所以需要在此更新
     refTextContent.value = props.content;
@@ -34,7 +38,7 @@ onBeforeUpdate(() => {
 <template>
     <el-card style="width: 280px; height: 700px">
         <template #header>
-            <span>{{ props.name }}</span>
+            <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}</span>
         </template>
 
         <!-- 非空状态 -->

@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, onBeforeUpdate, onUnmounted} from 'vue'
-import {echarts} from '@/plugins/echartsCore.js'
-import i18n from '@/config/i18n.js'
+import {echarts} from '@/plugins/EchartsCore.js'
+import i18n from '@/config/I18n.js'
 
 const props = defineProps(["attand", "unAttand"]);
 const emit = defineEmits(['onLegendSelectChanged']);
@@ -21,7 +21,7 @@ let option = {
     // 饼图底部说明
     legend: {
         orient: 'horizontal',
-        right: '0',
+        right: '-20',
         top: "50%",
         data: [
             i18n.ATTEND,

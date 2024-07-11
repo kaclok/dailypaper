@@ -2,14 +2,14 @@
 import {onMounted, ref, onUnmounted} from "vue";
 
 import {ElMessage} from 'element-plus'
-import timeUtil from "@/utils/date_time_util.js";
+import TimeUtil from "@/utils/DateTimeUtil.js";
 
-import cp_date_picker from './components/cp_date_picker.vue'
-import cp_card from '$/cp_card.vue'
-import cp_chart from '$/cp_chart.vue'
+import CpDatePicker from './components/CpDatePicker.vue'
+import CpCard from '$/CpCard.vue'
+import CpPie from '$/CpPie.vue'
 
-import dailyLogic from '@/logic/dailyLogic.js'
-import i18n from "@/config/i18n.js";
+import DailyLogic from '@/logic/DailyLogic.js'
+import I18n from "@/config/I18n.js";
 
 let commits = ref(null);
 let getAllCtrl = new AbortController();
@@ -21,13 +21,13 @@ let loading = ref(false);
 
 function onDateChanged(date) {
     let sec = date / 1000;
-    dailyLogic.RequestGetAll(sec, getAllCtrl.signal, () => {
+    DailyLogic.RequestGetAll(sec, getAllCtrl.signal, () => {
         loading.value = true;
     }, (r) => {
         loading.value = false;
 
         // 触发响应式UI刷新
-        commits.value = dailyLogic.GetCommits();
+        commits.value = DailyLogic.GetCommits();
     });
 
     selectedDate.value = sec;
@@ -35,14 +35,15 @@ function onDateChanged(date) {
 
 function onLegendSelectChanged(params) {
     // 出勤是否选中
-    selectedLegend.value[0] = params.selected[i18n.ATTEND] === true ? 0 : -1;
+    selectedLegend.value[0] = params.selected[I18n.ATTEND] === true ? 0 : -1;
     // 缺勤是否选中
-    selectedLegend.value[1] = params.selected[i18n.UN_ATTEND] === true ? 1 : -1;
+    selectedLegend.value[1] = params.selected[I18n.UN_ATTEND] === true ? 1 : -1;
+    console.log(selectedLegend.value)
 }
 
 function onEdit(userId, content) {
     if (content != null && content.trim() !== "") {
-        dailyLogic.RequestEdit(selectedDate.value, userId, content, editCtrl.signal, () => {
+        DailyLogic.RequestEdit(selectedDate.value, userId, content, editCtrl.signal, () => {
             loading.value = true;
         }, (r) => {
             loading.value = false;
@@ -74,7 +75,7 @@ function onEdit(userId, content) {
 
 onMounted(() => {
     /* 因为未onMounted之前，组件不会触发事件，所以需要手动触发*/
-    onDateChanged(timeUtil.nowDate());
+    onDateChanged(TimeUtil.nowDate());
 });
 
 // 清理定时器，事件监听器，异步函数
@@ -99,22 +100,21 @@ function getOne(id) {
 </script>
 
 <template>
-    <div>
-        <cp_date_picker @onDateChanged="onDateChanged" :targetDate="timeUtil.nowDate()"/>
-        <cp_chart @onLegendSelectChanged="onLegendSelectChanged" :attand="dailyLogic.GetAttendCount(true)"
-                  :unAttand="dailyLogic.GetAttendCount(false)"/>
-        <ul class="infinite-list" style="overflow: auto; justify-content: flex-start; display: flex;"
-            v-loading="loading">
-            <cp_card v-for="i in dailyLogic.GetTotalCount()" class="infinite-list-item"
-                     :key="i"
-                     :date="selectedDate"
-                     :id="getOne(i).userId"
-                     :name="getOne(i).name"
-                     :time="getOne(i).time"
-                     :content="getOne(i).content"
-                     @onEdit="onEdit"/>
-        </ul>
-    </div>
+    <CpDatePicker @onDateChanged="onDateChanged" :targetDate="TimeUtil.nowDate()"/>
+    <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
+    <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="DailyLogic.GetAttendCount(true)"
+              :unAttand="DailyLogic.GetAttendCount(false)"/>
+    <ul class="infinite-list" style="overflow: auto; justify-content: flex-start; display: flex;"
+        v-loading="loading">
+        <CpCard v-for="i in DailyLogic.GetTotalCount()" class="infinite-list-item"
+                 :key="i"
+                 :date="selectedDate"
+                 :id="getOne(i).userId"
+                 :name="getOne(i).name"
+                 :time="getOne(i).time"
+                 :content="getOne(i).content"
+                 @onEdit="onEdit"/>
+    </ul>
 </template>
 
 <style>

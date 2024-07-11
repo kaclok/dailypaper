@@ -1,6 +1,5 @@
-import timeService from "@/services/time_service.js";
-import dailyApi from "@/logic/api/dailyApi.js";
-import {computed} from "vue";
+import TimeService from "@/services/TimeService.js";
+import DailyApi from "@/logic/api/DailyApi.js";
 
 let _result = null;
 function GetCommits() {
@@ -14,9 +13,9 @@ async function RequestGetAll(date, signal, onBefore, onAfter) {
     if (onBefore != null) {
         onBefore();
     }
-    let r = await dailyApi.GetAll(date, signal);
+    let r = await DailyApi.GetAll(date, signal);
     // 同步时间
-    timeService.initTime(r.data.timestamp);
+    TimeService.initTime(r.data.timestamp);
 
     if (r.data.result && date === r.data.data.date) {
         // 网络消息回来之后，如果和之前的info.value没有区别，则不会触发UI响应式刷新
@@ -32,10 +31,10 @@ async function RequestEdit(date, userId, content, signal, onBefore, onAfter) {
     if (onBefore != null) {
         onBefore();
     }
-    let rlt = await dailyApi.Edit(date, userId, content, signal);
+    let rlt = await DailyApi.Edit(date, userId, content, signal);
 
     // 同步时间
-    timeService.initTime(rlt.data.timestamp);
+    TimeService.initTime(rlt.data.timestamp);
 
     if (rlt.data.result) {
         UpdateCommit(date, userId, content);
@@ -61,7 +60,7 @@ function UpdateCommit(date, userId, content) {
             let cur = c[i];
             if (cur.userId === userId) {
                 cur.content = content;
-                cur.time = timeService.getSvrTime();
+                cur.time = TimeService.getSvrTime();
                 break;
             }
         }

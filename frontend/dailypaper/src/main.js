@@ -6,8 +6,14 @@ import App from './App.vue'
 
 const app = createApp(App)
 // 局处理组件渲染和事件处理过程中的错误
-app.config.errorHandler = (error, vm, info) => {
-    console.error(error, vm, info);
+app.config.errorHandler = (error, instance, info) => {
+    console.error(error, instance, info);
 };
+
+app.config.warnHandler = (msg, instance, trace) => {
+    console.warn(msg, instance, trace);
+};
+app.config.performance = true;
+
 // mount在最后
 app.mount('#app')

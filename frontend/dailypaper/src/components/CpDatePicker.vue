@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
 import zhCn from "element-plus/es/locale/lang/zh-cn";
-import timeUtil from "@/utils/date_time_util";
+import TimeUtil from "@/utils/DateTimeUtil";
 
 defineEmits(['onDateChanged']);
 const props = defineProps(['targetDate']);
@@ -9,7 +9,7 @@ const props = defineProps(['targetDate']);
 const refTargetDate = ref(props.targetDate);
 
 function overToday() {
-    return refTargetDate.value.getTime() >= timeUtil.nowDate().getTime() + 86400;
+    return refTargetDate.value.getTime() >= TimeUtil.nowDate().getTime() + 86400;
 }
 
 </script>
@@ -34,6 +34,7 @@ function overToday() {
 
 <style scoped>
 .date-picker-root {
+    position: relative;
     display: flex;
     width: 240px;
     height: 60px;
@@ -43,6 +44,9 @@ function overToday() {
 
 .date-picker-root .date-picker {
     /*  padding: 30px 0;*/
+    position: absolute;
+    top: 20px;
+    left: 30px;
     text-align: center;
     border-right: solid 1px var(--el-border-color);
     flex: 1;

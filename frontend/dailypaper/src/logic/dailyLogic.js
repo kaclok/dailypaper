@@ -26,7 +26,6 @@ async function RequestGetAll(date, signal, onBefore, onAfter) {
     if (onAfter != null) {
         onAfter(r.data.result);
     }
-    console.log("=========")
 }
 
 async function RequestEdit(date, userId, content, signal, onBefore, onAfter) {

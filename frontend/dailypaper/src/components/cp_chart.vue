@@ -69,8 +69,13 @@ onMounted(() => {
     // 基于准备好的dom，初始化echarts实例
     pieChart = echarts.init(document.getElementById('pieChart'))
     
-    // 事件触发
-    // pieChart.on('legendselectchanged', onLegendSelectChanged);
+    // Echarts事件监听，监听legendselectchanged事件
+    pieChart.on('legendselectchanged', onLegendSelectChanged);
+
+    // 触发 legendAllSelect 事件
+    // chart.dispatchAction({
+    //     type: 'legendAllSelect'
+    // });
 
     // 更新图表
     pieChart.setOption(option);

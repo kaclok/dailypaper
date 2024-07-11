@@ -1,8 +1,10 @@
 <script setup>
 import {onMounted, onBeforeUpdate, watchEffect} from 'vue'
 import {echarts} from '@/plugins/echartsCore.js'
+import i18n from '@/config/i18n.js'
 
 const props = defineProps(["attand", "unAttand"]);
+const emit = defineEmits(['onLegendSelectChanged']);
 
 let pieChart = null;
 let option = {
@@ -16,22 +18,24 @@ let option = {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c} ({d}%)'
     },
-    /* 饼图底部说明
+    // 饼图底部说明
     legend: {
-        orient: 'vertical',
-
-        bottom: 'bottom',
-        data: ['出勤人数', '缺勤人数'],
-    },*/
+        orient: 'horizontal',
+        right: '0',
+        top: "50%",
+        data: [
+            i18n.ATTEND,
+            i18n.UN_ATTEND],
+    },
     series: [
         {
-            name: '比例情况',
+            name: '比例',
             type: 'pie',
-            radius: '30%',
+            radius: '50',
             center: ['50%', '50%'],
             data: [
-                {value: props.unAttand, name: '缺勤人数', itemStyle: 'red'},
-                {value: props.attand, name: '出勤人数', itemStyle: 'blue'}
+                {value: props.unAttand, name: i18n.UN_ATTEND, itemStyle: 'red'},
+                {value: props.attand, name: i18n.ATTEND, itemStyle: 'blue'}
             ],
             itemStyle: {
                 /*emphasis: {
@@ -49,6 +53,10 @@ let option = {
     ]
 };
 
+function onLegendSelectChanged(params) {
+    emit('onLegendSelectChanged', params)
+}
+
 onBeforeUpdate(() => {
     option.series[0].data[0].value = props.unAttand;
     option.series[0].data[1].value = props.attand;
@@ -60,6 +68,10 @@ onBeforeUpdate(() => {
 onMounted(() => {
     // 基于准备好的dom，初始化echarts实例
     pieChart = echarts.init(document.getElementById('pieChart'))
+    
+    // 事件触发
+    // pieChart.on('legendselectchanged', onLegendSelectChanged);
+
     // 更新图表
     pieChart.setOption(option);
 });

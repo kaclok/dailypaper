@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, onBeforeUpdate, watchEffect} from 'vue'
+import {onMounted, onBeforeUpdate, onUnmounted} from 'vue'
 import {echarts} from '@/plugins/echartsCore.js'
 import i18n from '@/config/i18n.js'
 
@@ -68,7 +68,7 @@ onBeforeUpdate(() => {
 onMounted(() => {
     // 基于准备好的dom，初始化echarts实例
     pieChart = echarts.init(document.getElementById('pieChart'))
-    
+
     // Echarts事件监听，监听legendselectchanged事件
     pieChart.on('legendselectchanged', onLegendSelectChanged);
 
@@ -79,6 +79,10 @@ onMounted(() => {
 
     // 更新图表
     pieChart.setOption(option);
+});
+
+onUnmounted(() => {
+    pieChart.off('legendselectchanged', onLegendSelectChanged);
 });
 
 </script>

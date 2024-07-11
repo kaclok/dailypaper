@@ -5,8 +5,8 @@ import {ElMessage} from 'element-plus'
 import TimeUtil from "@/utils/DateTimeUtil.js";
 
 import CpDatePicker from './components/CpDatePicker.vue'
-import CpCard from '$/CpCard.vue'
-import CpPie from '$/CpPie.vue'
+import CpCard from './components/CpCard.vue'
+import CpPie from './components/CpPie.vue'
 
 import DailyLogic from '@/logic/DailyLogic.js'
 import I18n from "@/config/I18n.js";
@@ -16,7 +16,11 @@ let getAllCtrl = new AbortController();
 let editCtrl = new AbortController();
 
 let selectedDate = ref(0);
-let selectedLegend = ref([0, 1]);
+// 默认饼图legend都选中
+let selectedLegend = ref({
+    [I18n.ATTEND]: true,
+    [I18n.UN_ATTEND]: true,
+});
 let loading = ref(false);
 
 function onDateChanged(date) {
@@ -27,18 +31,29 @@ function onDateChanged(date) {
         loading.value = false;
 
         // 触发响应式UI刷新
-        commits.value = DailyLogic.GetCommits();
+        refreshCommits();
     });
 
     selectedDate.value = sec;
 }
 
 function onLegendSelectChanged(params) {
-    // 出勤是否选中
-    selectedLegend.value[0] = params.selected[I18n.ATTEND] === true ? 0 : -1;
-    // 缺勤是否选中
-    selectedLegend.value[1] = params.selected[I18n.UN_ATTEND] === true ? 1 : -1;
-    console.log(selectedLegend.value)
+    selectedLegend.value = params.selected;
+
+    refreshCommits();
+}
+
+function refreshCommits() {
+    let attend = selectedLegend.value[I18n.ATTEND];
+    let unAttend = selectedLegend.value[I18n.UN_ATTEND];
+    // 更新commits
+    if (attend && unAttend) {
+        commits.value = DailyLogic.GetCommits();
+    } else if (attend || unAttend) {
+        commits.value = DailyLogic.GetAttendList(attend);
+    } else {
+        commits.value = [];
+    }
 }
 
 function onEdit(userId, content) {
@@ -83,37 +98,23 @@ onUnmounted(() => {
     getAllCtrl.abort();
     editCtrl.abort();
 });
-
-function getOne(id) {
-    if (commits.value == null || commits.value.length <= 0) {
-        return {
-            userId: 0,
-            name: "",
-            content: null,
-        };
-    }
-
-    return commits.value.find((ele) => {
-        return ele.userId === id;
-    });
-}
 </script>
 
 <template>
     <CpDatePicker @onDateChanged="onDateChanged" :targetDate="TimeUtil.nowDate()"/>
     <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
     <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="DailyLogic.GetAttendCount(true)"
-              :unAttand="DailyLogic.GetAttendCount(false)"/>
+           :unAttand="DailyLogic.GetAttendCount(false)" :selected="selectedLegend"/>
     <ul class="infinite-list" style="overflow: auto; justify-content: flex-start; display: flex;"
         v-loading="loading">
-        <CpCard v-for="i in DailyLogic.GetTotalCount()" class="infinite-list-item"
-                 :key="i"
-                 :date="selectedDate"
-                 :id="getOne(i).userId"
-                 :name="getOne(i).name"
-                 :time="getOne(i).time"
-                 :content="getOne(i).content"
-                 @onEdit="onEdit"/>
+        <CpCard v-for="card in commits" class="infinite-list-item"
+                :key="card.userId"
+                :date="selectedDate"
+                :id="card.userId"
+                :name="card.name"
+                :time="card.time"
+                :content="card.content"
+                @onEdit="onEdit"/>
     </ul>
 </template>
 

@@ -2,6 +2,7 @@ import TimeService from "@/services/TimeService.js";
 import DailyApi from "@/logic/api/DailyApi.js";
 
 let _result = null;
+
 function GetCommits() {
     if (_result == null) {
         return null;
@@ -75,23 +76,42 @@ function GetTotalCount() {
 }
 
 function GetAttendCount(attend) {
-    let c = GetCommits();
-    if (c == null) {
-        return 0;
-    }
-
+    let cms = GetCommits();
     let rlt = 0;
-    if (attend) {
-        for (let one of c) {
-            if (one.time !== 0) {
-                ++rlt;
+    if (cms != null) {
+        if (attend) {
+            for (let one of cms) {
+                if (one.time !== 0) {
+                    ++rlt;
+                }
+            }
+        } else {
+            for (let one of cms) {
+                if (one.time === 0) {
+                    ++rlt;
+                }
             }
         }
     }
-    else {
-        for (let one of c) {
-            if (one.time === 0) {
-                ++rlt;
+
+    return rlt;
+}
+
+function GetAttendList(attend) {
+    let cms = GetCommits();
+    let rlt = [];
+    if (cms != null) {
+        if (attend) {
+            for (let one of cms) {
+                if (one.time !== 0) {
+                    rlt.push(one);
+                }
+            }
+        } else {
+            for (let one of cms) {
+                if (one.time === 0) {
+                    rlt.push(one);
+                }
             }
         }
     }
@@ -106,5 +126,6 @@ export default {
     GetResult,
     GetCommits,
     GetTotalCount,
+    GetAttendList,
     GetAttendCount,
 };

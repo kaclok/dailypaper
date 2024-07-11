@@ -3,7 +3,7 @@ import {onMounted, onBeforeUpdate, onUnmounted} from 'vue'
 import {echarts} from '@/plugins/EchartsCore.js'
 import i18n from '@/config/I18n.js'
 
-const props = defineProps(["attand", "unAttand"]);
+const props = defineProps(["attand", "unAttand", "selected"]);
 const emit = defineEmits(['onLegendSelectChanged']);
 
 let pieChart = null;
@@ -29,7 +29,7 @@ let option = {
     },
     series: [
         {
-            name: '比例',
+            name: '简介',
             type: 'pie',
             radius: '50',
             center: ['50%', '50%'],
@@ -58,8 +58,12 @@ function onLegendSelectChanged(params) {
 }
 
 onBeforeUpdate(() => {
+    // 设置百分比
     option.series[0].data[0].value = props.unAttand;
     option.series[0].data[1].value = props.attand;
+
+    // 设置legend默认选中
+    option.legend.selected = props.selected;
 
     // 更新图表
     pieChart.setOption(option);
@@ -77,6 +81,8 @@ onMounted(() => {
     //     type: 'legendAllSelect'
     // });
 
+    // 设置legend默认选中
+    option.legend.selected = props.selected;
     // 更新图表
     pieChart.setOption(option);
 });

@@ -5,5 +5,9 @@ import {createApp} from 'vue'
 import App from './App.vue'
 
 const app = createApp(App)
+// 局处理组件渲染和事件处理过程中的错误
+app.config.errorHandler = (error, vm, info) => {
+    console.error(error, vm, info);
+};
 // mount在最后
 app.mount('#app')

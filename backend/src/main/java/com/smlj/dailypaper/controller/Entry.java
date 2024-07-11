@@ -80,6 +80,7 @@ public class Entry {
             to.getCommits().add(tu);
         }
 
+        // log.info("getAll-> to:{}", to);
         return r.setData(to, "getAll");
     }
 

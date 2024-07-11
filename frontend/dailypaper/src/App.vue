@@ -1,13 +1,5 @@
 <script setup>
-// 需要的组件：
-// 1、滚动列表 https://element-plus.org/zh-CN/component/infinite-scroll.html
-//      滚动条 https://element-plus.org/zh-CN/component/scrollbar.html
-// 2、通知 https://element-plus.org/zh-CN/component/notification.html
-// 3、空状态 https://element-plus.org/zh-CN/component/empty.html
-// 4、输入框 文本域 https://element-plus.org/zh-CN/component/input.html
-// 5、日期选择器 https://element-plus.org/zh-CN/component/date-picker.html
-// 6、按钮 https://element-plus.org/zh-CN/component/button.html
-import {onMounted, ref} from "vue";
+import {onMounted, ref, onUnmounted} from "vue";
 
 import {ElMessage} from 'element-plus'
 import apiDaily from '#/daily.js'
@@ -16,32 +8,41 @@ import timeService from "@/services/time_service.js";
 
 import cp_date_picker from './components/cp_date_picker.vue'
 import cp_card from '$/cp_card.vue'
+import cp_chart from '$/cp_chart.vue'
 
+let getAllCtrl = new AbortController();
+let editCtrl = new AbortController();
 let info = ref(null);
 let selectedDate = ref(0);
 let loading = ref(false);
 
 const requestGetAll = async function (date) {
     loading.value = true;
-    let rlt = await apiDaily.GetAll(date);
+    let rlt = await apiDaily.GetAll(date, getAllCtrl.signal);
     loading.value = false;
-    if (rlt.data.result) {
+    if (rlt.data.result && date === rlt.data.data.date) {
+        // 网络消息回来之后，如果和之前的info.value没有区别，则不会触发UI响应式刷新
         info.value = rlt.data.data;
     }
 
+    // 同步时间
     timeService.initTime(rlt.data.timestamp);
 }
 
 const requestEdit = async function (date, userId, content) {
     loading.value = true;
-    let rlt = await apiDaily.Edit(date, userId, content);
+    let rlt = await apiDaily.Edit(date, userId, content, getAllCtrl.signal);
     loading.value = false;
+
+    // 同步时间
+    timeService.initTime(rlt.data.timestamp);
 
     if (rlt.data.result) {
         for (let i = 0; i < info.value.commits.length; i++) {
             let cur = info.value.commits[i];
             if (cur.userId === userId) {
                 cur.content = content;
+                cur.time = timeService.getSvrTime();
                 break;
             }
         }
@@ -94,25 +95,45 @@ function getOne(id) {
     return rlt;
 }
 
-function getUserCount() {
+function getTotal() {
     if (info.value == null) {
         return 13;
     }
     return info.value.total;
 }
 
+function getAttandCount() {
+    let cnt = 0;
+    if (info.value != null) {
+        for (let i = 0; i < info.value.commits.length; i++) {
+            let one = info.value.commits[i];
+            if (one.time !== 0) {
+                ++cnt;
+            }
+        }
+    }
+    return cnt;
+}
+
 onMounted(() => {
     /* 因为未onMounted之前，组件不会触发事件，所以需要手动触发*/
     onDateChanged(timeUtil.nowDate());
+});
+
+// 清理定时器，事件监听器，异步函数
+onUnmounted(() => {
+    getAllCtrl.abort();
+    editCtrl.abort();
 });
 </script>
 
 <template>
     <div>
         <cp_date_picker @onDateChanged="onDateChanged" :targetDate="timeUtil.nowDate()"/>
+        <cp_chart :attand="getAttandCount()" :unAttand="getTotal() - getAttandCount()"/>
         <ul class="infinite-list" style="overflow: auto; justify-content: flex-start; display: flex;"
             v-loading="loading">
-            <cp_card v-for="i in getUserCount()" class="infinite-list-item"
+            <cp_card v-for="i in getTotal()" class="infinite-list-item"
                      :key="i"
                      :date="selectedDate"
                      :id="getOne(i).userId"

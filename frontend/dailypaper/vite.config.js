@@ -29,7 +29,7 @@ export default defineConfig((env) => {
         server: {
             hmr: true, // 开启热更新
             port: 5175, //vite项目启动时自定义端口
-            
+
             // 本因为这个对于：Access to XMLHttpRequest at 'http://localhost:8089/dailypaper/getAll?date=1720713600' from origin 'http://localhost:5175' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
             // 会生效，结果不生效
             // cors: true, // 允许跨域
@@ -46,11 +46,23 @@ export default defineConfig((env) => {
         build: {
             chunkSizeWarningLimit: 500,
             rollupOptions: {
-                output:{
+                output: {
                     manualChunks(id) {
                         if (id.includes('node_modules')) {
                             return id.toString().split('node_modules/')[1].split('/')[0].toString();
                         }
+                    },
+
+                    // npm install --save-dev rollup
+                    // https://segmentfault.com/a/1190000041464140
+                    // https://blog.csdn.net/sinat_36728518/article/details/123112966
+                    chunkFileNames: (chunkInfo) => {
+                        const facadeModuleId = chunkInfo.facadeModuleId
+                            ? chunkInfo.facadeModuleId.split('/')
+                            : [];
+                        const fileName =
+                            facadeModuleId[facadeModuleId.length - 2] || '[name]';
+                        return `js/${fileName}/[name].[hash].js`;
                     }
                 }
             },

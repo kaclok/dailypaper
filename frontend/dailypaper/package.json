@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start springBootServer": "E:\\Javas\\jdk\\22\\bin\\java.exe -jar F:\\Projects\\SMLJ\\svn\\DailyPaper\\backend\\target\\dailypaper-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev"
+    "start springBootServer": "E:\\Javas\\jdk\\22\\bin\\java.exe -jar F:\\Projects\\SMLJ\\svn\\DailyPaper\\backend\\target\\com.smlj.dailypaper*.jar --spring.profiles.active=dev"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

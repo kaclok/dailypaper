@@ -41,5 +41,10 @@ export default defineConfig((env) => {
                 '$': fileURLToPath(new URL('./src/components', import.meta.url)),
             }
         },
+        // build出现： Some chunks are larger than 500 kB after minification
+        // 解决：https://blog.csdn.net/Dawnchen1/article/details/118994062
+        build: {
+            chunkSizeWarningLimit: 1000,
+        },
     };
 })

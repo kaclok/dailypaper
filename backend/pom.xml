@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.smlj</groupId>
     <artifactId>dailypaper</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>dailypaper</name>
     <description>dailypaper</description>
     <url/>
@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>22</java.version>
+        <maven.build.timestamp.format>yyyy_MM_dd_HH_mm</maven.build.timestamp.format>
     </properties>
     <dependencies>
         <dependency>
@@ -111,6 +112,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>${groupId}.${project.artifactId}-${project.version}-${maven.build.timestamp}</finalName>
     </build>
 
 </project>

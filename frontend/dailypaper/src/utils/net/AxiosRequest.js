@@ -1,7 +1,7 @@
 import axios from "axios"
 
 // https://www.axios-http.cn/docs/instance
-const springBootURL = "http://localhost:8089";
+const springBootURL = import.meta.env.VITE_BASE_API;
 // https://www.axios-http.cn/docs/config_defaults
 const axiosInstance = axios.create({baseURL: springBootURL, timeout: 5000});
 

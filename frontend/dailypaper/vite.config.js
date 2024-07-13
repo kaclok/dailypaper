@@ -15,7 +15,7 @@ export default defineConfig((env) => {
 
     // import.meta.env 和 loadEnv 的使用场景不同
     // https://blog.csdn.net/weixin_42373175/article/details/131080666
-    let config = loadEnv(env.mode, './');
+    let config = loadEnv(mode, './');
     return {
         plugins: [
             vue(),

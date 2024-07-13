@@ -1,6 +1,5 @@
 package com.smlj.dailypaper.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +16,7 @@ import lombok.Data;
 @Component
 @ConfigurationProperties(prefix = "cors")
 public class CorsProperties {
-    private String allowedOrigin;
+    private String[] allowedOrigin;
 
     // https://blog.csdn.net/qq_37896194/article/details/102833430
     @Bean
@@ -25,10 +24,15 @@ public class CorsProperties {
         // 1. 添加 CORS 配置信息
         CorsConfiguration config = new CorsConfiguration();
         // 1.1 允许的源
-        config.addAllowedOrigin(allowedOrigin);
+        if(allowedOrigin != null) {
+            for (var i : allowedOrigin) {
+                config.addAllowedOrigin(i);
+            }
+        }
         // 1.2 允许的请求方法
         config.addAllowedMethod(HttpMethod.GET);
         config.addAllowedMethod(HttpMethod.POST);
+        config.addAllowedMethod(HttpMethod.DELETE);
         // 1.3 允许的请求头
         config.addAllowedHeader("*");
         // 1.4 允许携带证书

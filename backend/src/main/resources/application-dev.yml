@@ -10,4 +10,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 cors:
-  allowedOrigin: "http://localhost:5175"
+  allowedOrigin:
+    -"http://localhost:5175",
+    -"http://localhost:5176"

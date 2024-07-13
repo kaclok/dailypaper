@@ -12,4 +12,5 @@ spring:
 cors:
   allowedOrigin:
     -"http://localhost:5175",
-    -"http://localhost:5176"
+    -"http://localhost:5176",
+    -"http://10.8.13.152:5175"

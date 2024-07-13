@@ -32,12 +32,22 @@ export default defineConfig((env) => {
             hmr: true, // 开启热更新
             /*host: "localhost",*/
             port: 5175, //vite项目启动时自定义端口
-            strictPort: true,
+            strictPort: false,
 
-            // 本因为这个对于：Access to XMLHttpRequest at 'http://localhost:8089/dailypaper/getAll?date=1720713600' from origin 'http://localhost:5175' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-            // 会生效，结果不生效
-            // cors: true, // 允许跨域
             // origin: config['VITE_BASE_API'],
+            // 处理：Access to XMLHttpRequest at 'http://localhost:8089/dailypaper/getAll?date=1720713600' from origin 'http://localhost:5175' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+            cors: true, // 允许跨域
+            proxy: {
+                // https://vitejs.cn/vite3-cn/config/server-options.html#server-proxy
+                // https://blog.csdn.net/m0_70060803/article/details/131554861
+                // 将请求代理到另一个服务器
+                '/api': {
+                    target: config['VITE_BASE_API'],//这是你要跨域请求的地址前缀
+                    changeOrigin: true,//开启跨域
+                    //去除前缀api
+                    rewrite: (path) => path.replace(/^\/api/, '')
+                }
+            },
         },
         preview: {
             port: 5176,

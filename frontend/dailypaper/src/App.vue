@@ -12,6 +12,8 @@ import DailyLogic from '@/logic/DailyLogic.js'
 import I18n from "@/config/I18n.js";
 
 let commits = ref(null);
+
+// https://www.axios-http.cn/docs/cancellation
 let getAllCtrl = new AbortController();
 let editCtrl = new AbortController();
 

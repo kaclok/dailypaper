@@ -38,6 +38,8 @@ export default defineConfig((env) => {
             // 处理：Access to XMLHttpRequest at 'http://localhost:8089/dailypaper/getAll?date=1720713600' from origin 'http://localhost:5175' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
             cors: true, // 允许跨域
             proxy: {
+                // https://www.cnblogs.com/zy0723/p/17285517.html
+                // axios.get('/api/user/login')执行的时候，会把 '/api'前面的内容和'/api'一起替换为''，也就是 '/user/login'，然后前面添加 target
                 // https://vitejs.cn/vite3-cn/config/server-options.html#server-proxy
                 // https://blog.csdn.net/m0_70060803/article/details/131554861
                 // 将请求代理到另一个服务器

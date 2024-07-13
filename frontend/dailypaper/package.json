@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "local dev": "vite",
+    "local pro": "vite --mode production",
     "build": "vite build",
     "preview": "vite preview",
     "start springBootServer": "E:\\Javas\\jdk\\22\\bin\\java.exe -jar F:\\Projects\\SMLJ\\svn\\DailyPaper\\backend\\target\\com.smlj.dailypaper*.jar --spring.profiles.active=dev"

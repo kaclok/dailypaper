@@ -19,6 +19,7 @@ import lombok.Data;
 public class CorsProperties {
     private String allowedOrigin;
 
+    // https://blog.csdn.net/qq_37896194/article/details/102833430
     @Bean
     public CorsFilter corsFilter() {
         // 1. 添加 CORS 配置信息

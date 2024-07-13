@@ -12,6 +12,19 @@ spring:
   thymeleaf:
     check-template-location: false
 
+  datasource:
+    hikari:
+      # springboot运行时偶先报错：Possibly consider using a shorter maxLifetime value
+      # https://blog.csdn.net/xgw1010/article/details/113604080
+      connection-timeout: 10000
+      validation-timeout: 3000
+      idle-timeout: 60000
+      login-timeout: 5
+      max-lifetime: 60000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      read-only: false
+
 mybatis:
   # resources目录下xml的mapper路径
   mapper-locations: classpath:xmlMapper/*Mapper.xml

@@ -43,8 +43,14 @@ export default defineConfig((env) => {
                 // https://vitejs.cn/vite3-cn/config/server-options.html#server-proxy
                 // https://blog.csdn.net/m0_70060803/article/details/131554861
                 // 将请求代理到另一个服务器
+
+                // 浏览器中：http://localhost:5175/api/dailypaper/getAll?date=1720800000 和 http://localhost:8089/dailypaper/getAll?date=1720800000
+                // 都能正确访问，可能是cors的rewrite机制将前者替换成了后者，但是部署到服务器上之后(用nginx管理vite),这个rewrite机制就失效了。
+                // 通过本机浏览器访问服务器的vite项目，可以成功，只是vite项目内部调用springboot的 api接口时出现了问题。
+                // 猜测是服务器上的rewrite不生效
+                // 原因可能是： 1、服务器没有nodejs环境  2、服务器是linux,而开发环境是win  3、nginx管理web会有自己的cors策略
                 '/api': {
-                    target: config['VITE_BASE_API'],//这是你要跨域请求的地址前缀
+                    target: 'http://localhost:8089', //config['VITE_BASE_API'],//这是你要跨域请求的地址前缀
                     changeOrigin: true,//开启跨域
                     //去除前缀api
                     rewrite: (path) => path.replace(/^\/api/, '')

@@ -133,6 +133,6 @@
                 </executions>
             </plugin>
         </plugins>
-        <finalName>${groupId}.${project.artifactId}-${build.time}-${project.version}</finalName>
+        <finalName>${project.groupId}.${project.artifactId}-${build.time}-${project.version}</finalName>
     </build>
 </project>

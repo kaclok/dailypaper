@@ -2,7 +2,8 @@ import axios from "axios"
 
 // https://www.axios-http.cn/docs/instance
 // https://www.axios-http.cn/docs/config_defaults
-const axiosInstance = axios.create({baseURL: '/api', timeout: 5000});
+const springBootURL = import.meta.env.VITE_BASE_API;
+const axiosInstance = axios.create({baseURL: springBootURL, timeout: 5000});
 
 // https://www.axios-http.cn/docs/interceptors
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装

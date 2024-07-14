@@ -36,7 +36,7 @@ export default defineConfig((env) => {
 
             // origin: config['VITE_BASE_API'],
             // 处理：Access to XMLHttpRequest at 'http://localhost:8089/dailypaper/getAll?date=1720713600' from origin 'http://localhost:5175' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-            cors: true, // 允许跨域
+            /*cors: true, // 允许跨域
             proxy: {
                 // https://www.cnblogs.com/zy0723/p/17285517.html
                 // axios.get('/api/user/login')执行的时候，会把 '/api'前面的内容和'/api'一起替换为''，也就是 '/user/login'，然后前面添加 target
@@ -55,7 +55,7 @@ export default defineConfig((env) => {
                     //去除前缀api
                     rewrite: (path) => path.replace(/^\/api/, '')
                 }
-            },
+            },*/
         },
         preview: {
             port: 5176,

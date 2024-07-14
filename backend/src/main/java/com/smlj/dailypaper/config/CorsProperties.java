@@ -1,4 +1,3 @@
-/*
 package com.smlj.dailypaper.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -12,6 +11,8 @@ import org.springframework.web.filter.CorsFilter;
 
 import lombok.Data;
 
+import java.util.*;
+
 @Data
 @Configuration
 @Component
@@ -24,8 +25,16 @@ public class CorsProperties {
     public CorsFilter corsFilter() {
         // 1. 添加 CORS 配置信息
         CorsConfiguration config = new CorsConfiguration();
+
+        // config.addAllowedOrigin("*");会导致：java.lang.IllegalArgumentException: When allowCredentials is true, allowedOrigins cannot contain the special value "*" since that cannot be set on the "Access-Control-Allow-Origin" response header. To allow credentials to a set of origins, list them explicitly or consider using "allowedOriginPatterns" instead.
+        // config.addAllowedOrigin("*");
+
+        var patterns = new ArrayList<String>();
+        patterns.add("*");
+        config.setAllowedOriginPatterns(patterns);
+
         // 1.1 允许的源
-        if(allowedOrigin != null) {
+        if (allowedOrigin != null) {
             for (var i : allowedOrigin) {
                 config.addAllowedOrigin(i);
             }
@@ -48,4 +57,3 @@ public class CorsProperties {
         return new CorsFilter(source);
     }
 }
-*/

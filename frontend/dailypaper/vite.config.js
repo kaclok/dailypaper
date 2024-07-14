@@ -15,7 +15,13 @@ export default defineConfig((env) => {
 
     // import.meta.env 和 loadEnv 的使用场景不同
     // https://blog.csdn.net/weixin_42373175/article/details/131080666
-    let config = loadEnv(env.mode, './');
+    // https://vitejs.cn/vite3-cn/config/#async-config
+
+    // 获取所有环境变量，包括系统环境变量和VITE环境变量
+    // let config = loadEnv(env.mode, process.cwd(), '');
+
+    // 获取VITE环境变量
+    config = loadEnv(env.mode, './');
     return {
         plugins: [
             vue(),

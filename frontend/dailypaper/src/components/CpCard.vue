@@ -24,6 +24,10 @@ function hasContent() {
     return props.content != null && props.content.trim() !== "";
 }
 
+function getEditText() {
+    return hasContent() ? "已提交" : "未提交";
+}
+
 function hasEdited() {
     return props.time !== 0;
 }
@@ -36,15 +40,19 @@ onBeforeUpdate(() => {
 </script>
 
 <template>
-    <el-card style="width: 280px; height: 700px">
+    <el-card class="card_root">
         <template #header>
             <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}</span>
+            <span class="flag">{{ getEditText() }}</span>
+            <el-button @click="$emit('onEdit', props.id, props.content, refTextContent)" v-if="isToday()" type="success"
+                       circle :dark="true" style="position: relative; left: 120px; top: 30px">提交
+            </el-button>
         </template>
 
         <!-- 非空状态 -->
         <el-input v-if="(isToday() || (!isToday() && hasContent()))"
                   v-model="refTextContent"
-                  :rows="7"
+                  :rows="11"
                   type="textarea"
                   placeholder="输入日报内容"
                   clearable
@@ -55,14 +63,20 @@ onBeforeUpdate(() => {
         />
 
         <!-- 空状态 -->
-        <el-empty v-if="(!isToday() && !hasContent())" style="width:280px; height:150px; z-index:3000;"
-                  description="未填写内容"/>
-
-        <el-button @click="$emit('onEdit', props.id, refTextContent)" v-if="isToday()" type="success"
-                   circle :dark="true">提交
-        </el-button>
+        <el-empty v-if="(!isToday() && !hasContent())" description="未填写内容" style="z-index: 2000; --el-empty-fill-color-0: red; --el-empty-fill-color-1: blue;"/>
     </el-card>
 </template>
 
 <style scoped>
+.card_root {
+    height: 350px;
+
+    margin: 10px;
+}
+.flag {
+    position: relative;
+    left: 10px;
+
+    font-weight: 900;
+}
 </style>

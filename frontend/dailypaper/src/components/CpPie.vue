@@ -18,14 +18,22 @@ let option = {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c} ({d}%)'
     },
+    grid: { // https://echarts.apache.org/zh/option.html#grid.left
+        top: 50,
+        left: 30,
+    },
     // 饼图底部说明
-    legend: {
-        orient: 'horizontal',
-        right: '-20',
-        top: "50%",
+    legend: { // https://echarts.apache.org/zh/option.html#legend
+        orient: 'vertical',
+        right: '0',
+        top: "40%",
         data: [
-            i18n.ATTEND,
-            i18n.UN_ATTEND],
+            {name: i18n.ATTEND, textStyle : {
+                color: 'white',
+                }},
+            {name: i18n.UN_ATTEND,textStyle : {
+                    color: 'white',
+                }}],
     },
     series: [
         {
@@ -94,11 +102,23 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <div>
+    <div class="pie-root">
         <!--必须套在一个div里面-->
-        <div id="pieChart" style="width: 600px; height:400px;"></div>
+        <div id="pieChart"></div>
     </div>
 </template>
 
 <style scoped>
+.pie-root {
+    display: block;
+
+    position: relative;
+    top: 60px;
+    left: 30px;
+}
+
+#pieChart {
+    width: 400px;
+    height: 260px;
+}
 </style>

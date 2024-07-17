@@ -21,7 +21,7 @@ export default defineConfig((env) => {
     // let config = loadEnv(env.mode, process.cwd(), '');
 
     // 获取VITE环境变量
-    // config = loadEnv(env.mode, './');
+    let config = loadEnv(env.mode, './');
     return {
         plugins: [
             vue(),

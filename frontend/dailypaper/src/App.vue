@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, ref, onUnmounted} from "vue";
 
-import {ElMessage} from 'element-plus'
+import {ElMessage, ElNotification} from 'element-plus'
 import TimeUtil from "@/utils/DateTimeUtil.js";
 
 import CpDatePicker from './components/CpDatePicker.vue'
@@ -58,8 +58,20 @@ function refreshCommits() {
     }
 }
 
-function onEdit(userId, content) {
+function onEdit(userId, oldContent, content) {
     if (content != null && content.trim() !== "") {
+        if (content === oldContent) {
+            window.alert('提交内容无改动');
+/*            ElMessage({
+                showClose: false,
+                message: '提交内容无改动',
+                type: 'error',
+                center: true,
+                duration: 300000,
+            });*/
+            return;
+        }
+
         DailyLogic.RequestEdit(selectedDate.value, userId, content, editCtrl.signal, () => {
             loading.value = true;
         }, (r) => {
@@ -68,25 +80,34 @@ function onEdit(userId, content) {
             if (r) {
                 // 因为commits.value监听dailyLogic.result.date.commits, 每次edit修改某个commit之后也会
                 // 触发commits.value的响应式UI刷新
-                ElMessage({
+                // window.alert('编辑成功');
+                /*ElMessage({
                     showClose: false,
                     message: '编辑成功',
                     type: 'success',
-                });
+                    center: true,
+                    duration: 2000,
+                });*/
             } else {
-                ElMessage({
+                window.alert('编辑失败');
+                /*ElMessage({
                     showClose: false,
                     message: '编辑失败',
                     type: 'error',
-                })
+                    center: true,
+                    duration: 2000,
+                })*/
             }
         });
     } else {
-        ElMessage({
+        window.alert('编辑内容不能为空');
+        /*ElMessage({
             showClose: false,
             message: '编辑内容不能为空',
             type: 'warning',
-        });
+            center: true,
+            duration: 2000,
+        });*/
     }
 }
 
@@ -103,35 +124,53 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <CpDatePicker @onDateChanged="onDateChanged" :targetDate="TimeUtil.nowDate()"/>
-    <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
-    <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="DailyLogic.GetAttendCount(true)"
-           :unAttand="DailyLogic.GetAttendCount(false)" :selected="selectedLegend"/>
-    <ul class="infinite-list" style="overflow: auto; justify-content: flex-start; display: flex;"
-        v-loading="loading">
-        <CpCard v-for="card in commits" class="infinite-list-item"
-                :key="card.userId"
-                :date="selectedDate"
-                :id="card.userId"
-                :name="card.name"
-                :time="card.time"
-                :content="card.content"
-                @onEdit="onEdit"/>
-    </ul>
+    <div class="root">
+        <CpDatePicker @onDateChanged="onDateChanged" :targetDate="TimeUtil.nowDate()"/>
+        <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
+        <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="DailyLogic.GetAttendCount(true)"
+               :unAttand="DailyLogic.GetAttendCount(false)" :selected="selectedLegend"/>
+        <div class="infinite-list-root" v-loading="loading">
+            <CpCard v-for="card in commits"
+                    :key="card.userId"
+                    :date="selectedDate"
+                    :id="card.userId"
+                    :name="card.name"
+                    :time="card.time"
+                    :content="card.content"
+                    @onEdit="onEdit"/>
+        </div>
+    </div>
 </template>
 
 <style>
-.infinite-list {
-    height: 300px;
+.root {
+    background: url("@/assets/imgs/bg-smlj.jpg") no-repeat center border-box;
+
+    height: 100vh;
+    width: 100vw;
+
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.infinite-list-root {
+    position: relative;
+    top: 30px;
+    left: 0;
+    right: 0;
+
+    height: 600px;
+    width: 100vw;
     padding: 0;
     margin: 0;
-    list-style: none;
-}
 
-.infinite-list .infinite-list-item {
-}
+    display: grid;
+    grid-template-columns: repeat(6, 300px);
 
-.infinite-list .infinite-list-item + .list-item {
-    margin-top: 10px;
+    overflow: auto;
+    justify-content: space-evenly;
 }
 </style>

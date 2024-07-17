@@ -1,4 +1,4 @@
-import TimeService from "@/services/TimeService.js";
+import TimeService from "@/framework/services/TimeService.js";
 import DailyApi from "@/logic/api/DailyApi.js";
 
 let _result = null;

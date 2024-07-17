@@ -15,5 +15,8 @@ app.config.warnHandler = (msg, instance, trace) => {
 };
 app.config.performance = true;
 
+import Resizer from "@/framework/directives/Resizer.js";
+app.directive('resize-e', Resizer.directive);
+
 // mount在最后
 app.mount('#app')

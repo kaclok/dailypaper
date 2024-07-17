@@ -71,8 +71,6 @@ export default defineConfig((env) => {
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('./src', import.meta.url)),
-                '#': fileURLToPath(new URL('./src/api', import.meta.url)),
-                '$': fileURLToPath(new URL('./src/components', import.meta.url)),
             }
         },
         // build出现： Some chunks are larger than 500 kB after minification

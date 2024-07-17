@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
 import zhCn from "element-plus/es/locale/lang/zh-cn";
-import TimeUtil from "@/utils/DateTimeUtil";
+import TimeUtil from "@/framework/utils/DateTimeUtil";
 
 defineEmits(['onDateChanged']);
 const props = defineProps(['targetDate']);

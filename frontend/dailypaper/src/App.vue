@@ -2,13 +2,13 @@
 import {onMounted, ref, onUnmounted} from "vue";
 
 import {ElMessage, ElNotification} from 'element-plus'
-import TimeUtil from "@/utils/DateTimeUtil.js";
+import TimeUtil from "@/framework/utils/DateTimeUtil.js";
 
-import CpDatePicker from './components/CpDatePicker.vue'
-import CpCard from './components/CpCard.vue'
-import CpPie from './components/CpPie.vue'
+import CpDatePicker from '@/logic/ui/components/CpDatePicker.vue'
+import CpCard from '@/logic/ui/components/CpCard.vue'
+import CpPie from '@/logic/ui/components/CpPie.vue'
 
-import DailyLogic from '@/logic/DailyLogic.js'
+import DailyLogic from '@/logic/system/DailyLogic.js'
 import I18n from "@/config/I18n.js";
 
 let commits = ref(null);
@@ -62,13 +62,13 @@ function onEdit(userId, oldContent, content) {
     if (content != null && content.trim() !== "") {
         if (content === oldContent) {
             window.alert('提交内容无改动');
-/*            ElMessage({
-                showClose: false,
-                message: '提交内容无改动',
-                type: 'error',
-                center: true,
-                duration: 300000,
-            });*/
+            /*            ElMessage({
+                            showClose: false,
+                            message: '提交内容无改动',
+                            type: 'error',
+                            center: true,
+                            duration: 300000,
+                        });*/
             return;
         }
 

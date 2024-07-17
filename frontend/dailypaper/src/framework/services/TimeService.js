@@ -1,4 +1,4 @@
-import TimeUtil from "@/utils/DateTimeUtil.js";
+import TimeUtil from "@/framework/utils/DateTimeUtil.js";
 
 let syncSvrTime = 0;
 let syncCliTime = 0;

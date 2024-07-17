@@ -1,4 +1,4 @@
-import {axiosInstance as axiosR} from "@/utils/net/AxiosRequest.js"
+import {axiosInstance as axiosR} from "@/framework/utils/net/AxiosRequest.js"
 
 // https://www.bilibili.com/video/BV14z4y1N7pg/?p=63&spm_id_from=pageDriver&vd_source=5c9f5bd891aee351c325bcf632b5550f
 // 全量请求某日数据

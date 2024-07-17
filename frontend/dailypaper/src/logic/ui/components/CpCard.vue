@@ -4,7 +4,7 @@ import {
     Check as ep_check, // 按钮上的图标，如果不导入就没有图标只有按钮
 } from '@element-plus/icons-vue'
 
-import TimeUtil from "@/utils/DateTimeUtil.js";
+import TimeUtil from "@/framework/utils/DateTimeUtil.js";
 
 const props = defineProps(["date", "id", "name", "time", "content"]);
 defineEmits(['onEdit']);

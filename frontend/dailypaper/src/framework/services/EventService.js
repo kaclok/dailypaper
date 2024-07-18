@@ -1,4 +1,6 @@
-class EventService {
+import {UnorderList} from "@/framework/data-structure/UnorderList.js";
+
+export class EventService {
     constructor() {
         this.events = {};
     }
@@ -10,15 +12,10 @@ class EventService {
 
         let cbs = this.events[eventId];
         if (!cbs) {
-            this.events[eventId] = cbs = [];
+            this.events[eventId] = cbs = new UnorderList();
         }
 
-        let index = cbs.indexOf(callback);
-        if (index === -1) {
-            cbs.push(callback)
-            return true;
-        }
-        return false;
+        return cbs.add(callback);
     }
 
     remove(eventId, callback) {
@@ -31,12 +28,7 @@ class EventService {
             return false;
         }
 
-        let index = cbs.indexOf(callback);
-        if (index !== -1) {
-            cbs.splice(index, 1);
-            return true;
-        }
-        return false;
+        return cbs.remove(callback);
     }
 
     clear(eventId) {
@@ -44,10 +36,7 @@ class EventService {
             return false;
         }
 
-        let cbs = this.events[eventId];
-        if (cbs) {
-            this.events[eventId] = {};
-        }
+        this.events[eventId] = null;
         return true;
     }
 
@@ -57,6 +46,7 @@ class EventService {
         } else if (addOrRemove === false) {
             return this.remove(eventId, callback);
         }
+        return false;
     }
 
     fire(eventId, arg1, arg2, arg3, arg4, arg5) {
@@ -69,12 +59,10 @@ class EventService {
             return false;
         }
 
-        for (let i = 0; i < cbs.length; i++) {
-            let cb = cbs[i];
+        for (let i = 0; i < cbs.length(); i++) {
+            let cb = cbs.get(i);
             cb(arg1, arg2, arg3, arg4, arg5);
         }
         return true;
     }
 }
-
-export default new EventService();

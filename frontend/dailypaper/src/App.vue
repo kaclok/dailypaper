@@ -1,15 +1,13 @@
 <script setup>
 import {onMounted, ref, onUnmounted} from "vue";
-
-import {ElMessage, ElNotification} from 'element-plus'
-import TimeUtil from "@/framework/utils/DateTimeUtil.js";
+import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
 
 import CpDatePicker from '@/logic/ui/components/CpDatePicker.vue'
 import CpCard from '@/logic/ui/components/CpCard.vue'
 import CpPie from '@/logic/ui/components/CpPie.vue'
 
 import DailyLogic from '@/logic/system/DailyLogic.js'
-import I18n from "@/config/I18n.js";
+import {I18N} from "@/config/I18N.js";
 
 let commits = ref(null);
 
@@ -20,8 +18,8 @@ let editCtrl = new AbortController();
 let selectedDate = ref(0);
 // 默认饼图legend都选中
 let selectedLegend = ref({
-    [I18n.ATTEND]: true,
-    [I18n.UN_ATTEND]: true,
+    [I18N.ATTEND]: true,
+    [I18N.UN_ATTEND]: true,
 });
 let loading = ref(false);
 
@@ -46,8 +44,8 @@ function onLegendSelectChanged(params) {
 }
 
 function refreshCommits() {
-    let attend = selectedLegend.value[I18n.ATTEND];
-    let unAttend = selectedLegend.value[I18n.UN_ATTEND];
+    let attend = selectedLegend.value[I18N.ATTEND];
+    let unAttend = selectedLegend.value[I18N.UN_ATTEND];
     // 更新commits
     if (attend && unAttend) {
         commits.value = DailyLogic.GetCommits();
@@ -113,7 +111,7 @@ function onEdit(userId, oldContent, content) {
 
 onMounted(() => {
     /* 因为未onMounted之前，组件不会触发事件，所以需要手动触发*/
-    onDateChanged(TimeUtil.nowDate());
+    onDateChanged(DateTimeUtil.nowDate());
 });
 
 // 清理定时器，事件监听器，异步函数
@@ -125,7 +123,7 @@ onUnmounted(() => {
 
 <template>
     <div class="root">
-        <CpDatePicker @onDateChanged="onDateChanged" :targetDate="TimeUtil.nowDate()"/>
+        <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="DailyLogic.GetAttendCount(true)"
                :unAttand="DailyLogic.GetAttendCount(false)" :selected="selectedLegend"/>

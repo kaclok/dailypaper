@@ -1,20 +1,19 @@
-import TimeUtil from "@/framework/utils/DateTimeUtil.js";
+import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
 
-let syncSvrTime = 0;
-let syncCliTime = 0;
+export class TimeService{
+    constructor() {
+        this.syncSvrTime = 0;
+        this.syncCliTime = 0;
+    }
 
-function initTime(svrTime) {
-    syncSvrTime = svrTime;
-    syncCliTime = TimeUtil.nowTimestamp();
-}
+    static initTime(svrTime) {
+        this.syncSvrTime = svrTime;
+        this.syncCliTime = DateTimeUtil.nowTimestamp();
+    }
 
-function getSvrTime() {
-    let nowCliTime = TimeUtil.nowTimestamp();
-    let gap = nowCliTime - syncCliTime;
-    return syncSvrTime + gap;
-}
-
-export default {
-    initTime,
-    getSvrTime,
+    static getSvrTime() {
+        let nowCliTime = DateTimeUtil.nowTimestamp();
+        let gap = nowCliTime - this.syncCliTime;
+        return this.syncSvrTime + gap;
+    }
 }

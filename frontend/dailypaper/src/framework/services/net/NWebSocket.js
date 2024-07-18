@@ -1,4 +1,4 @@
-class NWebSocket {
+export class NWebSocket {
     constructor() {
         this.socketMap = new WeakMap();
         this.messageCallbacks = {};
@@ -87,5 +87,3 @@ class NWebSocket {
         }
     }
 }
-
-export default new NWebSocket();

@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import {onBeforeUpdate, ref} from 'vue'
+import { DateTimeUtil } from '@/framework/utils/DateTimeUtil'
 import {
     Check as ep_check, // 按钮上的图标，如果不导入就没有图标只有按钮
 } from '@element-plus/icons-vue'
-
-import TimeUtil from "@/framework/utils/DateTimeUtil.js";
 
 const props = defineProps(["date", "id", "name", "time", "content"]);
 defineEmits(['onEdit']);
@@ -16,7 +15,7 @@ let refTextContent = ref(props.content);
 // 能否编辑：只有今天能编辑， 之前日期的不能编辑
 function isToday() {
     let midNight = props.date;
-    let todayMidNight = TimeUtil.nowDate().getTime() / 1000;
+    let todayMidNight = DateTimeUtil.nowDate().getTime() / 1000;
     return midNight >= todayMidNight;
 }
 

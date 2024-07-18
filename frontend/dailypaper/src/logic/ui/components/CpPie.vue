@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, onBeforeUpdate, onUnmounted} from 'vue'
 import {echarts} from '@/plugins/EchartsCore.js'
-import i18n from '@/config/I18n.js'
+import {I18N} from '@/config/I18N.js'
 
 const props = defineProps(["attand", "unAttand", "selected"]);
 const emit = defineEmits(['onLegendSelectChanged']);
@@ -28,12 +28,16 @@ let option = {
         right: '0',
         top: "40%",
         data: [
-            {name: i18n.ATTEND, textStyle : {
-                color: 'white',
-                }},
-            {name: i18n.UN_ATTEND,textStyle : {
+            {
+                name: I18N.ATTEND, textStyle: {
                     color: 'white',
-                }}],
+                }
+            },
+            {
+                name: I18N.UN_ATTEND, textStyle: {
+                    color: 'white',
+                }
+            }],
     },
     series: [
         {
@@ -42,8 +46,8 @@ let option = {
             radius: '50',
             center: ['50%', '50%'],
             data: [
-                {value: props.unAttand, name: i18n.UN_ATTEND, itemStyle: 'red'},
-                {value: props.attand, name: i18n.ATTEND, itemStyle: 'blue'}
+                {value: props.unAttand, name: I18N.UN_ATTEND, itemStyle: 'red'},
+                {value: props.attand, name: I18N.ATTEND, itemStyle: 'blue'}
             ],
             itemStyle: {
                 /*emphasis: {

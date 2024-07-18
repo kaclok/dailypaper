@@ -4,10 +4,9 @@ const ro = new ResizeObserver((entries) => {
         let el = entry.target;
         let handler = map.get(el);
         if (!handler) {
-            handler({
-                width: entry.borderBoxSize[0].inlineSize,
-                height: entry.borderBoxSize[0].blockSize,
-            });
+            // width:height
+            handler(entry.borderBoxSize[0].inlineSize,
+                entry.borderBoxSize[0].blockSize);
         }
     }
 });

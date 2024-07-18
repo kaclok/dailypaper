@@ -1,6 +1,6 @@
 import {UnorderList} from "@/framework/data-structure/UnorderList.js";
 
-export class EventService {
+export class EventEmitter {
     constructor() {
         this.events = {};
     }

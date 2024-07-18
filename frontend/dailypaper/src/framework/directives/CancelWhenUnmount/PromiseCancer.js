@@ -1,4 +1,4 @@
-export class AsynCancer {
+export class PromiseCancer {
     constructor(...args) {
         this.cancers = args;
     }

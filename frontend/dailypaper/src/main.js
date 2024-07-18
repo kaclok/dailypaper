@@ -15,8 +15,12 @@ app.config.warnHandler = (msg, instance, trace) => {
 };
 app.config.performance = true;
 
+// 全局注册指令: 浏览器窗口尺寸变化
 import Resizer from "@/framework/directives/Resizer.js";
+// 全局注册指令: 组件卸载取消
+import Cancer from "@/framework/directives/CancelWhenUnmount/CancelWhenUnmount.js";
 app.directive('resize-e', Resizer.directive);
+app.directive('cancel-when-unmount', Cancer.directive);
 
 // mount在最后
 app.mount('#app')

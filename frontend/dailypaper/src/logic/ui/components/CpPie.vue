@@ -114,7 +114,7 @@ onUnmounted(() => {
 
 <style scoped>
 .pie-root {
-    display: block;
+    display: flex;
 
     position: relative;
     top: 60px;

@@ -127,6 +127,7 @@ onUnmounted(() => {
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="DailyLogic.GetAttendCount(true)"
                :unAttand="DailyLogic.GetAttendCount(false)" :selected="selectedLegend"/>
+<!--        <span style="font-size: 40px; color: #a0cfff;">数字化中心日报</span>-->
         <div class="infinite-list-root" v-loading="loading">
             <CpCard v-for="card in commits"
                     :key="card.userId"
@@ -166,7 +167,7 @@ onUnmounted(() => {
     margin: 0;
 
     display: grid;
-    grid-template-columns: repeat(6, 300px);
+    grid-template-columns: repeat(5, 300px);
 
     overflow: auto;
     justify-content: space-evenly;

@@ -18,9 +18,11 @@ app.config.performance = true;
 
 // 自定义指令
 import Resizer from "@/framework/directives/Resizer.js";
-import Cancer from "@/framework/directives/CancelWhenUnmount/CancelWhenUnmount.js";
+import Cancer from "@/framework/directives/cancel-when-unmount/CancelWhenUnmount.js";
+import InteractiveCDer from "@/framework/directives/InteractiveCDer.js";
 app.directive('resize-e', Resizer.directive);
 app.directive('cancel-when-unmount', Cancer.directive);
+app.directive('disable-s', InteractiveCDer.directive);
 
 // 路由
 // import router from '@/router'

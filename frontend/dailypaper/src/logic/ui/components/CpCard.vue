@@ -13,8 +13,14 @@ defineEmits(['onEdit']);
 let refTextContent = ref(props.content);
 
 function isSelf() {
+    if (!props.curAccount) {
+        return true;
+    }
+
     return props.curAccount === props.account;
 }
+
+6
 
 // 能否编辑：只有今天能编辑， 之前日期的不能编辑
 function isToday() {
@@ -49,6 +55,7 @@ onBeforeUpdate(() => {
             <span class="flag">{{ getEditText() }}</span>
             <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent)" v-if="isSelf() && isToday()"
                        type="success"
+                       v-disable-s="3"
                        circle :dark="true" style="position: relative; left: 120px; top: 30px">提交
             </el-button>
         </template>

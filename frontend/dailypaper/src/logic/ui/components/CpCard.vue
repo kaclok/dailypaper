@@ -20,8 +20,6 @@ function isSelf() {
     return props.curAccount === props.account;
 }
 
-6
-
 // 能否编辑：只有今天能编辑， 之前日期的不能编辑
 function isToday() {
     let midNight = props.date;

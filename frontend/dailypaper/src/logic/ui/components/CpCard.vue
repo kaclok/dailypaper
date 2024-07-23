@@ -5,7 +5,7 @@ import {
     Check as ep_check, // 按钮上的图标，如果不导入就没有图标只有按钮
 } from '@element-plus/icons-vue'
 
-const props = defineProps(["date", "id", "name", "time", "content"]);
+const props = defineProps(["date", "id", "name", "account", "time", "content"]);
 defineEmits(['onEdit']);
 
 // https://cn.vuejs.org/guide/components/props.html
@@ -43,7 +43,7 @@ onBeforeUpdate(() => {
         <template #header>
             <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}</span>
             <span class="flag">{{ getEditText() }}</span>
-            <el-button @click="$emit('onEdit', props.id, props.content, refTextContent)" v-if="isToday()" type="success"
+            <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent)" v-if="isToday()" type="success"
                        circle :dark="true" style="position: relative; left: 120px; top: 30px">提交
             </el-button>
         </template>
@@ -51,14 +51,15 @@ onBeforeUpdate(() => {
         <!-- 非空状态 -->
         <el-input v-if="(isToday() || (!isToday() && hasContent()))"
                   v-model="refTextContent"
-                  :rows="11"
+                  :rows="13"
                   type="textarea"
                   placeholder="输入日报内容"
                   clearable
+                  :show-word-limit="true"
                   resize="none"
                   :disabled="!isToday()"
 
-                  style="width: 240px"
+                  style="width: 240px; font-size: 12px;"
         />
 
         <!-- 空状态 -->

@@ -8,6 +8,5 @@ import lombok.Data;
 public class tUser {
     private int id;
     private String name;
-    private int age;
-    private String identity;
+    private String account;
 }

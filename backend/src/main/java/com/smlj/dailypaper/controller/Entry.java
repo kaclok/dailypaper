@@ -69,6 +69,7 @@ public class Entry {
             var user = userMapper.GetUserById(userId);
             tu.setUserId(userId);
             tu.setName(user.getName());
+            tu.setAccount(user.getAccount());
 
             var commitId = commitIds.get(i);
             tCommit c = commitMapper.FindById(commitId);

@@ -8,6 +8,7 @@ import java.io.Serializable;
 public class To_UserCommit implements Serializable, Comparable<To_UserCommit> {
     private int userId = 0;
     private String name = null;
+    private String account = null;
     private String content = null;
     private long time = 0;
 

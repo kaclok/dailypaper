@@ -1,5 +1,7 @@
 <script setup>
 import {onMounted, ref, onUnmounted} from "vue";
+import {useRoute} from "vue-router";
+
 import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
 
 import CpDatePicker from '@/logic/ui/components/CpDatePicker.vue'
@@ -17,13 +19,9 @@ let editCtrl = new AbortController();
 
 let selectedDate = ref(0);
 
-// 获取URL参数
 let params = new URLSearchParams(window.location.search);
-// 获取特定参数的值
-let paramValue = params.get('username');
-console.log(paramValue)
-
-let curAccount = ref(paramValue);
+let account = params.get('username');
+let curAccount = ref(account);
 
 // 默认饼图legend都选中
 let selectedLegend = ref({
@@ -67,7 +65,7 @@ function refreshCommits() {
 
 function onEdit(userId, cardAccount, oldContent, content) {
     if (curAccount.value && (curAccount.value !== cardAccount)) {
-        window.alert('不能提交其他人的内容');
+        window.alert('只能提交自己的日报内容');
         return;
     }
 

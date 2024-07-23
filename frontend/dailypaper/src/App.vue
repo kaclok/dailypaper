@@ -16,6 +16,15 @@ let getAllCtrl = new AbortController();
 let editCtrl = new AbortController();
 
 let selectedDate = ref(0);
+
+// 获取URL参数
+let params = new URLSearchParams(window.location.search);
+// 获取特定参数的值
+let paramValue = params.get('username');
+console.log(paramValue)
+
+let curAccount = ref(paramValue);
+
 // 默认饼图legend都选中
 let selectedLegend = ref({
     [I18N.ATTEND]: true,
@@ -56,7 +65,12 @@ function refreshCommits() {
     }
 }
 
-function onEdit(userId, oldContent, content) {
+function onEdit(userId, cardAccount, oldContent, content) {
+    if (curAccount.value && (curAccount.value !== cardAccount)) {
+        window.alert('不能提交其他人的内容');
+        return;
+    }
+
     if (content != null && content.trim() !== "") {
         if (content === oldContent) {
             window.alert('提交内容无改动');
@@ -87,7 +101,7 @@ function onEdit(userId, oldContent, content) {
                     duration: 2000,
                 });*/
             } else {
-                window.alert('编辑失败');
+                window.alert('提交失败');
                 /*ElMessage({
                     showClose: false,
                     message: '编辑失败',
@@ -98,7 +112,7 @@ function onEdit(userId, oldContent, content) {
             }
         });
     } else {
-        window.alert('编辑内容不能为空');
+        window.alert('提交内容不能为空');
         /*ElMessage({
             showClose: false,
             message: '编辑内容不能为空',
@@ -127,13 +141,14 @@ onUnmounted(() => {
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="DailyLogic.GetAttendCount(true)"
                :unAttand="DailyLogic.GetAttendCount(false)" :selected="selectedLegend"/>
-<!--        <span style="font-size: 40px; color: #a0cfff;">数字化中心日报</span>-->
+        <!--        <span style="font-size: 40px; color: #a0cfff;">数字化中心日报</span>-->
         <div class="infinite-list-root" v-loading="loading">
             <CpCard v-for="card in commits"
                     :key="card.userId"
                     :date="selectedDate"
                     :id="card.userId"
                     :name="card.name"
+                    :account="card.account"
                     :time="card.time"
                     :content="card.content"
                     @onEdit="onEdit"/>

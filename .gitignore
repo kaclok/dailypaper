@@ -39,3 +39,4 @@ backend/.vscode/
 /backend/.mvn
 /frontend/dailypaper/~$study.docx
 /frontend/dailypaper/.vscode
+/backend/.logs

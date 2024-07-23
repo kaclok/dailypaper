@@ -107,6 +107,7 @@ function onEdit(userId, cardAccount, oldContent, content) {
                     center: true,
                     duration: 2000,
                 })*/
+                return;
             }
         });
     } else {
@@ -118,6 +119,7 @@ function onEdit(userId, cardAccount, oldContent, content) {
             center: true,
             duration: 2000,
         });*/
+        return;
     }
 }
 
@@ -144,6 +146,7 @@ onUnmounted(() => {
             <CpCard v-for="card in commits"
                     :key="card.userId"
                     :date="selectedDate"
+                    :curAccount="curAccount"
                     :id="card.userId"
                     :name="card.name"
                     :account="card.account"

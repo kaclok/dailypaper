@@ -8,3 +8,7 @@ spring:
     username: confluence
     password: smlj@123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+logging:
+  file:
+    name: /data/deploy/dailyPaper/logs/dailyPaper.log

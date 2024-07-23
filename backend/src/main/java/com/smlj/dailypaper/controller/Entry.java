@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import java.util.ArrayList;
 
 // https://www.bilibili.com/video/BV1Lq4y1J77x?p=16&spm_id_from=pageDriver&vd_source=5c9f5bd891aee351c325bcf632b5550f 整合redis
@@ -85,37 +88,46 @@ public class Entry {
         return r.setData(to, "getAll");
     }
 
+    private Lock lock = new ReentrantLock();
+
     @GetMapping("/edit")
     private Result<To_DateCommit> Edit(@RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content) {
-        log.info("edit-> date:{}, userId:{}, content:{}", date, userId, content);
+        lock.lock();
+        try {
+            var now = System.currentTimeMillis() / 1000;
+            var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
 
-        var now = System.currentTimeMillis() / 1000;
-        var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
-        var r = new ResultUtil<To_DateCommit>();
-        if (date < todayMidNight) {
-            // 往日的日报信息不能编辑
-            return r.setErrorMsg("Can not edit because not today!", null);
-        } else {
-            var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
-            var dateCommit = dateCommitMapper.FindBy(targetMidNight);
-            if (dateCommit == null) {
-                // 如果date对应的记录不存在的话，立即插入新纪录
-                dateCommitMapper.Insert(targetMidNight);
+            log.info("edit-> date:{}, userId:{}, content:{}  now:{}, todayMidNight:{}", date, userId, content, now, todayMidNight);
+
+            var r = new ResultUtil<To_DateCommit>();
+            if (date < todayMidNight) {
+                // 往日的日报信息不能编辑
+                return r.setErrorMsg("Can not edit because not today!", null);
+            } else {
+                var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
+                var dateCommit = dateCommitMapper.FindBy(targetMidNight);
+                if (dateCommit == null) {
+                    // 如果date对应的记录不存在的话，立即插入新纪录
+                    dateCommitMapper.Insert(targetMidNight);
+                }
+
+                tCommit cm = new tCommit();
+                cm.setUserId(userId);
+                cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
+                cm.setContent(content);
+
+                // 插入commit表
+                commitMapper.Insert2(cm);
+                // todo 并发的时候是否会出现问题？
+                int lastId = cm.getId();
+                log.info("edit insert id: {}", lastId);
+                // 更新datecommit表
+                dateCommitMapper.Update(targetMidNight, "userId_" + userId, lastId);
+
+                return r.setSuccessMsg("edit success", null);
             }
-
-            tCommit cm = new tCommit();
-            cm.setUserId(userId);
-            cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
-            cm.setContent(content);
-
-            // 插入commit表
-            commitMapper.Insert2(cm);
-            // todo 并发的时候是否会出现问题？
-            int lastId = cm.getId();
-            // 更新datecommit表
-            dateCommitMapper.Update(targetMidNight, "userId_" + userId, lastId);
-
-            return r.setSuccessMsg("edit success", null);
+        } finally {
+            lock.unlock();
         }
     }
 }

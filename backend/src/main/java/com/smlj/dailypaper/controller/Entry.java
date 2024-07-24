@@ -45,6 +45,9 @@ public class Entry {
     @Autowired
     private CommitMapper commitMapper;
 
+    private Lock lockGetall = new ReentrantLock();
+    private Lock lockEdit = new ReentrantLock();
+
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
     private Result<To_DateCommit> GetAll(@RequestParam("date") long date) {
@@ -60,8 +63,13 @@ public class Entry {
         to.setDate(midNight);
 
         if (dateCommit == null) {
-            dateCommitMapper.Insert(midNight);
-            dateCommit = new tDateCommit(midNight);
+            lockGetall.lock();
+            try {
+                dateCommitMapper.Insert(midNight);
+                dateCommit = new tDateCommit(midNight);
+            } finally {
+                lockGetall.unlock();
+            }
         }
 
         ArrayList<Integer> commitIds = dateCommit.GetAllIds();
@@ -88,11 +96,9 @@ public class Entry {
         return r.setData(to, "getAll");
     }
 
-    private Lock lock = new ReentrantLock();
-
     @GetMapping("/edit")
     private Result<To_DateCommit> Edit(@RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content) {
-        lock.lock();
+        lockEdit.lock();
         try {
             var now = System.currentTimeMillis() / 1000;
             var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
@@ -127,7 +133,7 @@ public class Entry {
                 return r.setSuccessMsg("edit success", null);
             }
         } finally {
-            lock.unlock();
+            lockEdit.unlock();
         }
     }
 }

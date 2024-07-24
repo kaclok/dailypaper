@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "web-types": "./web-types.json",
   "scripts": {
     "local dev": "vite",
     "local pro": "vite --mode production",

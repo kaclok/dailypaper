@@ -20,13 +20,14 @@ app.config.performance = true;
 import Resizer from "@/framework/directives/Resizer.js";
 import Cancer from "@/framework/directives/cancel-when-unmount/CancelWhenUnmount.js";
 import InteractiveCDer from "@/framework/directives/InteractiveCDer.js";
+
 app.directive('resize-e', Resizer.directive);
 app.directive('cancel-when-unmount', Cancer.directive);
 app.directive('disable-s', InteractiveCDer.directive);
 
 // 路由
-// import router from '@/router'
-// app.use(router);
+import {router} from '@/logic/router/Index.js'
+app.use(router);
 
 // mount在最后
 app.mount('#app');

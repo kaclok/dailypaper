@@ -9,6 +9,13 @@ spring:
     password: smlj@123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  data:
+    redis:  # Redis
+      host: 10.8.54.127
+      port: 6391
+      #username: root
+      #password: smlj@123456
+
 logging:
   file:
     name: /data/deploy/dailyPaper/logs/dailyPaper.log

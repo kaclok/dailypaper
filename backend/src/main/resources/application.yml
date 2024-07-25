@@ -3,7 +3,20 @@
 
 # web服务器启动端口
 server:
-  port: 8089
+  port: 8090
+  shutdown: graceful # 优雅停机 关闭容器后默认等待30秒继续执行没处理完的任务 避免数据不一致
+  tomcat:
+    uri-encoding: UTF-8
+    threads:
+      max: 2500
+      min-spare: 500
+    # 最大吞吐量不限制
+    max-swallow-size: -1
+    max-http-form-post-size: -1
+    max-connections: 6500
+    accept-count: 1000
+    #链接建立超时时间
+    connection-timeout: 12000
 
 spring:
   profiles: # 测试、开发、部署环境切换
@@ -24,6 +37,11 @@ spring:
       maximum-pool-size: 10
       minimum-idle: 5
       read-only: false
+  data:
+    # Redis
+    redis:
+      database: 0 # 数据库索引 默认0
+      timeout: 3S # 超时时间:秒
 
 mybatis:
   # resources目录下xml的mapper路径

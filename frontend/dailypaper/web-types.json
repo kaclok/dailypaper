@@ -8,16 +8,19 @@
       "js-types-syntax": "typescript",
       "attributes": [
         {
-          "name": "v-loading"
-        },
-        {
           "name": "v-resize-e"
         },
         {
           "name": "v-cancel-when-unmount"
         },
         {
-          "name": "v-disable-s"
+          "name": "v-cd-s"
+        },
+        {
+          "name": "v-has-permission"
+        },
+        {
+          "name": "v-has-role"
         }
       ]
     }

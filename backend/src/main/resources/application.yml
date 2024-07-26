@@ -3,7 +3,7 @@
 
 # web服务器启动端口
 server:
-  port: 8090
+  port: 8089
   shutdown: graceful # 优雅停机 关闭容器后默认等待30秒继续执行没处理完的任务 避免数据不一致
   tomcat:
     uri-encoding: UTF-8

@@ -8,23 +8,23 @@ import ButtonCDer from "@/framework/directives/ButtonCDer.js";
 const list = [
     {
         name: "resize-e",
-        directive: Resizer,
+        directive: Resizer.directive,
     },
     {
         name: "cancel-when-unmount",
-        directive: Cancer,
+        directive: Cancer.directive,
     },
     {
         name: "cd-s",
-        directive: ButtonCDer,
+        directive: ButtonCDer.directive,
     },
     {
         name: "has-permission",
-        directive: HasPermission,
+        directive: HasPermission.directive,
     },
     {
         name: "has-role",
-        directive: HasRole,
+        directive: HasRole.directive,
     },
 ]
 

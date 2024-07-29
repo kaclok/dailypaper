@@ -19,6 +19,7 @@ export class DailyApi {
                 date: date,
                 userId: userId,
                 content: content,
+                hash: 7 + content.length,
             },
             signal: signal,
         })

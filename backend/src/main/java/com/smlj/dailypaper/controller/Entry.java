@@ -97,19 +97,24 @@ public class Entry {
     }
 
     @GetMapping("/edit")
-    private Result<To_DateCommit> Edit(@RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content) {
+    private Result<To_DateCommit> Edit(@RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content,
+                                       @RequestParam(name = "hash", required = false) Integer hash) {
         lockEdit.lock();
         try {
             var now = System.currentTimeMillis() / 1000;
             var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
 
-            log.info("edit-> date:{}, userId:{}, content:{}  now:{}, todayMidNight:{}", date, userId, content, now, todayMidNight);
+            log.info("edit-> date:{}, userId:{}, content:{}  now:{}, todayMidNight:{}, hash:{}", date, userId, content, now, todayMidNight, hash);
 
             var r = new ResultUtil<To_DateCommit>();
-            if (date < todayMidNight) {
+            if (hash == null || hash != (7 + content.length())) {
+                // 往日的日报信息不能编辑
+                return r.setErrorMsg("hash not valid!", null);
+            }
+            else if (date < todayMidNight) {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("Can not edit because not today!", null);
-            } else {
+            }else {
                 var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
                 var dateCommit = dateCommitMapper.FindBy(targetMidNight);
                 if (dateCommit == null) {

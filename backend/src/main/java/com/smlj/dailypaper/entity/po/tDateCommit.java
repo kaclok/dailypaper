@@ -22,17 +22,18 @@ public class tDateCommit {
     private int userId_13;
     private int userId_14;
     private int userId_15;
+    private int userId_16;
 
     public tDateCommit() {
     }
 
     public tDateCommit(long date) {
         this.date = date;
-        userId_1 = userId_2 = userId_3 = userId_4 = userId_5 = userId_6 = userId_7 = userId_8 = userId_9 = userId_10 = userId_11 = userId_12 = userId_13 = userId_14 = userId_15 = 0;
+        userId_1 = userId_2 = userId_3 = userId_4 = userId_5 = userId_6 = userId_7 = userId_8 = userId_9 = userId_10 = userId_11 = userId_12 = userId_13 = userId_14 = userId_15 = userId_16 = 0;
     }
 
     public static int GetFieldCount() {
-        return 15;
+        return 16;
     }
 
     public ArrayList<Integer> GetFieldIds() {
@@ -52,6 +53,7 @@ public class tDateCommit {
         rlt.add(13);
         rlt.add(14);
         rlt.add(15);
+        rlt.add(16);
         return rlt;
     }
 
@@ -72,6 +74,7 @@ public class tDateCommit {
         arr.add(userId_13);
         arr.add(userId_14);
         arr.add(userId_15);
+        arr.add(userId_16);
         return arr;
     }
 
@@ -106,6 +109,8 @@ public class tDateCommit {
             return userId_14;
         } else if (userId == 15) {
             return userId_15;
+        } else if (userId == 16) {
+            return userId_16;
         }
         return 0;
     }

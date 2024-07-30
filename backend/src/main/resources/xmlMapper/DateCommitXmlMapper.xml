@@ -17,7 +17,7 @@
     </update>
     <insert id="Insert">
         insert into t_datecommit (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
-                                  userId_9, userId_10, userId_11, userId_12, userId_13)
-        values (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+                                  userId_9, userId_10, userId_11, userId_12, userId_13, userId_14, userId_15, userId_16)
+        values (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     </insert>
 </mapper>

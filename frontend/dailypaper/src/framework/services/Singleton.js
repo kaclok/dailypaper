@@ -1,14 +1,21 @@
-export class Singleton {
-    constructor() {
-        return Singleton.getInstance();
-    }
-
-    static getInstance() {
-        if (Singleton.instance) {
-            return Singleton.instance;
+class Singleton {
+    static getInstance(cls) {
+        if (!cls) {
+            return null;
         }
-        // Singleton.instance是动态添加的一个static成员
-        Singleton.instance = this;
-        return Singleton.instance;
+
+        if (!cls.instance) {
+            cls.instance = new cls();
+        }
+        return cls.instance;
     }
+}
+
+function getInstance(cls) {
+    return Singleton.getInstance(cls);
+}
+
+export {
+    Singleton,
+    getInstance
 }

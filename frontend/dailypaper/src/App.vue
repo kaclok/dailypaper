@@ -1,6 +1,6 @@
 <script setup>
 import {onMounted, ref, onUnmounted} from "vue";
-import {useRoute, useRouter} from "vue-router";
+import {Singleton, getInstance} from "@/framework/services/Singleton.js";
 
 import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
 
@@ -8,7 +8,7 @@ import CpDatePicker from '@/logic/ui/components/CpDatePicker.vue'
 import CpCard from '@/logic/ui/components/CpCard.vue'
 import CpPie from '@/logic/ui/components/CpPie.vue'
 
-import DailyLogic from '@/logic/system/DailyLogic.js'
+import {DailyLogic} from '@/logic/system/DailyLogic.js'
 import {I18N} from "@/config/I18N.js";
 
 let commits = ref(null);
@@ -32,7 +32,7 @@ let loading = ref(false);
 
 function onDateChanged(date) {
     let sec = date / 1000;
-    DailyLogic.RequestGetAll(sec, getAllCtrl.signal, () => {
+    Singleton.getInstance(DailyLogic).RequestGetAll(sec, getAllCtrl.signal, () => {
         loading.value = true;
     }, (r) => {
         loading.value = false;
@@ -55,9 +55,9 @@ function refreshCommits() {
     let unAttend = selectedLegend.value[I18N.UN_ATTEND];
     // 更新commits
     if (attend && unAttend) {
-        commits.value = DailyLogic.GetCommits();
+        commits.value = Singleton.getInstance(DailyLogic).GetCommits();
     } else if (attend || unAttend) {
-        commits.value = DailyLogic.GetAttendList(attend);
+        commits.value = Singleton.getInstance(DailyLogic).GetAttendList(attend);
     } else {
         commits.value = [];
     }
@@ -82,7 +82,7 @@ function onEdit(userId, cardAccount, oldContent, content) {
             return;
         }
 
-        DailyLogic.RequestEdit(selectedDate.value, userId, content, editCtrl.signal, () => {
+        Singleton.getInstance(DailyLogic).RequestEdit(selectedDate.value, userId, content, editCtrl.signal, () => {
             loading.value = true;
         }, (r) => {
             loading.value = false;
@@ -139,8 +139,8 @@ onUnmounted(() => {
     <div class="root">
         <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
-        <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="DailyLogic.GetAttendCount(true)"
-               :unAttand="DailyLogic.GetAttendCount(false)" :selected="selectedLegend"/>
+        <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(DailyLogic).GetAttendCount(true)"
+               :unAttand="Singleton.getInstance(DailyLogic).GetAttendCount(false)" :selected="selectedLegend"/>
         <!--        <span style="font-size: 40px; color: #a0cfff;">数字化中心日报</span>-->
         <div class="infinite-list-root" v-loading="loading">
             <CpCard v-for="card in commits"

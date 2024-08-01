@@ -1,3 +1,4 @@
+// https://segmentfault.com/a/1190000013864944
 class Singleton {
     static getInstance(cls) {
         if (!cls) {

@@ -2,14 +2,16 @@ import {fileURLToPath, URL} from 'node:url'
 import {defineConfig, loadEnv} from 'vite'
 // https://www.cnblogs.com/heavenYJJ/p/18058142
 import vue from '@vitejs/plugin-vue'
-import { resolve } from 'path'
+import {resolve} from 'path'
 
 // 按需自动导入Element-Plus https://element-plus.org/zh-CN/guide/quickstart.html
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 
+// vite.config.js中不能用@表示src目录，因为@表达src就是在此配置的resolve.alias
 import globalDefine from './vite.config-define.js'
+import vue_auto from './src/framework/auto-import/vue-auto.js'
 
 // https://vitejs.cn/vite3-cn/config/#conditional-config
 // https://cn.vitejs.dev/config/#define
@@ -33,7 +35,7 @@ export default defineConfig((env) => {
             AutoImport({
                 resolvers: [ElementPlusResolver()],
                 imports: [
-                    'vue',
+                    vue_auto,
                     'vue-router',
                     // 可额外添加需要 autoImport 的组件
                     // {
@@ -87,12 +89,14 @@ export default defineConfig((env) => {
         resolve: {
             alias: {
                 '@': fileURLToPath(new URL('./src', import.meta.url)),
-            }
+                '$': fileURLToPath(new URL('./public', import.meta.url)),
+            },
         },
         // build出现： Some chunks are larger than 500 kB after minification
         // 解决：https://blog.csdn.net/Dawnchen1/article/details/118994062
         build: {
             manifest: true,
+            outDir: config.VITE_OUT_DIR || 'dist',
             chunkSizeWarningLimit: 500,
             rollupOptions: {
                 input: { // https://cn.vitejs.dev/guide/build#multi-page-app

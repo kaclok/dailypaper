@@ -2,6 +2,7 @@ import {fileURLToPath, URL} from 'node:url'
 import {defineConfig, loadEnv} from 'vite'
 // https://www.cnblogs.com/heavenYJJ/p/18058142
 import vue from '@vitejs/plugin-vue'
+import { resolve } from 'path'
 
 // 按需自动导入Element-Plus https://element-plus.org/zh-CN/guide/quickstart.html
 import AutoImport from 'unplugin-auto-import/vite'
@@ -94,6 +95,10 @@ export default defineConfig((env) => {
             manifest: true,
             chunkSizeWarningLimit: 500,
             rollupOptions: {
+                input: { // https://cn.vitejs.dev/guide/build#multi-page-app
+                    main: resolve(__dirname, './multi-entry/index.html'),
+                    second: resolve(__dirname, './multi-entry/second.html'),
+                },
                 output: {
                     manualChunks(id) {
                         if (id.includes('node_modules')) {

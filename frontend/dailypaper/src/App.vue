@@ -1,5 +1,4 @@
 <script setup>
-import {onMounted, ref, onUnmounted} from "vue";
 import {Singleton, getInstance} from "@/framework/services/Singleton.js";
 
 import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";

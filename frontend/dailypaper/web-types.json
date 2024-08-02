@@ -1,28 +1,28 @@
 {
-  "$schema": "https://json.schemastore.org/web-types",
-  "framework": "vue",
-  "name": "name written in package.json",
-  "version": "version written in package.json",
-  "contributions": {
-    "html": {
-      "js-types-syntax": "typescript",
-      "attributes": [
-        {
-          "name": "v-resize-e"
-        },
-        {
-          "name": "v-cancel-when-unmount"
-        },
-        {
-          "name": "v-cd-s"
-        },
-        {
-          "name": "v-has-permission"
-        },
-        {
-          "name": "v-has-role"
-        }
-      ]
-    }
-  }
+	"$schema": "https://json.schemastore.org/web-types",
+	"framework": "vue",
+	"name": "name written in package.json",
+	"version": "version written in package.json",
+	"contributions": {
+		"html": {
+			"js-types-syntax": "typescript",
+			"attributes": [
+				{
+					"name": "v-resize-e"
+				},
+				{
+					"name": "v-cancel-when-unmount"
+				},
+				{
+					"name": "v-cd-s"
+				},
+				{
+					"name": "v-has-permission"
+				},
+				{
+					"name": "v-has-role"
+				}
+			]
+		}
+	}
 }

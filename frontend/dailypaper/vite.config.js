@@ -8,7 +8,10 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 
+import globalDefine from './vite.config-define.js'
+
 // https://vitejs.cn/vite3-cn/config/#conditional-config
+// https://cn.vitejs.dev/config/#define
 export default defineConfig((env) => {
     // 获取当前开发环境 和 env.mode一样
     // console.log(process.env.NODE_ENV)
@@ -23,6 +26,7 @@ export default defineConfig((env) => {
     // 获取VITE环境变量
     let config = loadEnv(env.mode, './');
     return {
+        define: globalDefine,
         plugins: [
             vue(),
             AutoImport({

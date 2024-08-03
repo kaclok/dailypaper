@@ -39,12 +39,10 @@ export default defineConfig((env) => {
                     vue_auto_import,
                     'vue-router',
                     // 可额外添加需要 autoImport 的组件
-                    // {
-                    //     '@/hooks/web/useI18n': ['useI18n'],
-                    //     '@/hooks/web/useMessage': ['useMessage'],
-                    //     '@/hooks/web/useTable': ['useTable'],
-                    //     '@/hooks/web/useCrudSchemas': ['useCrudSchemas'],
-                    // }
+                    {
+                        // 不知道为啥，这里配置全局函数的时候会在template中使用的时候出错
+                        // '@/framework/services/LocaleService': ['GetByKey', 'Switch'],
+                    }
                 ],
             }),
             Components({

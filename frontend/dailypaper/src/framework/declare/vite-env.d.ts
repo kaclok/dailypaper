@@ -5,6 +5,7 @@
 interface ImportMetaEnv {
     readonly VITE_APP_TITLE: string
     readonly VITE_OUT_DIR: string
+    readonly VITE_LOCALE: string
     // 更多环境变量...
 }
 

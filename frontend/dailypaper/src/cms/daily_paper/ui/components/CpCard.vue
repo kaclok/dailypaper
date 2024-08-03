@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import {onBeforeUpdate, ref} from 'vue'
 import {DateTimeUtil} from '@/framework/utils/DateTimeUtil'
-import {
-    Check as ep_check, // 按钮上的图标，如果不导入就没有图标只有按钮
-} from '@element-plus/icons-vue'
+import {GetByKey} from "@/framework/services/LocaleService";
 
 const props = defineProps(["date", "curAccount", "id", "name", "account", "time", "content"]);
 defineEmits(['onEdit']);
@@ -32,7 +30,7 @@ function hasContent() {
 }
 
 function getEditText() {
-    return hasContent() ? "已提交" : "未提交";
+    return hasContent() ? GetByKey('cms.daily_paper.ATTEND') : GetByKey('cms.daily_paper.UN_ATTEND');
 }
 
 function hasEdited() {
@@ -54,7 +52,7 @@ onBeforeUpdate(() => {
             <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent)" v-if="isSelf() && isToday()"
                        type="success"
                        v-cd-s="3"
-                       circle :dark="true" style="position: relative; left: 120px; top: 30px">提交
+                       circle :dark="true" style="position: relative; left: 120px; top: 30px">{{GetByKey('cms.daily_paper.SUBMIT')}}
             </el-button>
         </template>
 

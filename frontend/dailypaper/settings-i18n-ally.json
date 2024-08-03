@@ -21,5 +21,6 @@
 		"ts",
 		"yml",
 		"yaml"
-	]
+	],
+	"i18n-ally.translate.engines": ["deepl", "google-cn", "google", "bing"]
 }

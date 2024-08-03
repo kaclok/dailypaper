@@ -56,7 +56,7 @@ export class LocaleService {
     }
 }
 
-export function GetByKey(key, ...args) {
+export function t(key, ...args) {
     return LocaleService.GetByKey(key, ...args);
 }
 

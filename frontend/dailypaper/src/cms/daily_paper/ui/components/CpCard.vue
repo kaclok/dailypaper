@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {onBeforeUpdate, ref} from 'vue'
 import {DateTimeUtil} from '@/framework/utils/DateTimeUtil'
-import {GetByKey} from "@/framework/services/LocaleService";
+import {t} from "@/framework/services/LocaleService";
 
 const props = defineProps(["date", "curAccount", "id", "name", "account", "time", "content"]);
 defineEmits(['onEdit']);
@@ -30,7 +30,7 @@ function hasContent() {
 }
 
 function getEditText() {
-    return hasContent() ? GetByKey('cms.daily_paper.ATTEND') : GetByKey('cms.daily_paper.UN_ATTEND');
+    return hasContent() ? t('cms.daily_paper.ATTEND') : t('cms.daily_paper.UN_ATTEND');
 }
 
 function hasEdited() {
@@ -52,7 +52,7 @@ onBeforeUpdate(() => {
             <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent)" v-if="isSelf() && isToday()"
                        type="success"
                        v-cd-s="3"
-                       circle :dark="true" style="position: relative; left: 120px; top: 30px">{{GetByKey('cms.daily_paper.SUBMIT')}}
+                       circle :dark="true" style="position: relative; left: 120px; top: 30px">{{t('cms.daily_paper.SUBMIT')}}
             </el-button>
         </template>
 
@@ -61,7 +61,7 @@ onBeforeUpdate(() => {
                   v-model="refTextContent"
                   :rows="13"
                   type="textarea"
-                  :placeholder="GetByKey('cms.daily_paper.INPUT_DAILY_CONTENT')"
+                  :placeholder="t('cms.daily_paper.INPUT_DAILY_CONTENT')"
                   clearable
                   :show-word-limit="true"
                   resize="none"

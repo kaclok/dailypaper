@@ -1,7 +1,7 @@
 import {TimeService} from "@/framework/services/TimeService.js";
 import {DailyApi} from "@/logic/api/DailyApi.js";
 
-class DailyLogic {
+class SysDaily {
     _result = null;
 
     GetCommits() {
@@ -122,5 +122,5 @@ class DailyLogic {
 }
 
 export {
-    DailyLogic,
+    SysDaily,
 };

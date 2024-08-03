@@ -41,7 +41,7 @@ export class LocaleService {
         console.log("current locale is: ", targetLocale);
 
         LocaleService._SetHTMLLocale(targetLocale);
-        LocaleService._curLocaleContent = await import(`@/cms/daily_paper/locales/${targetLocale}.js`);
+        LocaleService._curLocaleContent = await import(`@/locales/${targetLocale}.js`);
         let options = LocaleService._LocaleOption(LocaleService._curLocaleContent);
         LocaleService.i18n = createI18n(options);
 

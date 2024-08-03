@@ -11,7 +11,7 @@ import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 
 // vite.config.js中不能用@表示src目录，因为@表达src就是在此配置的resolve.alias
 import globalDefine from './vite.config-define.js'
-import vue_auto from './src/framework/auto-import/vue-auto.js'
+import vue_auto_import from './src/framework/auto-import/vue-auto-import.js'
 
 // https://vitejs.cn/vite3-cn/config/#conditional-config
 // https://cn.vitejs.dev/config/#define
@@ -36,7 +36,7 @@ export default defineConfig((env) => {
             AutoImport({
                 resolvers: [ElementPlusResolver()],
                 imports: [
-                    vue_auto,
+                    vue_auto_import,
                     'vue-router',
                     // 可额外添加需要 autoImport 的组件
                     // {
@@ -61,7 +61,10 @@ export default defineConfig((env) => {
 
             // origin: config['VITE_BASE_API'],
             // 处理：Access to XMLHttpRequest at 'http://localhost:8089/dailypaper/getAll?date=1720713600' from origin 'http://localhost:5175' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-            cors: true, // 允许跨域
+            warmup: { // 只应该预热频繁使用的文件，以免在启动时过载 Vite 开发服务器 https://cn.vitejs.dev/guide/performance.html
+                clientFiles: [
+                ],
+            },
             proxy: {
                 // https://www.cnblogs.com/zy0723/p/17285517.html
                 // axios.get('/api/user/login')执行的时候，会把 '/api'前面的内容和'/api'一起替换为''，也就是 '/user/login'，然后前面添加 target
@@ -101,8 +104,8 @@ export default defineConfig((env) => {
             chunkSizeWarningLimit: 500,
             rollupOptions: {
                 input: { // https://cn.vitejs.dev/guide/build#multi-page-app
-                    main: resolve(__dirname, './multi-entry/index.html'),
-                    second: resolve(__dirname, './multi-entry/second.html'),
+                    main: resolve(__dirname, './index.html'),
+                    second: resolve(__dirname, './pages/login.html'),
                 },
                 output: {
                     manualChunks(id) {

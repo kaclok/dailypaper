@@ -8,7 +8,7 @@ import CpCard from '@/cms/daily_paper/ui/components/CpCard.vue'
 import CpPie from '@/cms/daily_paper/ui/components/CpPie.vue'
 
 import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
-import {I18N} from "@/config/I18N.js";
+import {I18N} from "@/cms/daily_paper/config/I18N.js";
 
 let commits = ref(null);
 

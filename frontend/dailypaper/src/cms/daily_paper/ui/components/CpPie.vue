@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, onBeforeUpdate, onUnmounted} from 'vue'
 import {echarts} from '@/plugins/EchartsCore.js'
-import {I18N} from '@/config/I18N.js'
+import {I18N} from '@/cms/daily_paper/config/I18N.js'
 
 const props = defineProps(["attand", "unAttand", "selected"]);
 const emit = defineEmits(['onLegendSelectChanged']);

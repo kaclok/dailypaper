@@ -1,6 +1,6 @@
 import {computed, ref} from "vue";
 
-import CpMain from '@/App.vue'
+import CpMain from '@/cms/daily_paper/App.vue'
 import CpNotFound from '@/framework/components/CpNotFound.vue'
 
 export const _mainRouter = {

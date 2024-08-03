@@ -1,5 +1,5 @@
 import {TimeService} from "@/framework/services/TimeService.js";
-import {DailyApi} from "@/logic/api/DailyApi.js";
+import {DailyApi} from "@/cms/daily_paper/api/DailyApi.js";
 
 class SysDaily {
     _result = null;

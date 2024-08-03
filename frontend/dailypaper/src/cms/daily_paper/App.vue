@@ -3,11 +3,11 @@ import {Singleton, getInstance} from "@/framework/services/Singleton.js";
 
 import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
 
-import CpDatePicker from '@/logic/ui/components/CpDatePicker.vue'
-import CpCard from '@/logic/ui/components/CpCard.vue'
-import CpPie from '@/logic/ui/components/CpPie.vue'
+import CpDatePicker from '@/cms/daily_paper/ui/components/CpDatePicker.vue'
+import CpCard from '@/cms/daily_paper/ui/components/CpCard.vue'
+import CpPie from '@/cms/daily_paper/ui/components/CpPie.vue'
 
-import {SysDaily} from '@/logic/system/SysDaily.js'
+import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
 import {I18N} from "@/config/I18N.js";
 
 let commits = ref(null);

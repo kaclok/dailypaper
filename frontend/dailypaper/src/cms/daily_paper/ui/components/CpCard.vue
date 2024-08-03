@@ -61,7 +61,7 @@ onBeforeUpdate(() => {
                   v-model="refTextContent"
                   :rows="13"
                   type="textarea"
-                  placeholder="输入日报内容"
+                  :placeholder="GetByKey('cms.daily_paper.INPUT_DAILY_CONTENT')"
                   clearable
                   :show-word-limit="true"
                   resize="none"

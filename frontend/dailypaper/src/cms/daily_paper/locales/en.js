@@ -4,6 +4,7 @@ export default {
             ATTEND: "attend",
             UN_ATTEND: "un_attend",
             SUBMIT: "submit",
+            INPUT_DAILY_CONTENT: "please input",
         },
     },
 }

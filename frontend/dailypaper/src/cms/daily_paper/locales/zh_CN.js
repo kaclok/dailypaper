@@ -4,6 +4,7 @@ export default {
             ATTEND: "已提交",
             UN_ATTEND: "未提交",
             SUBMIT: "提交",
+            INPUT_DAILY_CONTENT: "请输入日报内容",
         },
     },
 }

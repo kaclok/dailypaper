@@ -50,6 +50,11 @@ export default defineConfig((env) => {
             }),
         ],
 
+        // npm run dev的输出是：Local:   http://localhost:5175/， 如果是多页面情形，则需要修改，即修改base即可
+        // https://vitejs.cn/vite3-cn/guide/build.html#public-base-path
+        // https://vitejs.cn/vite3-cn/config/shared-options.html#base
+        // base: '/pages/admin.html',
+
         // https://vitejs.cn/vite3-cn/config/server-options.html#server-host
         server: {
             hmr: true, // 开启热更新

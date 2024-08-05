@@ -40,3 +40,4 @@ backend/.vscode/
 /frontend/dailypaper/~$study.docx
 /frontend/dailypaper/.vscode
 /backend/.logs
+/frontend/dailypaper/dist*

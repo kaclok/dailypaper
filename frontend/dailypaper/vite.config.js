@@ -11,7 +11,7 @@ import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 
 // vite.config.js中不能用@表示src目录，因为@表达src就是在此配置的resolve.alias
 import globalDefine from './vite.config-define.js'
-import vue_auto_import from './src/framework/auto-import/vue-auto-import.js'
+import vueAutoImport from './src/framework/auto-import/vue-auto-import.js'
 
 // https://vitejs.cn/vite3-cn/config/#conditional-config
 // https://cn.vitejs.dev/config/#define
@@ -36,7 +36,7 @@ export default defineConfig((env) => {
             AutoImport({
                 resolvers: [ElementPlusResolver()],
                 imports: [
-                    vue_auto_import,
+                    vueAutoImport,
                     'vue-router',
                     // 可额外添加需要 autoImport 的组件
                     {
@@ -103,7 +103,7 @@ export default defineConfig((env) => {
         // 解决：https://blog.csdn.net/Dawnchen1/article/details/118994062
         build: {
             manifest: true,
-            outDir: config.VITE_OUT_DIR || 'dist',
+            outDir: (config.VITE_OUT_DIR || 'dist') + ' - 0.0.1-cors',
             chunkSizeWarningLimit: 500,
             rollupOptions: {
                 input: { // https://cn.vitejs.dev/guide/build#multi-page-app

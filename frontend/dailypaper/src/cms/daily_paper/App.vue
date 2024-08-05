@@ -158,7 +158,7 @@ onUnmounted(() => {
 
 <style>
 .root {
-    background: url("@/assets/imgs/bg-smlj.jpg") no-repeat center border-box;
+    background: url("@/cms/daily_paper/assets/imgs/bg-smlj.jpg") no-repeat center border-box;
 
     height: 100vh;
     width: 100vw;

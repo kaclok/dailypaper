@@ -56,6 +56,7 @@ export class LocaleService {
     }
 }
 
+// 外部使用必须是t, 否则i18n ally不能正常使用，但是语言获取功能是正常的
 export function t(key, ...args) {
     return LocaleService.GetByKey(key, ...args);
 }

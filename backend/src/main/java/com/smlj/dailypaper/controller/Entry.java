@@ -47,6 +47,8 @@ public class Entry {
 
     private Lock lockGetall = new ReentrantLock();
     private Lock lockEdit = new ReentrantLock();
+    private Lock lockExportAll = new ReentrantLock();
+    private Lock lockExportOne = new ReentrantLock();
 
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
@@ -139,6 +141,32 @@ public class Entry {
             }
         } finally {
             lockEdit.unlock();
+        }
+    }
+
+    @GetMapping("/export_one")
+    private Result<To_DateCommit> ExportOne(@RequestParam("userId") int userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+        lockExportOne.lock();
+        try {
+            log.info("ExportOne-> userId: {}, beginDate:{}, endDate:{}", userId, beginDate, endDate);
+
+            var r = new ResultUtil<To_DateCommit>();
+            return r.setSuccessMsg("edit success", null);
+        } finally {
+            lockExportOne.unlock();
+        }
+    }
+
+    @GetMapping("/export_all")
+    private Result<To_DateCommit> ExportAll(@RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+        lockExportAll.lock();
+        try {
+            log.info("ExportAll-> beginDate:{}, endDate:{}", beginDate, endDate);
+
+            var r = new ResultUtil<To_DateCommit>();
+            return r.setSuccessMsg("edit success", null);
+        } finally {
+            lockExportAll.unlock();
         }
     }
 }

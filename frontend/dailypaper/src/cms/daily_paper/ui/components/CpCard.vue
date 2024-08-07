@@ -4,7 +4,7 @@ import {DateTimeUtil} from '@/framework/utils/DateTimeUtil'
 import {t} from "@/framework/services/LocaleService";
 
 const props = defineProps(["date", "curAccount", "id", "name", "account", "time", "content"]);
-defineEmits(['onEdit']);
+defineEmits(['onEdit', 'onExportOne']);
 
 // https://cn.vuejs.org/guide/components/props.html
 // props.content只是提供一个初始值，以后refTextContent和prop的更新无关了

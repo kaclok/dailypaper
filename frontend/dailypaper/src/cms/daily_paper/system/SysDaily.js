@@ -1,5 +1,5 @@
 import {TimeService} from "@/framework/services/TimeService.js";
-import {DailyApi} from "@/cms/daily_paper/api/DailyApi.js";
+import {ApiDaily} from "@/cms/daily_paper/api/ApiDaily.js";
 
 class SysDaily {
     _result = null;
@@ -15,7 +15,7 @@ class SysDaily {
         if (onBefore != null) {
             onBefore();
         }
-        let r = await DailyApi.GetAll(date, signal);
+        let r = await ApiDaily.GetAll(date, signal);
         // 同步时间
         TimeService.initTime(r.data.timestamp);
 
@@ -33,7 +33,7 @@ class SysDaily {
         if (onBefore != null) {
             onBefore();
         }
-        let rlt = await DailyApi.Edit(date, userId, content, signal);
+        let rlt = await ApiDaily.Edit(date, userId, content, signal);
 
         // 同步时间
         TimeService.initTime(rlt.data.timestamp);
@@ -44,6 +44,28 @@ class SysDaily {
 
         if (onAfter != null) {
             onAfter(rlt.data.result);
+        }
+    }
+
+    async RequestExportAll(beginDate, endDate, signal, onBefore, onAfter) {
+        if (!onBefore) {
+            onBefore();
+        }
+        let r = await ApiDaily.ExportAll(beginDate, endDate, signal);
+        TimeService.initTime(r.data.timestamp);
+        if (onAfter != null) {
+            onAfter(r.data.result);
+        }
+    }
+
+    async RequestExportOne(userId, beginDate, endDate, signal, onBefore, onAfter) {
+        if (!onBefore) {
+            onBefore();
+        }
+        let r = await ApiDaily.ExportOne(userId, beginDate, endDate, signal);
+        TimeService.initTime(r.data.timestamp);
+        if (onAfter != null) {
+            onAfter(r.data.result);
         }
     }
 

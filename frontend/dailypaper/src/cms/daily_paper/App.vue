@@ -8,6 +8,7 @@ import CpCard from '@/cms/daily_paper/ui/components/CpCard.vue'
 import CpPie from '@/cms/daily_paper/ui/components/CpPie.vue'
 
 import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
+import {ApiDaily} from '@/cms/daily_paper/api/ApiDaily.js'
 import {I18N} from "@/cms/daily_paper/config/I18N.js";
 
 let commits = ref(null);
@@ -15,6 +16,8 @@ let commits = ref(null);
 // https://www.axios-http.cn/docs/cancellation
 let getAllCtrl = new AbortController();
 let editCtrl = new AbortController();
+let exportAllCtrl = new AbortController();
+let exportOneCtrl = new AbortController();
 
 let selectedDate = ref(0);
 
@@ -122,6 +125,14 @@ function onEdit(userId, cardAccount, oldContent, content) {
     }
 }
 
+function onExportOne(id, beginDate, endDate) {
+    Singleton.getInstance(SysDaily).RequestExportOne(id, beginDate, endDate, exportOneCtrl.signal);
+}
+
+function onExportAll(beginDate, endDate) {
+    Singleton.getInstance(SysDaily).RequestExportAll(beginDate, endDate, exportAllCtrl.signal);
+}
+
 onMounted(() => {
     /* 因为未onMounted之前，组件不会触发事件，所以需要手动触发*/
     onDateChanged(DateTimeUtil.nowDate());
@@ -131,6 +142,8 @@ onMounted(() => {
 onUnmounted(() => {
     getAllCtrl.abort();
     editCtrl.abort();
+    exportAllCtrl.abort();
+    exportOneCtrl.abort();
 });
 </script>
 
@@ -151,7 +164,8 @@ onUnmounted(() => {
                     :account="card.account"
                     :time="card.time"
                     :content="card.content"
-                    @onEdit="onEdit"/>
+                    @onEdit="onEdit"
+                    @onExport="onExportOne"/>
         </div>
     </div>
 </template>

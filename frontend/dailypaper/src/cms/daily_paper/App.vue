@@ -125,11 +125,11 @@ function onEdit(userId, cardAccount, oldContent, content) {
     }
 }
 
-function onExportOne(id, beginDate, endDate) {
+function onExportOne(id, name, account) {
     Singleton.getInstance(SysDaily).RequestExportOne(id, beginDate, endDate, exportOneCtrl.signal);
 }
 
-function onExportAll(beginDate, endDate) {
+function onExportAll() {
     Singleton.getInstance(SysDaily).RequestExportAll(beginDate, endDate, exportAllCtrl.signal);
 }
 
@@ -165,7 +165,7 @@ onUnmounted(() => {
                     :time="card.time"
                     :content="card.content"
                     @onEdit="onEdit"
-                    @onExport="onExportOne"/>
+                    @onExportOne="onExportOne"/>
         </div>
     </div>
 </template>

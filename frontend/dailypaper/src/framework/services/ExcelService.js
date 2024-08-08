@@ -42,12 +42,6 @@ export class ExcelService {
         ws['!cols'] = result;
     }
 
-    static _JsonToArray(json) {
-        return json.map(v => key.map(j => {
-            return v[j]
-        }));
-    }
-
     // get head from excel file,return array
     static GetHeaderRow(sheet) {
         const headers = []
@@ -89,15 +83,4 @@ export class ExcelService {
     }
 
     // ooa即：object of array对象数组
-    static ExportOOAToExcel(ooaWithoutTitle, arrayTitle, filename, autoWidth = true) {
-        // ooaWithoutTitle.unshift(arrayTitle);
-        const wb = xlsx.utils.book_new();
-        const ws = xlsx.utils.json_to_sheet(ooaWithoutTitle, {/*header: arrayTitle, */skipHeader: true});
-        if (autoWidth) {
-            const arr = ExcelService._JsonToArray(ooaWithoutTitle);
-            ExcelService._AutoWidth(ws, arr);
-        }
-        xlsx.utils.book_append_sheet(wb, ws, filename);
-        xlsx.writeFile(wb, filename + '.xlsx');
-    }
 }

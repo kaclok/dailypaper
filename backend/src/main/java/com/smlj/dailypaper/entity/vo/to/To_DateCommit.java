@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 public class To_DateCommit implements Serializable {
-    private int total = 13;
+    private int total = 16;
     private long date = 0;
-    private ArrayList<To_UserCommit> commits = new ArrayList<To_UserCommit>(13);
+    private ArrayList<To_UserCommit> commits = new ArrayList<To_UserCommit>(16);
 }

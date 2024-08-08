@@ -54,7 +54,7 @@ class SysDaily {
         let r = await ApiDaily.ExportAll(beginDate, endDate, signal);
         TimeService.initTime(r.data.timestamp);
         if (onAfter != null) {
-            onAfter(r.data.result);
+            onAfter(r.data);
         }
     }
 
@@ -65,7 +65,7 @@ class SysDaily {
         let r = await ApiDaily.ExportOne(userId, beginDate, endDate, signal);
         TimeService.initTime(r.data.timestamp);
         if (onAfter != null) {
-            onAfter(r.data.result);
+            onAfter(r.data);
         }
     }
 

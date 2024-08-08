@@ -202,13 +202,13 @@ public class Entry {
             To_Excel rlt = new To_Excel();
             ArrayList<tDateCommit> cs = dateCommitMapper.GetRangeCommits(beginDate, endDate);
             boolean hasGetColNames = false;
-            rlt.getColNames().add("日期");
             for (tDateCommit one : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();
                 excelRow.setTime(one.getDate());
                 boolean allEmpty = true;
 
                 if (!hasGetColNames) {
+                    rlt.getColNames().add("日期");
                     var userIds = one.GetFieldIds();
                     for (var userId : userIds) {
                         var user = userMapper.GetUserById(userId);

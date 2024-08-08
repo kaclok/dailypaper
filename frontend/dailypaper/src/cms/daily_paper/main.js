@@ -2,7 +2,7 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import '../../assets/main.css'
 
-import {router} from '@/cms/daily_paper/router/Index.js'
+// import {router} from '@/cms/daily_paper/router/Index.js'
 // import直接引用一个文件时，会执行一遍这个文件，而不获取任何文件对象, 比如：import './lib/init.js';
 import {RegisterDirective} from "@/framework/directives/DirectiveList.js";
 import {Switch} from "@/framework/services/LocaleService.js";
@@ -25,7 +25,7 @@ async function setupAll(app) {
     // 自定义指令
     RegisterDirective(app);
     // 路由
-    app.use(router);
+    // app.use(router);
 
     // mount在最后
     app.mount('#app');

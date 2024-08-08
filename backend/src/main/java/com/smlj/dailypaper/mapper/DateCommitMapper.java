@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+
 @Repository
 @Mapper
 public interface DateCommitMapper {
@@ -13,4 +15,8 @@ public interface DateCommitMapper {
     public void Update(@Param("date") long date, @Param("colName") String colName, @Param("commitId") int commitId);
 
     public tDateCommit FindBy(@Param("date") long date);
+
+    public ArrayList<tDateCommit> GetRangeCommitsByUser(@Param("from") long from, @Param("to") long to, @Param("colName") String colName);
+
+    public ArrayList<tDateCommit> GetRangeCommits(@Param("from") long from, @Param("to") long to);
 }

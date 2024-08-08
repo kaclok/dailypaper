@@ -20,4 +20,31 @@
                                   userId_9, userId_10, userId_11, userId_12, userId_13, userId_14, userId_15, userId_16)
         values (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     </insert>
+
+    <select id="GetRangeCommitsByUser" resultType="com.smlj.dailypaper.entity.po.tDateCommit">
+        select date, ${colName} from t_datecommit
+        where #{from} &lt; date and date &lt; #{to};
+    </select>
+    <select id="GetRangeCommits" resultType="com.smlj.dailypaper.entity.po.tDateCommit">
+        select date,
+               userId_1,
+               userId_2,
+               userId_3,
+               userId_4,
+               userId_5,
+               userId_6,
+               userId_7,
+               userId_8,
+               userId_9,
+               userId_10,
+               userId_11,
+               userId_12,
+               userId_13,
+               userId_14,
+               userId_15,
+               userId_16
+        from t_datecommit
+        where #{from} &lt; date
+          and date &lt; #{to};
+    </select>
 </mapper>

@@ -3,13 +3,17 @@ package com.smlj.dailypaper.controller;
 import com.smlj.dailypaper.entity.po.tCommit;
 import com.smlj.dailypaper.entity.po.tDateCommit;
 import com.smlj.dailypaper.entity.vo.to.To_DateCommit;
+import com.smlj.dailypaper.entity.vo.to.To_ExcelRow;
+import com.smlj.dailypaper.entity.vo.to.To_Excel;
 import com.smlj.dailypaper.entity.vo.to.To_UserCommit;
 import com.smlj.dailypaper.entity.vo.to.common.Result;
 import com.smlj.dailypaper.mapper.CommitMapper;
 import com.smlj.dailypaper.mapper.DateCommitMapper;
 import com.smlj.dailypaper.mapper.UserMapper;
+import com.smlj.dailypaper.services.UrlService;
 import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +49,9 @@ public class Entry {
     @Autowired
     private CommitMapper commitMapper;
 
+    @Autowired
+    private HttpServletRequest request;
+
     private Lock lockGetall = new ReentrantLock();
     private Lock lockEdit = new ReentrantLock();
     private Lock lockExportAll = new ReentrantLock();
@@ -53,7 +60,7 @@ public class Entry {
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
     private Result<To_DateCommit> GetAll(@RequestParam("date") long date) {
-        log.info("getAll-> date:{}", date);
+        log.info("GetAll:{}", UrlService.GetFullUrl(request));
 
         var midNight = DateTimeUtil.convertToMidnightTimestamp(date);
         var dateCommit = dateCommitMapper.FindBy(midNight);
@@ -106,17 +113,16 @@ public class Entry {
             var now = System.currentTimeMillis() / 1000;
             var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
 
-            log.info("edit-> date:{}, userId:{}, content:{}  now:{}, todayMidNight:{}, hash:{}", date, userId, content, now, todayMidNight, hash);
+            log.info("Edit: {} -> now:{}, todayMidNight:{}", UrlService.GetFullUrl(request), now, todayMidNight);
 
             var r = new ResultUtil<To_DateCommit>();
             if (hash == null || hash != (7 + content.length())) {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("hash not valid!", null);
-            }
-            else if (date < todayMidNight) {
+            } else if (date < todayMidNight) {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("Can not edit because not today!", null);
-            }else {
+            } else {
                 var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
                 var dateCommit = dateCommitMapper.FindBy(targetMidNight);
                 if (dateCommit == null) {
@@ -145,26 +151,98 @@ public class Entry {
     }
 
     @GetMapping("/export_one")
-    private Result<To_DateCommit> ExportOne(@RequestParam("userId") int userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+    private Result<To_Excel> ExportOne(@RequestParam("userId") short userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         lockExportOne.lock();
         try {
-            log.info("ExportOne-> userId: {}, beginDate:{}, endDate:{}", userId, beginDate, endDate);
+            log.info("ExportOne: {}", UrlService.GetFullUrl(request));
 
-            var r = new ResultUtil<To_DateCommit>();
-            return r.setSuccessMsg("edit success", null);
+            To_Excel rlt = new To_Excel();
+            ArrayList<tDateCommit> cs = dateCommitMapper.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId);
+
+            rlt.getColNames().add("日期");
+            var user = userMapper.GetUserById(userId);
+            String colName = Integer.toString(userId);
+            if (user != null) {
+                colName = user.getName();
+            }
+            rlt.getColNames().add(colName);
+
+            for (tDateCommit row : cs) {
+                To_ExcelRow excelRow = new To_ExcelRow();
+                var commitId = row.GetBy(userId);
+                String content = null;
+                if (commitId != 0) {
+                    var c = commitMapper.FindById(commitId);
+                    if (c != null) {
+                        content = c.getContent();
+                    }
+                }
+
+                if (content != null) {
+                    excelRow.getContents().add(content);
+                    excelRow.setTime(row.getDate());
+
+                    rlt.getRows().add(excelRow);
+                }
+            }
+
+            var r = new ResultUtil<To_Excel>();
+            return r.setSuccessMsg("edit success", rlt);
         } finally {
             lockExportOne.unlock();
         }
     }
 
     @GetMapping("/export_all")
-    private Result<To_DateCommit> ExportAll(@RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+    private Result<To_Excel> ExportAll(@RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         lockExportAll.lock();
         try {
-            log.info("ExportAll-> beginDate:{}, endDate:{}", beginDate, endDate);
+            log.info("ExportAll: {}", UrlService.GetFullUrl(request));
 
-            var r = new ResultUtil<To_DateCommit>();
-            return r.setSuccessMsg("edit success", null);
+            To_Excel rlt = new To_Excel();
+            ArrayList<tDateCommit> cs = dateCommitMapper.GetRangeCommits(beginDate, endDate);
+            boolean hasGetColNames = false;
+            rlt.getColNames().add("日期");
+            for (tDateCommit one : cs) {
+                To_ExcelRow excelRow = new To_ExcelRow();
+                excelRow.setTime(one.getDate());
+                boolean allEmpty = true;
+
+                if (!hasGetColNames) {
+                    var userIds = one.GetFieldIds();
+                    for (var userId : userIds) {
+                        var user = userMapper.GetUserById(userId);
+                        String colName = Integer.toString(userId);
+                        if (user != null) {
+                            colName = user.getName();
+                        }
+
+                        rlt.getColNames().add(colName);
+                    }
+
+                    hasGetColNames = true;
+                }
+
+                for (var commitId : one.GetAllIds()) {
+                    String content = null;
+                    if (commitId != 0) {
+                        var c = commitMapper.FindById(commitId);
+                        if (c != null) {
+                            content = c.getContent();
+                        }
+                    }
+
+                    allEmpty &= (content == null);
+                    excelRow.getContents().add(content);
+                }
+
+                if (!allEmpty) {
+                    rlt.getRows().add(excelRow);
+                }
+            }
+
+            var r = new ResultUtil<To_Excel>();
+            return r.setSuccessMsg("edit success", rlt);
         } finally {
             lockExportAll.unlock();
         }

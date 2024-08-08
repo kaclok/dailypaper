@@ -4,12 +4,13 @@ import {Singleton, getInstance} from "@/framework/services/Singleton.js";
 import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
 
 import CpDatePicker from '@/cms/daily_paper/ui/components/CpDatePicker.vue'
+import CpDateRangePicker from "@/cms/daily_paper/ui/components/CpDateRangePicker.vue";
 import CpCard from '@/cms/daily_paper/ui/components/CpCard.vue'
 import CpPie from '@/cms/daily_paper/ui/components/CpPie.vue'
 
 import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
-import {ApiDaily} from '@/cms/daily_paper/api/ApiDaily.js'
 import {I18N} from "@/cms/daily_paper/config/I18N.js";
+import {ExcelService} from "@/framework/services/ExcelService";
 
 let commits = ref(null);
 
@@ -18,6 +19,9 @@ let getAllCtrl = new AbortController();
 let editCtrl = new AbortController();
 let exportAllCtrl = new AbortController();
 let exportOneCtrl = new AbortController();
+
+let beginTimestamp = null;
+let endTimestamp = null;
 
 let selectedDate = ref(0);
 
@@ -44,6 +48,12 @@ function onDateChanged(date) {
     });
 
     selectedDate.value = sec;
+}
+
+function onDateRangeChanged(dateRange) {
+    console.log("onDateRangeChanged: " + dateRange[0] + "," + dateRange[1]);
+    beginTimestamp = Math.round(dateRange[0] / 1000);
+    endTimestamp = Math.round(dateRange[1] / 1000);
 }
 
 function onLegendSelectChanged(params) {
@@ -109,7 +119,6 @@ function onEdit(userId, cardAccount, oldContent, content) {
                     center: true,
                     duration: 2000,
                 })*/
-                return;
             }
         });
     } else {
@@ -121,16 +130,50 @@ function onEdit(userId, cardAccount, oldContent, content) {
             center: true,
             duration: 2000,
         });*/
-        return;
     }
 }
 
 function onExportOne(id, name, account) {
-    Singleton.getInstance(SysDaily).RequestExportOne(id, beginDate, endDate, exportOneCtrl.signal);
+    if (beginTimestamp == null || endTimestamp == null) {
+        window.alert('请选择导出时间区间');
+        return;
+    }
+    Singleton.getInstance(SysDaily).RequestExportOne(id, beginTimestamp, endTimestamp, exportOneCtrl.signal, () => {
+        loading.value = true;
+    }, (r) => {
+        loading.value = false;
+
+        let final = r.data.rows.map((ele) => {
+            let d = DateTimeUtil.toDateTime(ele.time);
+            d = DateTimeUtil.formatDate(d);
+            let arr = Object.values(ele.contents);
+            arr.unshift(d);
+            return arr;
+        });
+        ExcelService.ExportAOAToExcel1(final, r.data.colNames, 'export_one', true);
+    });
 }
 
 function onExportAll() {
-    Singleton.getInstance(SysDaily).RequestExportAll(beginDate, endDate, exportAllCtrl.signal);
+    if (beginTimestamp == null || endTimestamp == null) {
+        window.alert('请选择导出时间区间');
+        return;
+    }
+
+    Singleton.getInstance(SysDaily).RequestExportAll(beginTimestamp, endTimestamp, exportAllCtrl.signal, () => {
+        loading.value = true;
+    }, (r) => {
+        loading.value = false;
+
+        let final = r.data.rows.map((ele) => {
+            let d = DateTimeUtil.toDateTime(ele.time);
+            d = DateTimeUtil.formatDate(d);
+            let arr = Object.values(ele.contents);
+            arr.unshift(d);
+            return arr;
+        });
+        ExcelService.ExportAOAToExcel1(final, r.data.colNames, 'export_all', true);
+    });
 }
 
 onMounted(() => {
@@ -150,6 +193,9 @@ onUnmounted(() => {
 <template>
     <div class="root">
         <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
+        <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>
+        <el-button @click="onExportAll" v-cd-s="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
+        </el-button>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
                :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>

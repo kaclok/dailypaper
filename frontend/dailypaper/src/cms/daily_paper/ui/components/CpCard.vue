@@ -49,6 +49,11 @@ onBeforeUpdate(() => {
         <template #header>
             <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}</span>
             <span class="flag">{{ getEditText() }}</span>
+<!--            <el-button @click="$emit('onExportOne', props.id, props.name, props.account)" v-if="isSelf() && isToday()"
+                       type="warning"
+                       v-cd-s="3"
+                       circle :dark="true" style="position: relative; left: 130px; top: -15px">导出
+            </el-button>-->
             <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent)" v-if="isSelf() && isToday()"
                        type="success"
                        v-cd-s="3"

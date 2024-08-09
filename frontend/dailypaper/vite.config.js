@@ -113,6 +113,7 @@ export default defineConfig((env) => {
                 },
                 output: {
                     manualChunks(id) {
+                        // 第三方库打包结果不和 自己写的代码 混淆在一个包中
                         if (id.includes('node_modules')) {
                             return id.toString().split('node_modules/')[1].split('/')[0].toString();
                         }

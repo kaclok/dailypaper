@@ -151,12 +151,12 @@ public class Entry {
     }
 
     @GetMapping("/export_one")
-    private Result<To_Excel> ExportOne(@RequestParam("userId") short userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+    private Result<To_Excel<To_ExcelRow>> ExportOne(@RequestParam("userId") short userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         lockExportOne.lock();
         try {
             log.info("ExportOne: {}", UrlService.GetFullUrl(request));
 
-            To_Excel rlt = new To_Excel();
+            To_Excel<To_ExcelRow> rlt = new To_Excel<To_ExcelRow>();
             ArrayList<tDateCommit> cs = dateCommitMapper.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId);
 
             rlt.getColNames().add("日期");
@@ -186,7 +186,7 @@ public class Entry {
                 }
             }
 
-            var r = new ResultUtil<To_Excel>();
+            var r = new ResultUtil<To_Excel<To_ExcelRow>>();
             return r.setSuccessMsg("edit success", rlt);
         } finally {
             lockExportOne.unlock();
@@ -194,12 +194,12 @@ public class Entry {
     }
 
     @GetMapping("/export_all")
-    private Result<To_Excel> ExportAll(@RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+    private Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         lockExportAll.lock();
         try {
             log.info("ExportAll: {}", UrlService.GetFullUrl(request));
 
-            To_Excel rlt = new To_Excel();
+            To_Excel<To_ExcelRow> rlt = new To_Excel<To_ExcelRow>();
             ArrayList<tDateCommit> cs = dateCommitMapper.GetRangeCommits(beginDate, endDate);
             boolean hasGetColNames = false;
             for (tDateCommit one : cs) {
@@ -241,7 +241,7 @@ public class Entry {
                 }
             }
 
-            var r = new ResultUtil<To_Excel>();
+            var r = new ResultUtil<To_Excel<To_ExcelRow>>();
             return r.setSuccessMsg("edit success", rlt);
         } finally {
             lockExportAll.unlock();

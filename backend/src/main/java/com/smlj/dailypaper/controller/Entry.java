@@ -40,22 +40,25 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/dailypaper")
 public class Entry {
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    private DateCommitMapper dateCommitMapper;
+    private final DateCommitMapper dateCommitMapper;
 
-    @Autowired
-    private CommitMapper commitMapper;
+    private final CommitMapper commitMapper;
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    private Lock lockGetall = new ReentrantLock();
-    private Lock lockEdit = new ReentrantLock();
-    private Lock lockExportAll = new ReentrantLock();
-    private Lock lockExportOne = new ReentrantLock();
+    private final Lock lockGetall = new ReentrantLock();
+    private final Lock lockEdit = new ReentrantLock();
+    private final Lock lockExportAll = new ReentrantLock();
+    private final Lock lockExportOne = new ReentrantLock();
+
+    public Entry(UserMapper userMapper, DateCommitMapper dateCommitMapper, CommitMapper commitMapper, HttpServletRequest request) {
+        this.userMapper = userMapper;
+        this.dateCommitMapper = dateCommitMapper;
+        this.commitMapper = commitMapper;
+        this.request = request;
+    }
 
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")

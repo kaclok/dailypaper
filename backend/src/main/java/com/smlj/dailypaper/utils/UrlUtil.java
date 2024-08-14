@@ -1,8 +1,8 @@
-package com.smlj.dailypaper.services;
+package com.smlj.dailypaper.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-public class UrlService {
+public class UrlUtil {
     public static String GetFullUrl(HttpServletRequest request) {
         if (request == null) {
             return null;

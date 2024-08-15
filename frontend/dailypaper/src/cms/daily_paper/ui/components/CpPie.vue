@@ -43,8 +43,8 @@ let option = {
         {
             name: '简介',
             type: 'pie',
-            radius: '50',
-            center: ['50%', '50%'],
+            radius: [0, 30],
+            /*center: ['50%', '50%'],*/
             data: [
                 {value: props.unAttand, name: I18N.UN_ATTEND, itemStyle: 'red'},
                 {value: props.attand, name: I18N.ATTEND, itemStyle: 'blue'}
@@ -117,12 +117,10 @@ onUnmounted(() => {
     display: flex;
 
     position: relative;
-    top: 60px;
-    left: 30px;
 }
 
 #pieChart {
     width: 400px;
-    height: 260px;
+    height: 200px;
 }
 </style>

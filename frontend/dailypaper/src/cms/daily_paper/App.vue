@@ -197,9 +197,11 @@ onUnmounted(() => {
         <el-button @click="onExportAll" v-cd-s="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
         </el-button>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
-        <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
-               :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
-        <!--        <span style="font-size: 40px; color: #a0cfff;">数字化中心日报</span>-->
+        <div style="display: flex; margin-top: 60px; align-items: center;">
+            <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
+                   :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
+            <span style="font-size: 80px; font-style: italic; color: #a0cfff; margin-left: 300px; margin-top: -15px">数字化中心日报</span>
+        </div>
         <div class="infinite-list-root" v-loading="loading">
             <CpCard v-for="card in commits"
                     :key="card.userId"
@@ -232,7 +234,6 @@ onUnmounted(() => {
 
 .infinite-list-root {
     position: relative;
-    top: 30px;
     left: 0;
     right: 0;
 

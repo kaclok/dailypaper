@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 public class tCron {
     private int id;
-    private String desc;
+    private String goal;
     private String cron;
 }

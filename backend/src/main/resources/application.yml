@@ -60,10 +60,13 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: trace
     # 枚举类型绑定
     org.hibernate.metamodel.model.convert.internal.NamedEnumValueConverter: trace
+    web: DEBUG
 
 mybatis:
   # resources目录下xml的mapper路径
   mapper-locations: classpath:xmlMapper/*Mapper.xml
+  # 配置 MyBatis 配置文件路径
+  config-location: classpath:mybatis-config.xml
 
   # entity实体类的路径，用于xml文件中的别名，一般是resultType
   # type-aliases-package: com.smlj.dailypaper.entity.po.

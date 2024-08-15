@@ -7,10 +7,10 @@ import com.smlj.dailypaper.entity.vo.to.To_ExcelRow;
 import com.smlj.dailypaper.entity.vo.to.To_Excel;
 import com.smlj.dailypaper.entity.vo.to.To_UserCommit;
 import com.smlj.dailypaper.entity.vo.to.common.Result;
-import com.smlj.dailypaper.mapper.CommitMapper;
-import com.smlj.dailypaper.mapper.DateCommitMapper;
-import com.smlj.dailypaper.mapper.UserMapper;
-import com.smlj.dailypaper.services.UrlService;
+import com.smlj.dailypaper.services.CommitService;
+import com.smlj.dailypaper.services.DateCommitService;
+import com.smlj.dailypaper.services.UserService;
+import com.smlj.dailypaper.utils.UrlUtil;
 import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,33 +40,30 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/dailypaper")
 public class Entry {
-    private final UserMapper userMapper;
+    @Autowired
+    private UserService userService;
 
-    private final DateCommitMapper dateCommitMapper;
+    @Autowired
+    private DateCommitService dateCommitService;
 
-    private final CommitMapper commitMapper;
+    @Autowired
+    private CommitService commitService;
 
-    private final HttpServletRequest request;
+    @Autowired
+    private HttpServletRequest request;
 
     private final Lock lockGetall = new ReentrantLock();
     private final Lock lockEdit = new ReentrantLock();
     private final Lock lockExportAll = new ReentrantLock();
     private final Lock lockExportOne = new ReentrantLock();
 
-    public Entry(UserMapper userMapper, DateCommitMapper dateCommitMapper, CommitMapper commitMapper, HttpServletRequest request) {
-        this.userMapper = userMapper;
-        this.dateCommitMapper = dateCommitMapper;
-        this.commitMapper = commitMapper;
-        this.request = request;
-    }
-
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
     private Result<To_DateCommit> GetAll(@RequestParam("date") long date) {
-        log.info("GetAll:{}", UrlService.GetFullUrl(request));
+        log.info("GetAll:{}", UrlUtil.GetFullUrl(request));
 
         var midNight = DateTimeUtil.convertToMidnightTimestamp(date);
-        var dateCommit = dateCommitMapper.FindBy(midNight);
+        var dateCommit = dateCommitService.FindBy(midNight);
 
         var r = new ResultUtil<To_DateCommit>();
 
@@ -77,7 +74,7 @@ public class Entry {
         if (dateCommit == null) {
             lockGetall.lock();
             try {
-                dateCommitMapper.Insert(midNight);
+                dateCommitService.Insert(midNight);
                 dateCommit = new tDateCommit(midNight);
             } finally {
                 lockGetall.unlock();
@@ -89,13 +86,13 @@ public class Entry {
         for (int i = 0; i < commitIds.size(); i++) {
             var userId = userIds.get(i);
             To_UserCommit tu = new To_UserCommit();
-            var user = userMapper.GetUserById(userId);
+            var user = userService.GetUserById(userId);
             tu.setUserId(userId);
             tu.setName(user.getName());
             tu.setAccount(user.getAccount());
 
             var commitId = commitIds.get(i);
-            tCommit c = commitMapper.FindById(commitId);
+            tCommit c = commitService.FindById(commitId);
             if (c != null) {
                 tu.setTime(c.getCommitDateTime());
                 tu.setContent(c.getContent());
@@ -116,7 +113,7 @@ public class Entry {
             var now = System.currentTimeMillis() / 1000;
             var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
 
-            log.info("Edit: {} -> now:{}, todayMidNight:{}", UrlService.GetFullUrl(request), now, todayMidNight);
+            log.info("Edit: {} -> now:{}, todayMidNight:{}", UrlUtil.GetFullUrl(request), now, todayMidNight);
 
             var r = new ResultUtil<To_DateCommit>();
             if (hash == null || hash != (7 + content.length())) {
@@ -127,10 +124,10 @@ public class Entry {
                 return r.setErrorMsg("Can not edit because not today!", null);
             } else {
                 var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
-                var dateCommit = dateCommitMapper.FindBy(targetMidNight);
+                var dateCommit = dateCommitService.FindBy(targetMidNight);
                 if (dateCommit == null) {
                     // 如果date对应的记录不存在的话，立即插入新纪录
-                    dateCommitMapper.Insert(targetMidNight);
+                    dateCommitService.Insert(targetMidNight);
                 }
 
                 tCommit cm = new tCommit();
@@ -139,12 +136,12 @@ public class Entry {
                 cm.setContent(content);
 
                 // 插入commit表
-                commitMapper.Insert2(cm);
+                commitService.Insert2(cm);
                 // todo 并发的时候是否会出现问题？
                 int lastId = cm.getId();
                 log.info("edit insert id: {}", lastId);
                 // 更新datecommit表
-                dateCommitMapper.Update(targetMidNight, "userId_" + userId, lastId);
+                dateCommitService.Update(targetMidNight, "userId_" + userId, lastId);
 
                 return r.setSuccessMsg("edit success", null);
             }
@@ -157,13 +154,13 @@ public class Entry {
     private Result<To_Excel<To_ExcelRow>> ExportOne(@RequestParam("userId") short userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         lockExportOne.lock();
         try {
-            log.info("ExportOne: {}", UrlService.GetFullUrl(request));
+            log.info("ExportOne: {}", UrlUtil.GetFullUrl(request));
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<To_ExcelRow>();
-            ArrayList<tDateCommit> cs = dateCommitMapper.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId);
+            ArrayList<tDateCommit> cs = dateCommitService.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId);
 
             rlt.getColNames().add("日期");
-            var user = userMapper.GetUserById(userId);
+            var user = userService.GetUserById(userId);
             String colName = Integer.toString(userId);
             if (user != null) {
                 colName = user.getName();
@@ -175,7 +172,7 @@ public class Entry {
                 var commitId = row.GetBy(userId);
                 String content = null;
                 if (commitId != 0) {
-                    var c = commitMapper.FindById(commitId);
+                    var c = commitService.FindById(commitId);
                     if (c != null) {
                         content = c.getContent();
                     }
@@ -200,10 +197,10 @@ public class Entry {
     private Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         lockExportAll.lock();
         try {
-            log.info("ExportAll: {}", UrlService.GetFullUrl(request));
+            log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<To_ExcelRow>();
-            ArrayList<tDateCommit> cs = dateCommitMapper.GetRangeCommits(beginDate, endDate);
+            ArrayList<tDateCommit> cs = dateCommitService.GetRangeCommits(beginDate, endDate);
             boolean hasGetColNames = false;
             for (tDateCommit one : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();
@@ -214,7 +211,7 @@ public class Entry {
                     rlt.getColNames().add("日期");
                     var userIds = one.GetFieldIds();
                     for (var userId : userIds) {
-                        var user = userMapper.GetUserById(userId);
+                        var user = userService.GetUserById(userId);
                         String colName = Integer.toString(userId);
                         if (user != null) {
                             colName = user.getName();
@@ -229,7 +226,7 @@ public class Entry {
                 for (var commitId : one.GetAllIds()) {
                     String content = null;
                     if (commitId != 0) {
-                        var c = commitMapper.FindById(commitId);
+                        var c = commitService.FindById(commitId);
                         if (c != null) {
                             content = c.getContent();
                         }

@@ -1,13 +1,19 @@
 package com.smlj.dailypaper;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-// 导入Gson https://springdoc.cn/spring-boot-gson/
-@SpringBootApplication(exclude = {JacksonAutoConfiguration.class})
 @EnableWebMvc
+// 导入Gson https://springdoc.cn/spring-boot-gson/
+// 有了 多数据源 和动态台数据源 需要屏蔽默认的数据源配置形式
+@SpringBootApplication(exclude = {JacksonAutoConfiguration.class, DataSourceAutoConfiguration.class})
+@EnableAspectJAutoProxy(exposeProxy = true) // http://www.voidcn.com/article/p-zddcuyii-bpt.html
+@MapperScan("com.smlj.dailypaper.mapper")
 public class DailypaperApplication {
     public static void main(String[] args) {
         SpringApplication.run(DailypaperApplication.class, args);

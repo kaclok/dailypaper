@@ -95,6 +95,8 @@
 
         <!-- druid数据库连接池
             https://www.iocoder.cn/Spring-Boot/datasource-pool/?yudao
+            https://github.com/alibaba/druid/tree/master/druid-spring-boot-3-starter
+	    https://github.com/alibaba/druid/blob/master/druid-spring-boot-3-starter/src/test/resources/application-multi-datasource.properties
         -->
         <dependency>
             <groupId>com.alibaba</groupId>

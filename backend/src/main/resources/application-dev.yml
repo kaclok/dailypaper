@@ -46,5 +46,7 @@ spring:
       #password: root
 
 logging:
+  # level:
+    # root: debug # 指定日志级别 把springboot的所有日志修改成为debug
   file:
     name: F:\Projects\SMLJ\svn\DailyPaper\backend\.logs\out.log.txt

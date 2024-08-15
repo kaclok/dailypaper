@@ -25,6 +25,9 @@ spring:
   profiles: # 测试、开发、部署环境切换
     active: dev
 
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+
   jpa: # https://www.zhangbj.com/p/1411.html https://blog.csdn.net/zhaolinfenggg/article/details/135706459
     show-sql: false # 显示sql
     hibernate: # 自动生成表结构
@@ -36,18 +39,6 @@ spring:
   thymeleaf:
     check-template-location: false
 
-  datasource:
-    hikari:
-      # springboot运行时偶先报错：Possibly consider using a shorter maxLifetime value
-      # https://blog.csdn.net/xgw1010/article/details/113604080
-      connection-timeout: 10000
-      validation-timeout: 3000
-      idle-timeout: 60000
-      login-timeout: 5
-      max-lifetime: 60000
-      maximum-pool-size: 10
-      minimum-idle: 5
-      read-only: false
 #  data:
 #    # Redis
 #    redis:

@@ -93,12 +93,14 @@
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
 
-        <!-- druid数据库连接池 -->
-        <!--<dependency>
+        <!-- druid数据库连接池
+            https://www.iocoder.cn/Spring-Boot/datasource-pool/?yudao
+        -->
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
             <version>1.2.23</version>
-        </dependency>-->
+        </dependency>
 
         <!-- redis -->
         <!--<dependency>

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- mapper namespace作用是：代码和xml进行关联 -->
-<!-- https://blog.csdn.net/xu962336414/article/details/105624371 -->
+<!--
+    https://blog.csdn.net/xu962336414/article/details/105624371
+    https://mybatis.net.cn/dynamic-sql.html
+-->
 <mapper namespace="com.smlj.dailypaper.mapper.CommitMapper">
     <!-- id自增，所以使用：useGeneratedKeys="true" keyProperty="id" -->
     <insert id="Insert">

@@ -3,6 +3,8 @@ import {ApiDaily} from "@/cms/daily_paper/api/ApiDaily.js";
 
 class SysDaily {
     _result = null;
+    _departmentId = null;
+    _departmentIdName = null;
 
     GetCommits() {
         if (this._result == null) {
@@ -11,17 +13,19 @@ class SysDaily {
         return this._result.data.commits;
     }
 
-    async RequestGetAll(date, signal, onBefore, onAfter) {
+    async RequestGetAll(userAccount, date, signal, onBefore, onAfter) {
         if (onBefore != null) {
             onBefore();
         }
-        let r = await ApiDaily.GetAll(date, signal);
+        let r = await ApiDaily.GetAll(userAccount, date, signal);
         // 同步时间
         TimeService.initTime(r.data.timestamp);
 
         if (r.data.result && date === r.data.data.date) {
             // 网络消息回来之后，如果和之前的info.value没有区别，则不会触发UI响应式刷新
-            this.SetResult(r.data);
+            this._result = r.data;
+            this._departmentId = this._result.data.departmentId;
+            this._departmentIdName = this._result.data.departmentName;
         }
 
         if (onAfter != null) {
@@ -33,7 +37,7 @@ class SysDaily {
         if (onBefore != null) {
             onBefore();
         }
-        let rlt = await ApiDaily.Edit(date, userId, content, signal);
+        let rlt = await ApiDaily.Edit(this._departmentId, date, userId, content, signal);
 
         // 同步时间
         TimeService.initTime(rlt.data.timestamp);
@@ -51,7 +55,7 @@ class SysDaily {
         if (!onBefore) {
             onBefore();
         }
-        let r = await ApiDaily.ExportAll(beginDate, endDate, signal);
+        let r = await ApiDaily.ExportAll(this._departmentId, beginDate, endDate, signal);
         TimeService.initTime(r.data.timestamp);
         if (onAfter != null) {
             onAfter(r.data);
@@ -62,15 +66,11 @@ class SysDaily {
         if (!onBefore) {
             onBefore();
         }
-        let r = await ApiDaily.ExportOne(userId, beginDate, endDate, signal);
+        let r = await ApiDaily.ExportOne(this._departmentId, userId, beginDate, endDate, signal);
         TimeService.initTime(r.data.timestamp);
         if (onAfter != null) {
             onAfter(r.data);
         }
-    }
-
-    SetResult(r) {
-        this._result = r;
     }
 
     GetResult() {

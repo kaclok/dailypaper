@@ -59,7 +59,7 @@ public class Entry {
 
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
-    private Result<To_DateCommit> GetAll(@RequestParam("date") long date) {
+    private Result<To_DateCommit> GetAll(@RequestParam("userAccount") String userAccount, @RequestParam("date") long date) {
         log.info("GetAll:{}", UrlUtil.GetFullUrl(request));
 
         var midNight = DateTimeUtil.convertToMidnightTimestamp(date);
@@ -70,6 +70,8 @@ public class Entry {
         To_DateCommit to = new To_DateCommit();
         to.setTotal(tDateCommit.GetFieldCount());
         to.setDate(midNight);
+        to.setDepartmentId(0);
+        to.setDepartmentName("数字化中心");
 
         if (dateCommit == null) {
             lockGetall.lock();
@@ -106,7 +108,7 @@ public class Entry {
     }
 
     @GetMapping("/edit")
-    private Result<To_DateCommit> Edit(@RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content,
+    private Result<To_DateCommit> Edit(@RequestParam("departmentId") int departmentId, @RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content,
                                        @RequestParam(name = "hash", required = false) Integer hash) {
         lockEdit.lock();
         try {
@@ -151,7 +153,7 @@ public class Entry {
     }
 
     @GetMapping("/export_one")
-    private Result<To_Excel<To_ExcelRow>> ExportOne(@RequestParam("userId") short userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+    private Result<To_Excel<To_ExcelRow>> ExportOne(@RequestParam("departmentId") int departmentId, @RequestParam("userId") short userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         lockExportOne.lock();
         try {
             log.info("ExportOne: {}", UrlUtil.GetFullUrl(request));
@@ -194,7 +196,7 @@ public class Entry {
     }
 
     @GetMapping("/export_all")
-    private Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+    private Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("departmentId") int departmentId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         lockExportAll.lock();
         try {
             log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));

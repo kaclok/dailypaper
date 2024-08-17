@@ -35,16 +35,18 @@ let selectedLegend = ref({
     [I18N.UN_ATTEND]: true,
 });
 let loading = ref(false);
+let title = ref('');
 
 function onDateChanged(date) {
     let sec = date / 1000;
-    Singleton.getInstance(SysDaily).RequestGetAll(sec, getAllCtrl.signal, () => {
+    Singleton.getInstance(SysDaily).RequestGetAll(account, sec, getAllCtrl.signal, () => {
         loading.value = true;
     }, (r) => {
         loading.value = false;
 
         // 触发响应式UI刷新
         refreshCommits();
+        title.value = Singleton.getInstance(SysDaily)._departmentIdName;
     });
 
     selectedDate.value = sec;
@@ -201,7 +203,7 @@ onUnmounted(() => {
             <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
                    :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
             <span style="font-size: 80px; font-style: italic; color: #a0cfff; margin-left: 300px; margin-top: -15px; height: 160px; width: 580px;
-            overflow: hidden;">数字化中心日报</span>
+            overflow: hidden;">{{ title }}</span>
         </div>
         <div class="infinite-list-root" v-loading="loading">
             <CpCard v-for="card in commits"

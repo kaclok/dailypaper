@@ -12,7 +12,7 @@
         <result property="sort_order" column="sort_order" jdbcType="NUMERIC"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="title" column="title" jdbcType="VARCHAR"/>
-        <result property="is_parent" column="is_parent" jdbcType="VARCHAR"/>
+        <result property="is_parent" column="is_parent" jdbcType="BOOLEAN"/>
         <result property="open_status" column="open_status" jdbcType="INTEGER"/>
         <result property="code" column="code" jdbcType="VARCHAR"/>
         <result property="parent_code" column="parent_code" jdbcType="VARCHAR"/>

@@ -1,6 +1,5 @@
 package com.smlj.dailypaper.table_3rd.entity;
 
-import java.util.Boolean;
 import java.util.Date;
 import java.io.Serializable;
 import java.io.Serial;
@@ -11,12 +10,12 @@ import lombok.Data;
  * (TDepartment)表实体类
  *
  * @author Cui
- * @since 2024-08-18 17:37:58
+ * @since 2024-08-18 18:01:53
  */
 @Data
 public class TDepartment implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1; // -57422058565690574L;
+    private static final long serialVersionUID = 1; // -13145078355808757L;
 
     private String id;
     private String create_by;

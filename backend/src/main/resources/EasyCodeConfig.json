@@ -76,7 +76,7 @@
       }, {
         "matchType" : "ORDINARY",
         "columnType" : "bit(1)",
-        "javaType" : "java.util.Boolean"
+        "javaType" : "java.lang.Boolean"
       }, {
         "matchType" : "ORDINARY",
         "columnType" : "datetime(6)",

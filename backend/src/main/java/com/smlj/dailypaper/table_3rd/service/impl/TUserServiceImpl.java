@@ -14,10 +14,10 @@ import com.smlj.dailypaper.config.db.EDatasource;
  * (TUser)表服务实现类
  *
  * @author Cui
- * @since 2024-08-18 17:37:59
+ * @since 2024-08-18 17:57:32
  */
 @Slf4j
-@DS(EDatasource.dailypaper)
+@DS(EDatasource.jtmenhu)
 @Service("TUserService")
 public class TUserServiceImpl implements TUserService {
     @Autowired

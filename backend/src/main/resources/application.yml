@@ -56,9 +56,9 @@ logging:
 
 mybatis:
   # resources目录下xml的mapper路径
-  mapper-locations: classpath:xmlMapper/*Mapper.xml
+  mapper-locations: classpath:xmlMapper/*Dao.xml
   # 配置 MyBatis 配置文件路径
   config-location: classpath:mybatis-config.xml
 
   # entity实体类的路径，用于xml文件中的别名，一般是resultType
-  # type-aliases-package: com.smlj.dailypaper.entity.po.
+  # type-aliases-package: com.smlj.dailypaper.table.entity

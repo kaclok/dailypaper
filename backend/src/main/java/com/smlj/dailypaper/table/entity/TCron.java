@@ -1,4 +1,4 @@
-package com.smlj.dailypaper.entity.po;
+package com.smlj.dailypaper.table.entity;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
 // https://www.runoob.com/w3cnote/linux-crontab-tasks.html
 // @Data特性可以帮助自己写getter、setter等函数
 @Data
-public class tCron {
+public class TCron {
     private int id;
     private String goal;
     private String cron;

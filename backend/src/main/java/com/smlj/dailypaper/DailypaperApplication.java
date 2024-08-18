@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 // 有了 多数据源 和动态台数据源 需要屏蔽默认的数据源配置形式
 @SpringBootApplication(exclude = {JacksonAutoConfiguration.class, DataSourceAutoConfiguration.class})
 @EnableAspectJAutoProxy(exposeProxy = true) // http://www.voidcn.com/article/p-zddcuyii-bpt.html
-@MapperScan("com.smlj.dailypaper.mapper")
+@MapperScan("com.smlj.dailypaper.table.dao")
 public class DailypaperApplication {
     public static void main(String[] args) {
         SpringApplication.run(DailypaperApplication.class, args);

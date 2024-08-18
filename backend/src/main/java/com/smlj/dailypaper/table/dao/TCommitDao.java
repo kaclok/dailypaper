@@ -1,18 +1,18 @@
-package com.smlj.dailypaper.mapper;
+package com.smlj.dailypaper.table.dao;
 
-import com.smlj.dailypaper.entity.po.tCommit;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import com.smlj.dailypaper.table.entity.TCommit;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Mapper
-public interface CommitMapper {
+public interface TCommitDao {
     public int Insert(@Param("userId") int userId, @Param("commitDateTime") int commitDateTime, @Param("content") String content);
 
-    public int Insert2(tCommit tCommit);
+    public int Insert2(TCommit tCommit);
 
     public int GetLastId();
 
-    public tCommit FindById(@Param("id") int id);
+    public TCommit FindById(@Param("id") int id);
 }

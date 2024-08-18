@@ -1,10 +1,9 @@
-package com.smlj.dailypaper.entity.vo.to;
+package com.smlj.dailypaper.proto.to;
 
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 @Data
 public class To_DateCommit implements Serializable {

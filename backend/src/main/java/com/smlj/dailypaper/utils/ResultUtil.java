@@ -1,6 +1,6 @@
 package com.smlj.dailypaper.utils;
 
-import com.smlj.dailypaper.entity.vo.to.common.Result;
+import com.smlj.dailypaper.proto.to.common.Result;
 
 // 前后端交互数据标准
 public final class ResultUtil<T> {

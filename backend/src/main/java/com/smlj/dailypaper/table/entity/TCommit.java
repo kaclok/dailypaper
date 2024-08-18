@@ -1,9 +1,9 @@
-package com.smlj.dailypaper.entity.po;
+package com.smlj.dailypaper.table.entity;
 
 import lombok.Data;
 
 @Data
-public class tCommit {
+public class TCommit {
     private int id;
     private int userId;
     private long commitDateTime;

@@ -1,11 +1,11 @@
-package com.smlj.dailypaper.entity.po;
+package com.smlj.dailypaper.table.entity;
 
 import lombok.Data;
 
 import java.util.ArrayList;
 
 @Data
-public class tDateCommit {
+public class TDateCommit {
     private long date;
     private int userId_1;
     private int userId_2;
@@ -24,10 +24,10 @@ public class tDateCommit {
     private int userId_15;
     private int userId_16;
 
-    public tDateCommit() {
+    public TDateCommit() {
     }
 
-    public tDateCommit(long date) {
+    public TDateCommit(long date) {
         this.date = date;
         userId_1 = userId_2 = userId_3 = userId_4 = userId_5 = userId_6 = userId_7 = userId_8 = userId_9 = userId_10 = userId_11 = userId_12 = userId_13 = userId_14 = userId_15 = userId_16 = 0;
     }

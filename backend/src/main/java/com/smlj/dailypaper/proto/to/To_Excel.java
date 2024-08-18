@@ -1,4 +1,4 @@
-package com.smlj.dailypaper.entity.vo.to;
+package com.smlj.dailypaper.proto.to;
 
 import lombok.Data;
 

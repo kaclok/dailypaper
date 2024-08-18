@@ -1,6 +1,6 @@
-package com.smlj.dailypaper.mapper;
+package com.smlj.dailypaper.table.dao;
 
-import com.smlj.dailypaper.entity.po.tUser;
+import com.smlj.dailypaper.table.entity.TUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -10,10 +10,10 @@ import java.util.ArrayList;
 
 @Repository
 @Mapper
-public interface UserMapper {
+public interface TUserDao {
     // 测试非xml配置的模式进行数据库访问
     @Select("select * from t_user")
-    public ArrayList<tUser> FindAll();
+    public ArrayList<TUser> FindAll();
 
-    public tUser GetUserById(@Param("userId") int userId);
+    public TUser GetUserById(@Param("userId") int userId);
 }

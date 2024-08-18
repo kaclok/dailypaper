@@ -1,4 +1,4 @@
-package com.smlj.dailypaper.entity.vo.to.common;
+package com.smlj.dailypaper.proto.to.common;
 
 import com.smlj.dailypaper.utils.DateTimeUtil;
 import lombok.Data;

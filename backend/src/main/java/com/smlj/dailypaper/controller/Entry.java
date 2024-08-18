@@ -1,15 +1,15 @@
 package com.smlj.dailypaper.controller;
 
-import com.smlj.dailypaper.entity.po.tCommit;
-import com.smlj.dailypaper.entity.po.tDateCommit;
-import com.smlj.dailypaper.entity.vo.to.To_DateCommit;
-import com.smlj.dailypaper.entity.vo.to.To_ExcelRow;
-import com.smlj.dailypaper.entity.vo.to.To_Excel;
-import com.smlj.dailypaper.entity.vo.to.To_UserCommit;
-import com.smlj.dailypaper.entity.vo.to.common.Result;
-import com.smlj.dailypaper.services.CommitService;
-import com.smlj.dailypaper.services.DateCommitService;
-import com.smlj.dailypaper.services.UserService;
+import com.smlj.dailypaper.table.entity.TDateCommit;
+import com.smlj.dailypaper.table.entity.TCommit;
+import com.smlj.dailypaper.proto.to.To_DateCommit;
+import com.smlj.dailypaper.proto.to.To_ExcelRow;
+import com.smlj.dailypaper.proto.to.To_Excel;
+import com.smlj.dailypaper.proto.to.To_UserCommit;
+import com.smlj.dailypaper.proto.to.common.Result;
+import com.smlj.dailypaper.table.service.TCommitService;
+import com.smlj.dailypaper.table.service.TDateCommitService;
+import com.smlj.dailypaper.table.service.TUserService;
 import com.smlj.dailypaper.utils.UrlUtil;
 import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
@@ -41,13 +41,13 @@ import java.util.ArrayList;
 @RequestMapping("/dailypaper")
 public class Entry {
     @Autowired
-    private UserService userService;
+    private TUserService userService;
 
     @Autowired
-    private DateCommitService dateCommitService;
+    private TDateCommitService dateCommitService;
 
     @Autowired
-    private CommitService commitService;
+    private TCommitService commitService;
 
     @Autowired
     private HttpServletRequest request;
@@ -68,7 +68,7 @@ public class Entry {
         var r = new ResultUtil<To_DateCommit>();
 
         To_DateCommit to = new To_DateCommit();
-        to.setTotal(tDateCommit.GetFieldCount());
+        to.setTotal(TDateCommit.GetFieldCount());
         to.setDate(midNight);
         to.setDepartmentId(0);
         to.setDepartmentName("数字化中心");
@@ -77,7 +77,7 @@ public class Entry {
             lockGetall.lock();
             try {
                 dateCommitService.Insert(midNight);
-                dateCommit = new tDateCommit(midNight);
+                dateCommit = new TDateCommit(midNight);
             } finally {
                 lockGetall.unlock();
             }
@@ -94,7 +94,7 @@ public class Entry {
             tu.setAccount(user.getAccount());
 
             var commitId = commitIds.get(i);
-            tCommit c = commitService.FindById(commitId);
+            TCommit c = commitService.FindById(commitId);
             if (c != null) {
                 tu.setTime(c.getCommitDateTime());
                 tu.setContent(c.getContent());
@@ -132,7 +132,7 @@ public class Entry {
                     dateCommitService.Insert(targetMidNight);
                 }
 
-                tCommit cm = new tCommit();
+                TCommit cm = new TCommit();
                 cm.setUserId(userId);
                 cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
                 cm.setContent(content);
@@ -159,7 +159,7 @@ public class Entry {
             log.info("ExportOne: {}", UrlUtil.GetFullUrl(request));
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<To_ExcelRow>();
-            ArrayList<tDateCommit> cs = dateCommitService.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId);
+            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId);
 
             rlt.getColNames().add("日期");
             var user = userService.GetUserById(userId);
@@ -169,7 +169,7 @@ public class Entry {
             }
             rlt.getColNames().add(colName);
 
-            for (tDateCommit row : cs) {
+            for (TDateCommit row : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();
                 var commitId = row.GetBy(userId);
                 String content = null;
@@ -202,9 +202,9 @@ public class Entry {
             log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<To_ExcelRow>();
-            ArrayList<tDateCommit> cs = dateCommitService.GetRangeCommits(beginDate, endDate);
+            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommits(beginDate, endDate);
             boolean hasGetColNames = false;
-            for (tDateCommit one : cs) {
+            for (TDateCommit one : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();
                 excelRow.setTime(one.getDate());
                 boolean allEmpty = true;

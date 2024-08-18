@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smlj.dailypaper.table_3rd.dao.TUserDao">
+    <resultMap type="com.smlj.dailypaper.table_3rd.entity.TUser" id="TUserMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="create_by" column="create_by" jdbcType="VARCHAR"/>
+        <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="update_by" column="update_by" jdbcType="VARCHAR"/>
+        <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="mobile" column="mobile" jdbcType="VARCHAR"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="del_flag" column="del_flag" jdbcType="INTEGER"/>
+        <result property="department_id" column="department_id" jdbcType="VARCHAR"/>
+        <result property="street" column="street" jdbcType="VARCHAR"/>
+        <result property="pass_strength" column="pass_strength" jdbcType="VARCHAR"/>
+        <result property="department_title" column="department_title" jdbcType="VARCHAR"/>
+        <result property="birth" column="birth" jdbcType="TIMESTAMP"/>
+        <result property="open_status" column="open_status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="TUserMap">
+        select create_by,
+               create_time,
+               update_by,
+               update_time,
+               address,
+               avatar,
+               description,
+               email,
+               mobile,
+               nickname,
+               password,
+               sex,
+               status,
+               type,
+               username,
+               del_flag,
+               department_id,
+               street,
+               pass_strength,
+               department_title,
+               birth,
+               open_status
+        from t_user
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="TUserMap">
+        select
+        create_by, create_time, update_by, update_time, address, avatar, description, email, mobile, nickname, password,
+        sex, status, type, username, del_flag, department_id, street, pass_strength, department_title, birth,
+        open_status
+        from t_user
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="create_by != null and create_by != ''">
+                and create_by = #{create_by}
+            </if>
+            <if test="create_time != null">
+                and create_time = #{create_time}
+            </if>
+            <if test="update_by != null and update_by != ''">
+                and update_by = #{update_by}
+            </if>
+            <if test="update_time != null">
+                and update_time = #{update_time}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="avatar != null and avatar != ''">
+                and avatar = #{avatar}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and nickname = #{nickname}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="del_flag != null">
+                and del_flag = #{del_flag}
+            </if>
+            <if test="department_id != null and department_id != ''">
+                and department_id = #{department_id}
+            </if>
+            <if test="street != null and street != ''">
+                and street = #{street}
+            </if>
+            <if test="pass_strength != null and pass_strength != ''">
+                and pass_strength = #{pass_strength}
+            </if>
+            <if test="department_title != null and department_title != ''">
+                and department_title = #{department_title}
+            </if>
+            <if test="birth != null">
+                and birth = #{birth}
+            </if>
+            <if test="open_status != null">
+                and open_status = #{open_status}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from t_user
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="create_by != null and create_by != ''">
+                and create_by = #{create_by}
+            </if>
+            <if test="create_time != null">
+                and create_time = #{create_time}
+            </if>
+            <if test="update_by != null and update_by != ''">
+                and update_by = #{update_by}
+            </if>
+            <if test="update_time != null">
+                and update_time = #{update_time}
+            </if>
+            <if test="address != null and address != ''">
+                and address = #{address}
+            </if>
+            <if test="avatar != null and avatar != ''">
+                and avatar = #{avatar}
+            </if>
+            <if test="description != null and description != ''">
+                and description = #{description}
+            </if>
+            <if test="email != null and email != ''">
+                and email = #{email}
+            </if>
+            <if test="mobile != null and mobile != ''">
+                and mobile = #{mobile}
+            </if>
+            <if test="nickname != null and nickname != ''">
+                and nickname = #{nickname}
+            </if>
+            <if test="password != null and password != ''">
+                and password = #{password}
+            </if>
+            <if test="sex != null and sex != ''">
+                and sex = #{sex}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="del_flag != null">
+                and del_flag = #{del_flag}
+            </if>
+            <if test="department_id != null and department_id != ''">
+                and department_id = #{department_id}
+            </if>
+            <if test="street != null and street != ''">
+                and street = #{street}
+            </if>
+            <if test="pass_strength != null and pass_strength != ''">
+                and pass_strength = #{pass_strength}
+            </if>
+            <if test="department_title != null and department_title != ''">
+                and department_title = #{department_title}
+            </if>
+            <if test="birth != null">
+                and birth = #{birth}
+            </if>
+            <if test="open_status != null">
+                and open_status = #{open_status}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into t_user(create_by, create_time, update_by, update_time, address, avatar, description, email, mobile,
+                           nickname, password, sex, status, type, username, del_flag, department_id, street,
+                           pass_strength, department_title, birth, open_status)
+        values (#{create_by}, #{create_time}, #{update_by}, #{update_time}, #{address}, #{avatar}, #{description},
+                #{email}, #{mobile}, #{nickname}, #{password}, #{sex}, #{status}, #{type}, #{username}, #{del_flag},
+                #{department_id}, #{street}, #{pass_strength}, #{department_title}, #{birth}, #{open_status})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into t_user(
+        create_by, create_time, update_by, update_time, address, avatar, description, email, mobile, nickname, password,
+        sex, status, type, username, del_flag, department_id, street, pass_strength, department_title, birth,
+        open_status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.create_by}, #{entity.create_time}, #{entity.update_by}, #{entity.update_time}, #{entity.address},
+            #{entity.avatar}, #{entity.description}, #{entity.email}, #{entity.mobile}, #{entity.nickname},
+            #{entity.password}, #{entity.sex}, #{entity.status}, #{entity.type}, #{entity.username}, #{entity.del_flag},
+            #{entity.department_id}, #{entity.street}, #{entity.pass_strength}, #{entity.department_title},
+            #{entity.birth}, #{entity.open_status})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into t_user(
+        create_by, create_time, update_by, update_time, address, avatar, description, email, mobile, nickname, password,
+        sex, status, type, username, del_flag, department_id, street, pass_strength, department_title, birth,
+        open_status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.create_by}, #{entity.create_time}, #{entity.update_by}, #{entity.update_time}, #{entity.address},
+            #{entity.avatar}, #{entity.description}, #{entity.email}, #{entity.mobile}, #{entity.nickname},
+            #{entity.password}, #{entity.sex}, #{entity.status}, #{entity.type}, #{entity.username}, #{entity.del_flag},
+            #{entity.department_id}, #{entity.street}, #{entity.pass_strength}, #{entity.department_title},
+            #{entity.birth}, #{entity.open_status})
+        </foreach>
+        on duplicate key update
+        create_by = values(create_by),
+        create_time = values(create_time),
+        update_by = values(update_by),
+        update_time = values(update_time),
+        address = values(address),
+        avatar = values(avatar),
+        description = values(description),
+        email = values(email),
+        mobile = values(mobile),
+        nickname = values(nickname),
+        password = values(password),
+        sex = values(sex),
+        status = values(status),
+        type = values(type),
+        username = values(username),
+        del_flag = values(del_flag),
+        department_id = values(department_id),
+        street = values(street),
+        pass_strength = values(pass_strength),
+        department_title = values(department_title),
+        birth = values(birth),
+        open_status = values(open_status)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update t_user
+        <set>
+            <if test="create_by != null and create_by != ''">
+                create_by = #{create_by},
+            </if>
+            <if test="create_time != null">
+                create_time = #{create_time},
+            </if>
+            <if test="update_by != null and update_by != ''">
+                update_by = #{update_by},
+            </if>
+            <if test="update_time != null">
+                update_time = #{update_time},
+            </if>
+            <if test="address != null and address != ''">
+                address = #{address},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar = #{avatar},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="del_flag != null">
+                del_flag = #{del_flag},
+            </if>
+            <if test="department_id != null and department_id != ''">
+                department_id = #{department_id},
+            </if>
+            <if test="street != null and street != ''">
+                street = #{street},
+            </if>
+            <if test="pass_strength != null and pass_strength != ''">
+                pass_strength = #{pass_strength},
+            </if>
+            <if test="department_title != null and department_title != ''">
+                department_title = #{department_title},
+            </if>
+            <if test="birth != null">
+                birth = #{birth},
+            </if>
+            <if test="open_status != null">
+                open_status = #{open_status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from t_user
+        where id = #{id}
+    </delete>
+</mapper>
+

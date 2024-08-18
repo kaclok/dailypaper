@@ -61,4 +61,4 @@ mybatis:
   config-location: classpath:mybatis-config.xml
 
   # entity实体类的路径，用于xml文件中的别名，一般是resultType
-  # type-aliases-package: com.smlj.dailypaper.table.entity
+  # type-aliases-package: com.smlj.dailypaper.table*.entity

@@ -12,10 +12,10 @@ import java.util.List;
  * (TUser)表数据库访问层
  *
  * @author Cui
- * @since 2024-08-18 17:37:58
+ * @since 2024-08-19 08:29:19
  */
-@Repository
 @Mapper
+@Repository("jtmenhu_TUserDao")
 public interface TUserDao {
     /**
      * 通过ID查询单条数据

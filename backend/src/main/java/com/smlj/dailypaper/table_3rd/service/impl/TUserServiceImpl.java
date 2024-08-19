@@ -4,23 +4,25 @@ import com.smlj.dailypaper.table_3rd.entity.TUser;
 import com.smlj.dailypaper.table_3rd.dao.TUserDao;
 import com.smlj.dailypaper.table_3rd.service.TUserService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.dynamic.datasource.annotation.DS;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import com.smlj.dailypaper.config.db.EDatasource;
 
 /**
  * (TUser)表服务实现类
  *
  * @author Cui
- * @since 2024-08-18 17:57:32
+ * @since 2024-08-19 08:29:19
  */
 @Slf4j
 @DS(EDatasource.jtmenhu)
-@Service("TUserService")
+@Service("jtmenhu_TUserService")
 public class TUserServiceImpl implements TUserService {
     @Autowired
+    @Qualifier("jtmenhu_TUserDao")
     private TUserDao tUserDao;
 
     /**

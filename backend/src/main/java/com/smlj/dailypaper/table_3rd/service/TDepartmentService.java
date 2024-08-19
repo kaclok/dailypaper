@@ -6,7 +6,7 @@ import com.smlj.dailypaper.table_3rd.entity.TDepartment;
  * (TDepartment)表服务接口
  *
  * @author Cui
- * @since 2024-08-18 17:37:58
+ * @since 2024-08-19 08:29:18
  */
 public interface TDepartmentService {
     /**

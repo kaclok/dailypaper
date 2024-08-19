@@ -5,18 +5,20 @@ import java.util.Date;
 import java.io.Serializable;
 import java.io.Serial;
 
+import org.springframework.stereotype.Component;
 import lombok.Data;
 
 /**
  * (TUser)表实体类
  *
  * @author Cui
- * @since 2024-08-18 17:37:59
+ * @since 2024-08-19 08:29:19
  */
 @Data
+@Component("jtmenhu_TUser")
 public class TUser implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1; // 256355531036328527L;
+    private static final long serialVersionUID = 1; // -87089175252424814L;
 
     private String id;
     private String create_by;

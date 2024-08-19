@@ -6,7 +6,7 @@ import com.smlj.dailypaper.table_3rd.entity.TUser;
  * (TUser)表服务接口
  *
  * @author Cui
- * @since 2024-08-18 17:37:59
+ * @since 2024-08-19 08:29:19
  */
 public interface TUserService {
     /**

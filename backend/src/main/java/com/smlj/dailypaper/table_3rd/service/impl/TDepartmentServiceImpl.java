@@ -4,23 +4,25 @@ import com.smlj.dailypaper.table_3rd.entity.TDepartment;
 import com.smlj.dailypaper.table_3rd.dao.TDepartmentDao;
 import com.smlj.dailypaper.table_3rd.service.TDepartmentService;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.dynamic.datasource.annotation.DS;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import com.smlj.dailypaper.config.db.EDatasource;
 
 /**
  * (TDepartment)表服务实现类
  *
  * @author Cui
- * @since 2024-08-18 17:57:32
+ * @since 2024-08-19 08:29:18
  */
 @Slf4j
 @DS(EDatasource.jtmenhu)
-@Service("TDepartmentService")
+@Service("jtmenhu_TDepartmentService")
 public class TDepartmentServiceImpl implements TDepartmentService {
     @Autowired
+    @Qualifier("jtmenhu_TDepartmentDao")
     private TDepartmentDao tDepartmentDao;
 
     /**

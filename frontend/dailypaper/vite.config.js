@@ -104,7 +104,7 @@ export default defineConfig((env) => {
         // 解决：https://blog.csdn.net/Dawnchen1/article/details/118994062
         build: {
             manifest: true,
-            outDir: (config.VITE_OUT_DIR || 'dist') + ' - 0.0.1-cors',
+            outDir: (config.VITE_OUT_DIR || 'dist') + '-0.0.1-cors',
             chunkSizeWarningLimit: 500,
             rollupOptions: {
                 input: { // https://cn.vitejs.dev/guide/build#multi-page-app

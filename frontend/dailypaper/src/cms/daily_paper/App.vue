@@ -9,7 +9,7 @@ import CpCard from '@/cms/daily_paper/ui/components/CpCard.vue'
 import CpPie from '@/cms/daily_paper/ui/components/CpPie.vue'
 
 import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
-import {I18N} from "@/cms/daily_paper/config/I18N.js";
+import {t} from "@/framework/services/LocaleService";
 import {ExcelService} from "@/framework/services/ExcelService";
 
 let commits = ref(null);
@@ -31,8 +31,8 @@ let curAccount = ref(account);
 
 // 默认饼图legend都选中
 let selectedLegend = ref({
-    [I18N.ATTEND]: true,
-    [I18N.UN_ATTEND]: true,
+    [t('cms.daily_paper.UN_ATTEND')]: true,
+    [t('cms.daily_paper.ATTEND')]: true,
 });
 let loading = ref(false);
 let title = ref('');
@@ -65,8 +65,8 @@ function onLegendSelectChanged(params) {
 }
 
 function refreshCommits() {
-    let attend = selectedLegend.value[I18N.ATTEND];
-    let unAttend = selectedLegend.value[I18N.UN_ATTEND];
+    let attend = selectedLegend.value[t('cms.daily_paper.ATTEND')];
+    let unAttend = selectedLegend.value[t('cms.daily_paper.UN_ATTEND')];
     // 更新commits
     if (attend && unAttend) {
         commits.value = Singleton.getInstance(SysDaily).GetCommits();

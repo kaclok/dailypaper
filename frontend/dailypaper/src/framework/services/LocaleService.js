@@ -41,7 +41,7 @@ export class LocaleService {
         console.log("current locale is: ", targetLocale);
 
         LocaleService._SetHTMLLocale(targetLocale);
-        LocaleService._curLocaleContent = await import(`@/locales/${targetLocale}.yml`);
+        LocaleService._curLocaleContent = await import(`@/locales/${targetLocale}.json`);
         let options = LocaleService._LocaleOption(LocaleService._curLocaleContent);
         LocaleService.i18n = createI18n(options);
 

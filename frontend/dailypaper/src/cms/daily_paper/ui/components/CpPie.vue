@@ -1,7 +1,7 @@
 <script setup>
 import {onMounted, onBeforeUpdate, onUnmounted} from 'vue'
 import {echarts} from '@/plugins/EchartsCore.js'
-import {I18N} from '@/cms/daily_paper/config/I18N.js'
+import {t} from "@/framework/services/LocaleService";
 
 const props = defineProps(["attand", "unAttand", "selected"]);
 const emit = defineEmits(['onLegendSelectChanged']);
@@ -29,12 +29,12 @@ let option = {
         top: "40%",
         data: [
             {
-                name: I18N.ATTEND, textStyle: {
+                name: t('cms.daily_paper.ATTEND'), textStyle: {
                     color: 'white',
                 }
             },
             {
-                name: I18N.UN_ATTEND, textStyle: {
+                name: t('cms.daily_paper.UN_ATTEND'), textStyle: {
                     color: 'white',
                 }
             }],
@@ -46,8 +46,8 @@ let option = {
             radius: [0, 30],
             /*center: ['50%', '50%'],*/
             data: [
-                {value: props.unAttand, name: I18N.UN_ATTEND, itemStyle: 'red'},
-                {value: props.attand, name: I18N.ATTEND, itemStyle: 'blue'}
+                {value: props.unAttand, name: t('cms.daily_paper.UN_ATTEND'), itemStyle: 'red'},
+                {value: props.attand, name: t('cms.daily_paper.ATTEND'), itemStyle: 'blue'}
             ],
             itemStyle: {
                 /*emphasis: {

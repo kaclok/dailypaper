@@ -121,7 +121,7 @@ public class Entry {
             if (hash == null || hash != (7 + content.length())) {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("hash not valid!", null);
-            } else if (date < todayMidNight) {
+            } else if (date + 86400 * 2 < todayMidNight) {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("Can not edit because not today!", null);
             } else {

@@ -22,7 +22,7 @@ function isSelf() {
 function isToday() {
     let midNight = props.date;
     let todayMidNight = DateTimeUtil.nowDate().getTime() / 1000;
-    return midNight >= todayMidNight;
+    return midNight >= todayMidNight - 86400 * 2;
 }
 
 function hasContent() {

@@ -71,7 +71,7 @@ public class Entry {
         to.setTotal(TDateCommit.GetFieldCount());
         to.setDate(midNight);
         to.setDepartmentId(0);
-        to.setDepartmentName("数字化中心");
+        to.setDepartmentName("数字化中心日报");
 
         if (dateCommit == null) {
             lockGetall.lock();

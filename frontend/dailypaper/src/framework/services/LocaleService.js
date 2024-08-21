@@ -3,7 +3,7 @@ import {createI18n} from 'vue-i18n'
 export const ELocaleType = {
     nil: 'nil',
     zh_CN: "zh_CN",
-    en: 'en',
+    en_US: 'en_US',
 }
 
 export class LocaleService {

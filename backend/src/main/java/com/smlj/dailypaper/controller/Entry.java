@@ -63,7 +63,7 @@ public class Entry {
         log.info("GetAll:{}", UrlUtil.GetFullUrl(request));
 
         var midNight = DateTimeUtil.convertToMidnightTimestamp(date);
-        var dateCommit = dateCommitService.FindBy(midNight);
+        var dateCommit = dateCommitService.FindBy(midNight, "t_DateCommit");
 
         var r = new ResultUtil<To_DateCommit>();
 
@@ -76,7 +76,7 @@ public class Entry {
         if (dateCommit == null) {
             lockGetall.lock();
             try {
-                dateCommitService.Insert(midNight);
+                dateCommitService.Insert(midNight, "t_DateCommit");
                 dateCommit = new TDateCommit(midNight);
             } finally {
                 lockGetall.unlock();
@@ -126,10 +126,10 @@ public class Entry {
                 return r.setErrorMsg("Can not edit because not today!", null);
             } else {
                 var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
-                var dateCommit = dateCommitService.FindBy(targetMidNight);
+                var dateCommit = dateCommitService.FindBy(targetMidNight, "t_DateCommit");
                 if (dateCommit == null) {
                     // 如果date对应的记录不存在的话，立即插入新纪录
-                    dateCommitService.Insert(targetMidNight);
+                    dateCommitService.Insert(targetMidNight, "t_DateCommit");
                 }
 
                 TCommit cm = new TCommit();
@@ -143,7 +143,7 @@ public class Entry {
                 int lastId = cm.getId();
                 log.info("edit insert id: {}", lastId);
                 // 更新datecommit表
-                dateCommitService.Update(targetMidNight, "userId_" + userId, lastId);
+                dateCommitService.Update(targetMidNight, "userId_" + userId, lastId, "t_DateCommit");
 
                 return r.setSuccessMsg("edit success", null);
             }
@@ -158,8 +158,8 @@ public class Entry {
         try {
             log.info("ExportOne: {}", UrlUtil.GetFullUrl(request));
 
-            To_Excel<To_ExcelRow> rlt = new To_Excel<To_ExcelRow>();
-            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId);
+            To_Excel<To_ExcelRow> rlt = new To_Excel<>();
+            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId, "t_DateCommit");
 
             rlt.getColNames().add("日期");
             var user = userService.GetUserById(userId);
@@ -201,8 +201,8 @@ public class Entry {
         try {
             log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));
 
-            To_Excel<To_ExcelRow> rlt = new To_Excel<To_ExcelRow>();
-            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommits(beginDate, endDate);
+            To_Excel<To_ExcelRow> rlt = new To_Excel<>();
+            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommits(beginDate, endDate, "t_DateCommit");
             boolean hasGetColNames = false;
             for (TDateCommit one : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();

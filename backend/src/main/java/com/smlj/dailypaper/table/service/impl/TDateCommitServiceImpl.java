@@ -19,27 +19,27 @@ public class TDateCommitServiceImpl implements TDateCommitService {
     private TDateCommitDao tDateCommitDao;
 
     @Override
-    public int Insert(long date) {
-        return tDateCommitDao.Insert(date);
+    public int Insert(long date, String tName) {
+        return tDateCommitDao.Insert(date, tName);
     }
 
     @Override
-    public void Update(long date, String colName, int commitId) {
-        tDateCommitDao.Update(date, colName, commitId);
+    public void Update(long date, String colName, int commitId, String tName) {
+        tDateCommitDao.Update(date, colName, commitId, tName);
     }
 
     @Override
-    public TDateCommit FindBy(long date) {
-        return tDateCommitDao.FindBy(date);
+    public TDateCommit FindBy(long date, String tName) {
+        return tDateCommitDao.FindBy(date, tName);
     }
 
     @Override
-    public ArrayList<TDateCommit> GetRangeCommitsByUser(long from, long to, String colName) {
-        return tDateCommitDao.GetRangeCommitsByUser(from, to, colName);
+    public ArrayList<TDateCommit> GetRangeCommitsByUser(long from, long to, String colName, String tName) {
+        return tDateCommitDao.GetRangeCommitsByUser(from, to, colName, tName);
     }
 
     @Override
-    public ArrayList<TDateCommit> GetRangeCommits(long from, long to) {
-        return tDateCommitDao.GetRangeCommits(from, to);
+    public ArrayList<TDateCommit> GetRangeCommits(long from, long to, String tName) {
+        return tDateCommitDao.GetRangeCommits(from, to, tName);
     }
 }

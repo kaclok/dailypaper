@@ -5,24 +5,24 @@
 <mapper namespace="com.smlj.dailypaper.table.dao.TDateCommitDao">
     <select id="FindBy" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
         select * /*date, commitIds*/
-        from t_datecommit
+        from ${tName}
         where date = #{date};
     </select>
     <update id="Update">
-        update t_datecommit
+        update ${tName}
         <set>
             ${colName} = #{commitId}
         </set>
         where date = #{date};
     </update>
     <insert id="Insert">
-        insert into t_datecommit (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
+        insert into ${tName} (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
                                   userId_9, userId_10, userId_11, userId_12, userId_13, userId_14, userId_15, userId_16)
         values (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     </insert>
 
     <select id="GetRangeCommitsByUser" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
-        select date, ${colName} from t_datecommit
+        select date, ${colName} from ${tName}
         where #{from} &lt; date and date &lt; #{to};
     </select>
     <select id="GetRangeCommits" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
@@ -43,7 +43,7 @@
                userId_14,
                userId_15,
                userId_16
-        from t_datecommit
+        from ${tName}
         where #{from} &lt; date
           and date &lt; #{to};
     </select>

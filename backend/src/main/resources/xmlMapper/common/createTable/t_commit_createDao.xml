@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smlj.dailypaper.table.dao.common.createTable.t_commit_CreateDao">
+    <!-- 创建新的日志表-->
+    <update id="Create"  parameterType="String">
+        DROP TABLE IF EXISTS ${tableName};
+        CREATE TABLE ${tableName}
+        (
+            id                   int(10) UNSIGNED                                                                                                           NOT NULL AUTO_INCREMENT,
+            userId               int(10) UNSIGNED                                                                                                           NOT NULL,
+            commitDateTime       int(10) UNSIGNED                                                                                                           NOT NULL,
+            commitDateTimeFormat varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci GENERATED ALWAYS AS (from_unixtime(commitDateTime))           VIRTUAL NOT NULL,
+            content              varchar(300) CHARACTER SET utf8 COLLATE utf8_general_ci                                                                    NOT NULL,
+            PRIMARY KEY (id) USING BTREE
+        ) ENGINE = InnoDB
+          AUTO_INCREMENT = 1
+          CHARACTER SET = utf8mb4
+          COLLATE = utf8mb4_general_ci
+          ROW_FORMAT = DYNAMIC;
+    </update>
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smlj.dailypaper.table.dao.common.TableDao">
+    <!-- https://blog.csdn.net/wzx199201/article/details/120705105 -->
+    <!-- 查看指定的表是否存在 -->
+    <select id="Exist" parameterType="String" resultType="Integer">
+        select count(1)
+        from information_schema.TABLES
+        where TABLE_SCHEMA = (SELECT DATABASE())
+          AND TABLE_NAME = #{tableName}
+    </select>
+
+    <!-- 当前所在的数据库 -->
+    <select id="OwnerDB" resultType="java.lang.String">
+        SELECT DATABASE()
+    </select>
+
+    <!-- 删除指定的表-->
+    <update id="Drop" parameterType="java.lang.String">
+        DROP TABLE IF EXISTS #{tableName}
+    </update>
+
+    <!--展示表索引-->
+    <select id="ShowIndex" parameterType="java.lang.String" resultType="com.smlj.dailypaper.config.db.TableIndex">
+        show index from ${tableName}
+    </select>
+
+    <!--获取表字段-->
+    <select id="ShowColumn" parameterType="java.lang.String" resultType="com.smlj.dailypaper.config.db.TableColumn">
+        SELECT
+            COLUMN_NAME,
+            COLUMN_TYPE,
+            IS_NULLABLE,
+            COLUMN_COMMENT
+        FROM
+            information_schema.COLUMNS
+        WHERE TABLE_NAME = #{tableName}
+    </select>
+
+    <!--获取表注释-->
+    <select id="ShowComment" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+            TABLE_COMMENT
+        FROM
+            information_schema.TABLES
+        WHERE
+            TABLE_SCHEMA =(SELECT DATABASE())
+          AND TABLE_NAME = #{tableName}
+    </select>
+
+    <!--增加表字段-->
+    <update id="AddColumn">
+        <if test="isNullable == 1">
+            ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}(${columnLength}) DEFAULT NULL COMMENT #{columnComment}
+        </if>
+        <if test="isNullable == 2">
+            ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnType}(${columnLength}) NOT NULL COMMENT #{columnComment}
+        </if>
+    </update>
+
+    <!--删除表字段-->
+    <update id="DeleteColumn">
+        ALTER TABLE ${tableName} DROP COLUMN ${columnName}
+    </update>
+
+    <!--重命名表字段-->
+    <update id="ModifyTableName">
+        ALTER TABLE ${oldTableName} RENAME TO ${newTableName}
+    </update>
+</mapper>

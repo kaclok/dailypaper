@@ -195,9 +195,10 @@ onUnmounted(() => {
 <template>
     <div class="root">
         <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
+        <a v-if="account === 'SMLJ23659'" href="https://www.kdocs.cn/l/cgHAbfHG8Fm2?from=docs&startTime=1724384203679" target="_blank" style="position: absolute; left: 260px; top: 30px; color: white; background: #0000FF; border-radius: 50%;">考勤表</a>
+        <!-- <el-button @click="onClickCheck" v-cd-s="3" circle :dark="true" type="info" style="position: absolute; right: 30px; top: 30px">考勤</el-button> -->
         <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>
-        <el-button @click="onExportAll" v-cd-s="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
-        </el-button>
+        <el-button @click="onExportAll" v-cd-s="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出</el-button>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <div style="display: flex; margin-top: 60px;  align-items: center;">
             <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"

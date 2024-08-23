@@ -17,7 +17,7 @@
 
     <!-- 删除指定的表-->
     <update id="Drop" parameterType="java.lang.String">
-        DROP TABLE IF EXISTS #{tableName}
+        DROP TABLE IF EXISTS ${tableName}
     </update>
 
     <!--展示表索引-->

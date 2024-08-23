@@ -57,6 +57,7 @@ class DailypaperApplicationTests {
 
     @Test
     void CreateTable() {
+        tableDao.Drop("t_commit_hgglb");
         commit_createDao.Create("t_commit_hgglb");
     }
 }

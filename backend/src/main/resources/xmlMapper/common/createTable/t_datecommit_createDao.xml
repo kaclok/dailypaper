@@ -3,28 +3,27 @@
 <mapper namespace="com.smlj.dailypaper.table.dao.common.createTable.t_datecommit_CreateDao">
     <!-- 创建新的日志表-->
     <update id="Create"  parameterType="String">
-        DROP TABLE IF EXISTS ${tableName};
         CREATE TABLE ${tableName}
         (
-            date       int(10) UNSIGNED                                                                                                 NOT NULL,
-            dateFormat varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci GENERATED ALWAYS AS (from_unixtime(date)) VIRTUAL NOT NULL,
-            userId_1   int(10) UNSIGNED                                                                                                 NULL DEFAULT 0,
-            userId_2   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_3   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_4   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_5   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_6   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_7   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_8   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_9   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_10  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_11  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_12  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_13  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_14  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_15  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            userId_16  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            PRIMARY KEY (date) USING BTREE
+            `date`       int(10) UNSIGNED                                                                                                 NOT NULL,
+            `dateFormat` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci GENERATED ALWAYS AS (from_unixtime(`date`)) VIRTUAL NOT NULL,
+            `userId_1`   int(10) UNSIGNED                                                                                                 NULL DEFAULT 0,
+            `userId_2`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_3`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_4`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_5`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_6`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_7`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_8`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_9`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_10`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_11`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_12`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_13`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_14`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_15`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_16`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            PRIMARY KEY (`date`) USING BTREE
         ) ENGINE = InnoDB
           CHARACTER SET = utf8mb4
           COLLATE = utf8mb4_general_ci

@@ -29,6 +29,7 @@ const refTargetDate = ref(props.targetDate);
     position: absolute;
     top: 30px;
     left: 30px;
+
     text-align: center;
     border-right: solid 1px var(--el-border-color);
     flex: 1;

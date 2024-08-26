@@ -202,8 +202,8 @@ onUnmounted(() => {
         <div style="display: flex; margin-top: 60px;  align-items: center;">
             <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
                    :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
-            <span style="font-size: 80px; font-style: italic; color: #a0cfff; margin-left: 300px; margin-top: -15px; height: 160px; width: 580px;
-            overflow: hidden;">{{ title }}</span>
+            <span style="font-size: 40px; font-style: italic; color: #a0cfff; margin-left: 300px; margin-top: 15px; height: 160px; width: 580px;
+            overflow: hidden; display: flex; align-items: center; justify-content: flex-start;">{{ title }}</span>
         </div>
         <div class="infinite-list-root" v-loading="loading">
             <CpCard v-for="card in commits"
@@ -224,6 +224,8 @@ onUnmounted(() => {
 <style>
 .root {
     background: url("@/cms/daily_paper/assets/imgs/bg-smlj.jpg") no-repeat center border-box;
+    /* 背景图片全屏化 */
+    background-size: cover;
 
     height: 100vh;
     width: 100vw;

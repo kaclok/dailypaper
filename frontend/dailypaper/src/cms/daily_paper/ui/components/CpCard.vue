@@ -64,7 +64,7 @@ onBeforeUpdate(() => {
         <!-- 非空状态 -->
         <el-input v-if="(isToday() || (!isToday() && hasContent()))"
                   v-model="refTextContent"
-                  :rows="13"
+                  :rows="12"
                   type="textarea"
                   :placeholder="t('cms.daily_paper.INPUT_DAILY_CONTENT')"
                   clearable
@@ -72,7 +72,7 @@ onBeforeUpdate(() => {
                   resize="none"
                   :disabled="!isSelf() || !isToday()"
 
-                  style="width: 240px; font-size: 12px;"
+                  style="width: 240px; font-size: 14px;"
         />
 
         <!-- 空状态 -->

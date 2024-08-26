@@ -3,6 +3,7 @@
 // https://blog.csdn.net/perfect2011/article/details/129930819?ydreferer=aHR0cHM6Ly9jbi5iaW5nLmNvbS8%3D
 
 interface ImportMetaEnv {
+    readonly VITE_BASE_API: string
     readonly VITE_APP_TITLE: string
     readonly VITE_OUT_DIR: string
     readonly VITE_LOCALE: string

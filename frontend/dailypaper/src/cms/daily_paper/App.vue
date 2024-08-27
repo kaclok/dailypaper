@@ -195,11 +195,12 @@ onUnmounted(() => {
 <template>
     <div class="root">
         <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
+        <a href="https://www.kdocs.cn/l/cgHAbfHG8Fm2?from=docs&startTime=1724384203679" target="_blank" style="position: absolute; left: 260px; top: 30px; color: white; background: #0000FF; border-radius: 50%;">考勤表</a>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
-        <div style="display: flex; margin-left: 200px;  align-items: center;">
+        <div style="display: flex; position: relative; left: 340px;  align-items: center;">
             <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
                 :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
-            <span style="font-size: 60px; font-style: italic; color: #a0cfff; margin-left: 130px; height: 160px; width: 580px;
+            <span style="font-size: 60px; font-style: italic; color: #a0cfff; margin-left: 100px; height: 160px; width: 580px;
                 overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;">{{ title }}</span>
         </div>
         <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>

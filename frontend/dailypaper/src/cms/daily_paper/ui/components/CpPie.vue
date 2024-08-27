@@ -43,8 +43,8 @@ let option = {
         {
             name: '简介',
             type: 'pie',
-            radius: [0, 20],
-            /*center: ['50%', '50%'],*/
+            radius: [0, 30],
+            center: ['30%', '50%'],
             data: [
                 {value: props.unAttand, name: t('cms.daily_paper.UN_ATTEND'), itemStyle: 'red'},
                 {value: props.attand, name: t('cms.daily_paper.ATTEND'), itemStyle: 'blue'}
@@ -114,13 +114,11 @@ onUnmounted(() => {
 
 <style scoped>
 .pie-root {
-    display: flex;
-
-    position: relative;
+    display: flex
 }
 
 #pieChart {
-    width: 400px;
+    width: 300px;
     height: 150px;
 }
 </style>

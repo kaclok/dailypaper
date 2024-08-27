@@ -47,7 +47,7 @@ onBeforeUpdate(() => {
 <template>
     <el-card class="card_root">
         <template #header>
-            <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}</span>
+            <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}({{ props.account }})</span>
             <span class="flag">{{ getEditText() }}</span>
 <!--            <el-button @click="$emit('onExportOne', props.id, props.name, props.account)" v-if="isSelf() && isToday()"
                        type="warning"
@@ -57,7 +57,7 @@ onBeforeUpdate(() => {
             <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent)" v-if="isSelf() && isToday()"
                        type="success"
                        v-cd-s="3"
-                       circle :dark="true" style="position: relative; left: 120px; top: 30px">{{t('cms.daily_paper.SUBMIT')}}
+                       circle :dark="true" style="position: relative; left: 40px; top: 30px">{{t('cms.daily_paper.SUBMIT')}}
             </el-button>
         </template>
 

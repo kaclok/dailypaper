@@ -83,9 +83,9 @@ onBeforeUpdate(() => {
 
 <style scoped>
 .card_root {
-    height: 350px;
+    height: 360px;
 
-    margin: 10px;
+    margin: 5px;
 }
 
 .flag {

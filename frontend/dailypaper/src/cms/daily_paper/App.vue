@@ -243,13 +243,13 @@ onUnmounted(() => {
     left: 0;
     right: 0;
 
-    height: 600px;
+    height: 750px;
     width: 100vw;
     padding: 0;
     margin: 0;
 
     display: grid;
-    grid-template-columns: repeat(5, 300px);
+    grid-template-columns: repeat(6, 300px);
 
     overflow: auto;
     justify-content: space-evenly;

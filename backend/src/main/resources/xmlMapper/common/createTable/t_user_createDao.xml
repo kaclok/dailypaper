@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.smlj.dailypaper.table.dao.common.createTable.t_user_CreateDao">
+    <!-- 创建新的日志表-->
+    <update id="Create" parameterType="String">
+        <!--
+            在 MySQL 中，不能在一个语句中同时执行 DROP TABLE 和 CREATE TABLE 操作。您需要将它们分成两个单独的语句
+            DROP TABLE IF EXISTS ${tableName};
+        -->
+        CREATE TABLE ${tableName} (
+            `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` varchar(4) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+            `account` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+            PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+    </update>
+</mapper>

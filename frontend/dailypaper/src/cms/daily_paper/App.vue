@@ -195,16 +195,17 @@ onUnmounted(() => {
 <template>
     <div class="root">
         <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
+        <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
+        <div style="display: flex; margin-left: 200px;  align-items: center;">
+            <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
+                :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
+            <span style="font-size: 60px; font-style: italic; color: #a0cfff; margin-left: 130px; height: 160px; width: 580px;
+                overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;">{{ title }}</span>
+        </div>
         <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>
         <el-button @click="onExportAll" v-cd-s="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
         </el-button>
-        <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
-        <div style="display: flex; margin-top: 60px;  align-items: center;">
-            <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
-                   :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
-            <span style="font-size: 40px; font-style: italic; color: #a0cfff; margin-left: 300px; margin-top: 15px; height: 160px; width: 580px;
-            overflow: hidden; display: flex; align-items: center; justify-content: flex-start;">{{ title }}</span>
-        </div>
+        
         <div class="infinite-list-root" v-loading="loading">
             <CpCard v-for="card in commits"
                     :key="card.userId"

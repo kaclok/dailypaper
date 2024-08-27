@@ -7,10 +7,35 @@ class SysDaily {
     _departmentIdName = null;
 
     GetCommits() {
-        if (this._result == null) {
+        if (this._result === null) {
             return null;
         }
-        return this._result.data.commits;
+
+        let cs = this._result.data.commits;
+        return cs;
+    }
+
+    GetSelfCommits(userAccount) {
+        let cs = this.GetCommits();
+        if (cs === null || cs.length <= 0) {
+            return null;
+        }
+
+        let index = cs.findIndex((item, index, array) => {
+            return item.account === userAccount;
+        });
+
+        // console.table(cs);
+
+        if(index === -1) {
+            return cs;
+        }
+
+        // 交换位置
+        let a = cs[index];
+        cs[index] = cs[0];
+        cs[0] = a;
+        return cs;
     }
 
     async RequestGetAll(userAccount, date, signal, onBefore, onAfter) {

@@ -69,7 +69,7 @@ function refreshCommits() {
     let unAttend = selectedLegend.value[t('cms.daily_paper.UN_ATTEND')];
     // 更新commits
     if (attend && unAttend) {
-        commits.value = Singleton.getInstance(SysDaily).GetCommits();
+        commits.value = Singleton.getInstance(SysDaily).GetSelfCommits(curAccount.value);
     } else if (attend || unAttend) {
         commits.value = Singleton.getInstance(SysDaily).GetAttendList(attend);
     } else {

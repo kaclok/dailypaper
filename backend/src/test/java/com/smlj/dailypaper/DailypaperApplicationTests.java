@@ -1,17 +1,15 @@
 package com.smlj.dailypaper;
 
-import com.smlj.dailypaper.config.db.TableColumn;
-import com.smlj.dailypaper.table.dao.common.TableDao;
-import com.smlj.dailypaper.table.dao.common.createTable.t_commit_CreateDao;
-import com.smlj.dailypaper.table.entity.TUser;
+import com.smlj.dailypaper.table.dao.TCommitDao;
 import com.smlj.dailypaper.table.dao.TUserDao;
+import com.smlj.dailypaper.table.dao.common.TableDao;
+import com.smlj.dailypaper.table.entity.TUser;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
-import java.util.Map;
 
 @SpringBootTest(classes = {DailypaperApplication.class})
 class DailypaperApplicationTests {
@@ -22,7 +20,7 @@ class DailypaperApplicationTests {
     private TableDao tableDao;
 
     @Autowired
-    private t_commit_CreateDao commit_createDao;
+    private TCommitDao commit_createDao;
 
     @Test
     void testFindAll() {

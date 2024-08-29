@@ -1,5 +1,6 @@
 package com.smlj.dailypaper.table.dao;
 
+import com.smlj.dailypaper.table.dao.common.TableCreateDao;
 import com.smlj.dailypaper.table.entity.TDateCommit;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 
 @Repository
 @Mapper
-public interface TDateCommitDao {
+public interface TDateCommitDao extends TableCreateDao {
     public int Insert(@Param("date") long date, @Param("tName") String tName);
 
     public void Update(@Param("date") long date, @Param("colName") String colName, @Param("commitId") int commitId, @Param("tName") String tName);

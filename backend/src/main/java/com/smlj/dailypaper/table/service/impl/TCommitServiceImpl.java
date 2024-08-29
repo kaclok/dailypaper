@@ -6,6 +6,7 @@ import com.smlj.dailypaper.table.entity.TCommit;
 import com.smlj.dailypaper.table.entity.TUser;
 import com.smlj.dailypaper.table.service.TCommitService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.smlj.dailypaper.config.db.EDatasource;
@@ -22,6 +23,10 @@ public class TCommitServiceImpl implements TCommitService {
     @Override
     public int Insert(String tableName, int userId, int commitDateTime, String content) {
         return tCommitDao.Insert(tableName, userId, commitDateTime, content);
+    }
+
+    public void Create(String tableName) {
+        tCommitDao.Create(tableName);
     }
 
     @Override

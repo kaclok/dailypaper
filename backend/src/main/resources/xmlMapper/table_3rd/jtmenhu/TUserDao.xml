@@ -27,6 +27,17 @@
         <result property="open_status" column="open_status" jdbcType="INTEGER"/>
     </resultMap>
 
+    <select id="select" resultType="com.smlj.dailypaper.table_3rd.entity.TUser">
+        SELECT
+            nickname,
+            username
+        FROM
+            t_user
+        WHERE
+            department_id = (select department_id from t_user where username = #{userAccount})
+        ORDER BY id;
+    </select>
+
     <!--查询单个-->
     <select id="queryById" resultMap="TUserMap">
         select create_by,

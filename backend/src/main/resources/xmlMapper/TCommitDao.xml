@@ -19,7 +19,8 @@
     </insert>
 
     <!--https://blog.csdn.net/qq_43718048/article/details/123681806-->
-    <insert id="InsertBatch" useGeneratedKeys="true" keyProperty="list.id">
+    <!-- 用这种方式限制id：useGeneratedKeys="true" keyProperty="list.id-->
+    <insert id="InsertBatch">
         insert into ${tableName} (userId, commitDateTime, content) values
         <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
         <foreach collection="list" item="item" index="index" separator=",">

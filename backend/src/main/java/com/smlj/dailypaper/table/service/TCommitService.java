@@ -9,6 +9,8 @@ import java.util.ArrayList;
 public interface TCommitService {
     int Insert(@Param("tableName") String tableName, @Param("userId") int userId, @Param("commitDateTime") int commitDateTime, @Param("content") String content);
 
+    public void Create(@Param("tableName") String tableName);
+
     void InsertOutKey(@Param("tableName") String tableName, @Param("one") TCommit one);
 
     void InsertBatch(@Param("tableName") String tableName, @Param("list") ArrayList<TCommit> list);

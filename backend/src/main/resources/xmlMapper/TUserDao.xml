@@ -9,20 +9,23 @@
         where id = #{userId};
     </select>
 
-    <!-- id自增，所以使用：useGeneratedKeys="true" keyProperty="id" -->
-    <insert id="Insert" useGeneratedKeys="true" keyProperty="one.id">
-        insert into ${tableName} (name, account)
-        values (#{one.name}, #{one.account});
+    <insert id="Insert">
+        insert into ${tableName} (id, name, account)
+        values (#{one.id}, #{one.name}, #{one.account});
     </insert>
 
-    <insert id="InsertBatch" useGeneratedKeys="true" keyProperty="list.id">
-        insert into ${tableName} (name, account) values
+    <insert id="InsertBatch">
+        insert into ${tableName} (id, name, account) values
         <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
         <foreach collection="list" item="item" index="index" separator=",">
             <if test="item != null">
-                (#{item.name}, #{item.account})
+                (#{item.id}, #{item.name}, #{item.account})
             </if>
         </foreach>
+        on duplicate key update
+        id = values(id),
+        name = values(name),
+        account = values(account)
     </insert>
 
     <!-- 创建新的日志表-->
@@ -32,7 +35,7 @@
             DROP TABLE IF EXISTS ${tableName};
         -->
         CREATE TABLE ${tableName} (
-            `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `id` tinyint(3) UNSIGNED NOT NULL,
             `name` varchar(4) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
             `account` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
             PRIMARY KEY (`id`) USING BTREE

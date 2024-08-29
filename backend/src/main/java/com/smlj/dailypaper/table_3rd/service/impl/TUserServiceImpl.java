@@ -6,10 +6,13 @@ import com.smlj.dailypaper.table_3rd.service.TUserService;
 import com.smlj.dailypaper.config.db.EDatasource;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.ArrayList;
 
 /**
  * (TUser)表服务实现类
@@ -24,6 +27,11 @@ public class TUserServiceImpl implements TUserService {
     @Autowired
     @Qualifier("jtmenhu_TUserDao")
     private TUserDao tUserDao;
+
+    @Override
+    public ArrayList<TUser> select(@Param("userAccount") String userAccount) {
+        return tUserDao.select(userAccount);
+    }
 
     /**
      * 通过ID查询单条数据

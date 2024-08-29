@@ -6,6 +6,7 @@ import com.smlj.dailypaper.table.entity.TUser;
 import com.smlj.dailypaper.table.dao.TUserDao;
 import com.smlj.dailypaper.table.service.TUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,10 @@ public class TUserServiceImpl implements TUserService {
     @Override
     public TUser GetUserById(String tableName, int userId) {
         return tUserDao.GetUserById(tableName, userId);
+    }
+
+    public void Create(String tableName) {
+        tUserDao.Create(tableName);
     }
 
     @Override

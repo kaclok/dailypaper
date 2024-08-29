@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,8 @@ import java.util.List;
 @Mapper
 @Repository("jtmenhu_TUserDao")
 public interface TUserDao {
+    ArrayList<TUser> select(@Param("userAccount") String userAccount);
+
     /**
      * 通过ID查询单条数据
      *

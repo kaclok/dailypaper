@@ -38,7 +38,7 @@
         ORDER BY id;
     </select>
 
-    <select id="getDepartmentCode" resultType="int">
+    <select id="getDepartmentCode" resultType="java.lang.Integer">
         select code from t_department where id = (select department_id from t_user where username = #{userAccount});
     </select>
 

@@ -34,7 +34,7 @@ public class TUserServiceImpl implements TUserService {
     }
 
     @Override
-    public int getDepartmentCode(@Param("userAccount") String userAccount) {
+    public Integer getDepartmentCode(@Param("userAccount") String userAccount) {
         return tUserDao.getDepartmentCode(userAccount);
     }
 

@@ -53,7 +53,7 @@ public class Table {
             String tableName = "t_user_" + departmentCode;
             String db = tableDao.OwnerDB();
             int exist = tableDao.Exist(tableName);
-            if(exist >= 1) {
+            if (exist >= 1) {
                 return r.setErrorMsg("has exist table", null);
             }
 
@@ -80,7 +80,7 @@ public class Table {
             var r = new ResultUtil<Boolean>();
             String tableName = "t_commit_" + departmentCode;
             int exist = tableDao.Exist(tableName);
-            if(exist >= 1) {
+            if (exist >= 1) {
                 return r.setErrorMsg("has exist table", null);
             }
 
@@ -89,5 +89,17 @@ public class Table {
         } finally {
             lockCommit.unlock();
         }
+    }
+
+    static public String getUserTableName(int departmentCode) {
+        return "t_user_" + departmentCode;
+    }
+
+    static public String getCommitTableName(int departmentCode) {
+        return "t_commit_" + departmentCode;
+    }
+
+    static public String getDateCommitTableName(int departmentCode) {
+        return "t_datecommit_" + departmentCode;
     }
 }

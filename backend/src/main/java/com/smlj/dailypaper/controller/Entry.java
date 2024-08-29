@@ -77,9 +77,11 @@ public class Entry {
 
         // todo 将来redis构建userAccount和departName的关系
 
-        int departmentCode = jt_userService.getDepartmentCode(userAccount);
+        Integer departmentCode = jt_userService.getDepartmentCode(userAccount);
+        // 默认：数字化中心
+        departmentCode = departmentCode == null ? 30015 : departmentCode;
 
-        String userTableName = "t_user_" + departmentCode;
+        String userTableName = Table.getUserTableName(departmentCode);
         if (tableDao.Exist(userTableName) <= 0) {
             // 构建部门的user表 ------------------------------------------------------------------------------------------
             userService.Create(userTableName);
@@ -101,7 +103,7 @@ public class Entry {
         }
 
         // 构建部门的commit表 --------------------------------------------------------------------------------------------
-        String commitTableName = "t_commit_" + departmentCode;
+        String commitTableName = Table.getCommitTableName(departmentCode);
         if (tableDao.Exist(commitTableName) <= 0) {
             commitService.Create(commitTableName);
         }
@@ -114,6 +116,7 @@ public class Entry {
         to.setDate(midNight);
         to.setDepartmentId(departmentCode);
         String departmentName = jt_userService.getDepartmentName(userAccount);
+        departmentName = departmentName == null ? "未知部门" : departmentName;
         to.setDepartmentName(departmentName);
 
         String dateCommitTableName = "t_datecommit_" + departmentCode;
@@ -181,7 +184,7 @@ public class Entry {
                 cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
                 cm.setContent(content);
 
-                String commitTableName = "t_commit_" + departmentId;
+                String commitTableName = Table.getCommitTableName(departmentId);
                 // 插入commit表
                 commitService.InsertOutKey(commitTableName, cm);
                 // todo 并发的时候是否会出现问题？
@@ -206,7 +209,7 @@ public class Entry {
             To_Excel<To_ExcelRow> rlt = new To_Excel<>();
             ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommitsByUser("t_DateCommit", beginDate, endDate, "userId_" + userId);
 
-            String userTableName = "t_user_" + departmentId;
+            String userTableName = Table.getUserTableName(departmentId);
             rlt.getColNames().add("日期");
             var user = userService.GetUserById(userTableName, userId);
             String colName = Integer.toString(userId);
@@ -215,7 +218,7 @@ public class Entry {
             }
             rlt.getColNames().add(colName);
 
-            String commitTableName = "t_commit_" + departmentId;
+            String commitTableName = Table.getCommitTableName(departmentId);
             for (TDateCommit row : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();
                 var commitId = row.GetBy(userId);
@@ -251,7 +254,8 @@ public class Entry {
             To_Excel<To_ExcelRow> rlt = new To_Excel<>();
             ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommits("t_DateCommit", beginDate, endDate);
             boolean hasGetColNames = false;
-            String commitTableName = "t_commit_" + departmentId;
+            String commitTableName = Table.getCommitTableName(departmentId);
+            String userTableName = Table.getUserTableName(departmentId);
             for (TDateCommit one : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();
                 excelRow.setTime(one.getDate());
@@ -259,7 +263,6 @@ public class Entry {
 
                 if (!hasGetColNames) {
                     rlt.getColNames().add("日期");
-                    String userTableName = "t_user_" + departmentId;
                     var userIds = one.GetFieldIds();
                     for (var userId : userIds) {
                         var user = userService.GetUserById(userTableName, userId);

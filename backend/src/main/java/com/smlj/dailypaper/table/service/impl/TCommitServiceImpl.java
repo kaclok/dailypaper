@@ -35,11 +35,6 @@ public class TCommitServiceImpl implements TCommitService {
     }
 
     @Override
-    public int GetLastId(String tableName) {
-        return tCommitDao.GetLastId(tableName);
-    }
-
-    @Override
     public TCommit FindById(String tableName, int id) {
         return tCommitDao.FindById(tableName, id);
     }

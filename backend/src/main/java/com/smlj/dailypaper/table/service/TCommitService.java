@@ -13,7 +13,5 @@ public interface TCommitService {
 
     void InsertBatch(@Param("tableName") String tableName, @Param("list") ArrayList<TCommit> list);
 
-    int GetLastId(@Param("tableName") String tableName);
-
     TCommit FindById(@Param("tableName") String tableName, @Param("id") int id);
 }

@@ -15,11 +15,13 @@
         values (#{one.name}, #{one.account});
     </insert>
 
-    <insert id="InsertBatch">
+    <insert id="InsertBatch" useGeneratedKeys="true" keyProperty="list.id">
         insert into ${tableName} (name, account) values
         <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.name}, #{item.account})
+            <if test="item != null">
+                (#{item.name}, #{item.account})
+            </if>
         </foreach>
     </insert>
 

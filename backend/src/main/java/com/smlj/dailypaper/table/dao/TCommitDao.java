@@ -18,7 +18,5 @@ public interface TCommitDao extends TableCreateDao {
 
     public void InsertBatch(@Param("tableName") String tableName, @Param("list") ArrayList<TCommit> list);
 
-    public int GetLastId(@Param("tableName") String tableName);
-
     public TCommit FindById(@Param("tableName") String tableName, @Param("id") int id);
 }

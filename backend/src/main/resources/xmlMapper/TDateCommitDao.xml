@@ -21,7 +21,7 @@
         values (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     </insert>
 
-    <insert id="InsertBatch">
+    <insert id="InsertBatch" keyProperty="list.id">
         insert into ${tableName} (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
         userId_9, userId_10, userId_11, userId_12, userId_13, userId_14, userId_15, userId_16) values
         <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->

@@ -18,11 +18,14 @@
         values (#{one.userId}, #{one.commitDateTime}, #{one.content});
     </insert>
 
-    <insert id="InsertBatch" useGeneratedKeys="true">
+    <!--https://blog.csdn.net/qq_43718048/article/details/123681806-->
+    <insert id="InsertBatch" useGeneratedKeys="true" keyProperty="list.id">
         insert into ${tableName} (userId, commitDateTime, content) values
         <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.userId}, #{item.commitDateTime}, #{item.content})
+            <if test="item != null">
+                (#{item.userId}, #{item.commitDateTime}, #{item.content})
+            </if>
         </foreach>
     </insert>
 
@@ -30,11 +33,6 @@
         select id, userId, commitDateTime, content
         from ${tableName}
         where id = #{id};
-    </select>
-
-    <select id="GetLastId" resultType="int">
-        select max(id)
-        FROM ${tableName};
     </select>
 
     <!-- 创建新的日志表-->

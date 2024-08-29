@@ -6,13 +6,13 @@ import org.apache.ibatis.annotations.Param;
 import java.util.ArrayList;
 
 public interface TDateCommitService {
-    int Insert(@Param("date") long date, @Param("tName") String tName);
+    int Insert(@Param("tableName") String tableName, @Param("date") long date);
 
-    void Update(@Param("date") long date, @Param("colName") String colName, @Param("commitId") int commitId, @Param("tName") String tName);
+    void Update(@Param("tableName") String tableName, @Param("date") long date, @Param("colName") String colName, @Param("commitId") int commitId);
 
-    TDateCommit FindBy(@Param("date") long date, @Param("tName") String tName);
+    TDateCommit FindBy(@Param("tableName") String tableName, @Param("date") long date);
 
-    ArrayList<TDateCommit> GetRangeCommitsByUser(@Param("from") long from, @Param("to") long to, @Param("colName") String colName, @Param("tName") String tName);
+    ArrayList<TDateCommit> GetRangeCommitsByUser(@Param("tableName") String tableName, @Param("from") long from, @Param("to") long to, @Param("colName") String colName);
 
-    ArrayList<TDateCommit> GetRangeCommits(@Param("from") long from, @Param("to") long to, @Param("tName") String tName);
+    ArrayList<TDateCommit> GetRangeCommits(@Param("tableName") String tableName, @Param("from") long from, @Param("to") long to);
 }

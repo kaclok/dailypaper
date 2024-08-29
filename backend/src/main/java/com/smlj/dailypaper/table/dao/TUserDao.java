@@ -16,5 +16,9 @@ public interface TUserDao extends TableCreateDao {
     @Select("select * from t_user")
     public ArrayList<TUser> FindAll();
 
-    public TUser GetUserById(@Param("userId") int userId);
+    public void Insert(@Param("tableName") String tableName, @Param("one") TUser one);
+
+    public void InsertBatch(@Param("tableName") String tableName, @Param("list") ArrayList<TUser> list);
+
+    public TUser GetUserById(@Param("tableName") String tableName, @Param("userId") int userId);
 }

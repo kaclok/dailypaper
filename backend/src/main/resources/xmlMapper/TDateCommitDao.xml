@@ -5,24 +5,33 @@
 <mapper namespace="com.smlj.dailypaper.table.dao.TDateCommitDao">
     <select id="FindBy" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
         select * /*date, commitIds*/
-        from ${tName}
+        from ${tableName}
         where date = #{date};
     </select>
     <update id="Update">
-        update ${tName}
+        update ${tableName}
         <set>
             ${colName} = #{commitId}
         </set>
         where date = #{date};
     </update>
-    <insert id="Insert">
-        insert into ${tName} (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
+    <insert id="Insert" useGeneratedKeys="true" keyProperty="one.id">
+        insert into ${tableName} (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
                                   userId_9, userId_10, userId_11, userId_12, userId_13, userId_14, userId_15, userId_16)
         values (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     </insert>
 
+    <insert id="InsertBatch">
+        insert into ${tableName} (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
+        userId_9, userId_10, userId_11, userId_12, userId_13, userId_14, userId_15, userId_16) values
+        <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        </foreach>
+    </insert>
+
     <select id="GetRangeCommitsByUser" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
-        select date, ${colName} from ${tName}
+        select date, ${colName} from ${tableName}
         where #{from} &lt; date and date &lt; #{to};
     </select>
     <select id="GetRangeCommits" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
@@ -43,8 +52,37 @@
                userId_14,
                userId_15,
                userId_16
-        from ${tName}
+        from ${tableName}
         where #{from} &lt; date
           and date &lt; #{to};
     </select>
+
+    <!-- 创建新的日志表-->
+    <update id="Create"  parameterType="String">
+        CREATE TABLE ${tableName}
+        (
+            `date`       int(10) UNSIGNED                                                                                                 NOT NULL,
+            `dateFormat` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci GENERATED ALWAYS AS (from_unixtime(`date`)) VIRTUAL NOT NULL,
+            `userId_1`   int(10) UNSIGNED                                                                                                 NULL DEFAULT 0,
+            `userId_2`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_3`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_4`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_5`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_6`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_7`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_8`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_9`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_10`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_11`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_12`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_13`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_14`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_15`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_16`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            PRIMARY KEY (`date`) USING BTREE
+        ) ENGINE = InnoDB
+          CHARACTER SET = utf8mb4
+          COLLATE = utf8mb4_general_ci
+          ROW_FORMAT = DYNAMIC;
+    </update>
 </mapper>

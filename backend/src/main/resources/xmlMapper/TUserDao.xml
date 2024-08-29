@@ -5,7 +5,35 @@
 <mapper namespace="com.smlj.dailypaper.table.dao.TUserDao">
     <select id="GetUserById" resultType="com.smlj.dailypaper.table.entity.TUser">
         select * /*id, name, age, identity*/
-        from t_user
+        from ${tableName}
         where id = #{userId};
     </select>
+
+    <!-- id自增，所以使用：useGeneratedKeys="true" keyProperty="id" -->
+    <insert id="Insert" useGeneratedKeys="true" keyProperty="one.id">
+        insert into ${tableName} (name, account)
+        values (#{one.name}, #{one.account});
+    </insert>
+
+    <insert id="InsertBatch">
+        insert into ${tableName} (name, account) values
+        <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name}, #{item.account})
+        </foreach>
+    </insert>
+
+    <!-- 创建新的日志表-->
+    <update id="Create" parameterType="String">
+        <!--
+            在 MySQL 中，不能在一个语句中同时执行 DROP TABLE 和 CREATE TABLE 操作。您需要将它们分成两个单独的语句
+            DROP TABLE IF EXISTS ${tableName};
+        -->
+        CREATE TABLE ${tableName} (
+            `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` varchar(4) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+            `account` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+            PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+    </update>
 </mapper>

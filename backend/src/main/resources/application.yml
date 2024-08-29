@@ -59,7 +59,6 @@ mybatis:
   mapper-locations:
     - classpath:xmlMapper/*.xml
     - classpath:xmlMapper/common/*.xml
-    - classpath:xmlMapper/common/createTable/*.xml
     - classpath:xmlMapper/table_3rd/jtmenhu/*.xml
   # 配置 MyBatis 配置文件路径
   config-location: classpath:mybatis-config.xml

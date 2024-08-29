@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 @Slf4j
 @Service
 @DS(EDatasource.dailypaper)
@@ -17,7 +19,17 @@ public class TUserServiceImpl implements TUserService {
     private TUserDao tUserDao;
 
     @Override
-    public TUser GetUserById(int userId) {
-        return tUserDao.GetUserById(userId);
+    public TUser GetUserById(String tableName, int userId) {
+        return tUserDao.GetUserById(tableName, userId);
+    }
+
+    @Override
+    public void Insert(String tableName, TUser one) {
+        tUserDao.Insert(tableName, one);
+    }
+
+    @Override
+    public void InsertBatch(String tableName, ArrayList<TUser> list) {
+        tUserDao.InsertBatch(tableName, list);
     }
 }

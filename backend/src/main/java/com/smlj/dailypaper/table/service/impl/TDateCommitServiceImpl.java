@@ -19,27 +19,27 @@ public class TDateCommitServiceImpl implements TDateCommitService {
     private TDateCommitDao tDateCommitDao;
 
     @Override
-    public int Insert(long date, String tName) {
-        return tDateCommitDao.Insert(date, tName);
+    public int Insert(String tableName, long date) {
+        return tDateCommitDao.Insert(tableName, date);
     }
 
     @Override
-    public void Update(long date, String colName, int commitId, String tName) {
-        tDateCommitDao.Update(date, colName, commitId, tName);
+    public void Update(String tableName, long date, String colName, int commitId) {
+        tDateCommitDao.Update(tableName, date, colName, commitId);
     }
 
     @Override
-    public TDateCommit FindBy(long date, String tName) {
-        return tDateCommitDao.FindBy(date, tName);
+    public TDateCommit FindBy(String tableName, long date) {
+        return tDateCommitDao.FindBy(tableName, date);
     }
 
     @Override
-    public ArrayList<TDateCommit> GetRangeCommitsByUser(long from, long to, String colName, String tName) {
-        return tDateCommitDao.GetRangeCommitsByUser(from, to, colName, tName);
+    public ArrayList<TDateCommit> GetRangeCommitsByUser(String tableName, long from, long to, String colName) {
+        return tDateCommitDao.GetRangeCommitsByUser(tableName, from, to, colName);
     }
 
     @Override
-    public ArrayList<TDateCommit> GetRangeCommits(long from, long to, String tName) {
-        return tDateCommitDao.GetRangeCommits(from, to, tName);
+    public ArrayList<TDateCommit> GetRangeCommits(String tableName, long from, long to) {
+        return tDateCommitDao.GetRangeCommits(tableName, from, to);
     }
 }

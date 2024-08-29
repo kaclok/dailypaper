@@ -11,13 +11,13 @@ import java.util.ArrayList;
 @Repository
 @Mapper
 public interface TDateCommitDao extends TableCreateDao {
-    public int Insert(@Param("date") long date, @Param("tName") String tName);
+    public int Insert(@Param("tableName") String tableName, @Param("date") long date);
 
-    public void Update(@Param("date") long date, @Param("colName") String colName, @Param("commitId") int commitId, @Param("tName") String tName);
+    public void Update(@Param("tableName") String tableName, @Param("date") long date, @Param("colName") String colName, @Param("commitId") int commitId);
 
-    public TDateCommit FindBy(@Param("date") long date, @Param("tName") String tName);
+    public TDateCommit FindBy(@Param("tableName") String tableName, @Param("date") long date);
 
-    public ArrayList<TDateCommit> GetRangeCommitsByUser(@Param("from") long from, @Param("to") long to, @Param("colName") String colName, @Param("tName") String tName);
+    public ArrayList<TDateCommit> GetRangeCommitsByUser(@Param("tableName") String tableName, @Param("from") long from, @Param("to") long to, @Param("colName") String colName);
 
-    public ArrayList<TDateCommit> GetRangeCommits(@Param("from") long from, @Param("to") long to, @Param("tName") String tName);
+    public ArrayList<TDateCommit> GetRangeCommits(@Param("tableName") String tableName, @Param("from") long from, @Param("to") long to);
 }

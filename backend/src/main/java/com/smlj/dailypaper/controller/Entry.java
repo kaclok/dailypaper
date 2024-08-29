@@ -63,7 +63,7 @@ public class Entry {
         log.info("GetAll:{}", UrlUtil.GetFullUrl(request));
 
         var midNight = DateTimeUtil.convertToMidnightTimestamp(date);
-        var dateCommit = dateCommitService.FindBy(midNight, "t_DateCommit");
+        var dateCommit = dateCommitService.FindBy("t_DateCommit", midNight);
 
         var r = new ResultUtil<To_DateCommit>();
 
@@ -76,7 +76,7 @@ public class Entry {
         if (dateCommit == null) {
             lockGetall.lock();
             try {
-                dateCommitService.Insert(midNight, "t_DateCommit");
+                dateCommitService.Insert("t_DateCommit", midNight);
                 dateCommit = new TDateCommit(midNight);
             } finally {
                 lockGetall.unlock();
@@ -88,13 +88,13 @@ public class Entry {
         for (int i = 0; i < commitIds.size(); i++) {
             var userId = userIds.get(i);
             To_UserCommit tu = new To_UserCommit();
-            var user = userService.GetUserById(userId);
+            var user = userService.GetUserById("t_user", userId);
             tu.setUserId(userId);
             tu.setName(user.getName());
             tu.setAccount(user.getAccount());
 
             var commitId = commitIds.get(i);
-            TCommit c = commitService.FindById(commitId);
+            TCommit c = commitService.FindById("t_commit", commitId);
             if (c != null) {
                 tu.setTime(c.getCommitDateTime());
                 tu.setContent(c.getContent());
@@ -126,10 +126,10 @@ public class Entry {
                 return r.setErrorMsg("Can not edit because not today!", null);
             } else {
                 var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
-                var dateCommit = dateCommitService.FindBy(targetMidNight, "t_DateCommit");
+                var dateCommit = dateCommitService.FindBy("t_DateCommit", targetMidNight);
                 if (dateCommit == null) {
                     // 如果date对应的记录不存在的话，立即插入新纪录
-                    dateCommitService.Insert(targetMidNight, "t_DateCommit");
+                    dateCommitService.Insert("t_DateCommit", targetMidNight);
                 }
 
                 TCommit cm = new TCommit();
@@ -138,12 +138,12 @@ public class Entry {
                 cm.setContent(content);
 
                 // 插入commit表
-                commitService.Insert2(cm);
+                commitService.InsertOutKey("t_commit", cm);
                 // todo 并发的时候是否会出现问题？
                 int lastId = cm.getId();
                 log.info("edit insert id: {}", lastId);
                 // 更新datecommit表
-                dateCommitService.Update(targetMidNight, "userId_" + userId, lastId, "t_DateCommit");
+                dateCommitService.Update("t_DateCommit", targetMidNight, "userId_" + userId, lastId);
 
                 return r.setSuccessMsg("edit success", null);
             }
@@ -159,10 +159,10 @@ public class Entry {
             log.info("ExportOne: {}", UrlUtil.GetFullUrl(request));
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<>();
-            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommitsByUser(beginDate, endDate, "userId_" + userId, "t_DateCommit");
+            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommitsByUser("t_DateCommit", beginDate, endDate, "userId_" + userId);
 
             rlt.getColNames().add("日期");
-            var user = userService.GetUserById(userId);
+            var user = userService.GetUserById("t_user", userId);
             String colName = Integer.toString(userId);
             if (user != null) {
                 colName = user.getName();
@@ -174,7 +174,7 @@ public class Entry {
                 var commitId = row.GetBy(userId);
                 String content = null;
                 if (commitId != 0) {
-                    var c = commitService.FindById(commitId);
+                    var c = commitService.FindById("t_commit", commitId);
                     if (c != null) {
                         content = c.getContent();
                     }
@@ -202,7 +202,7 @@ public class Entry {
             log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<>();
-            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommits(beginDate, endDate, "t_DateCommit");
+            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommits("t_DateCommit", beginDate, endDate);
             boolean hasGetColNames = false;
             for (TDateCommit one : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();
@@ -213,7 +213,7 @@ public class Entry {
                     rlt.getColNames().add("日期");
                     var userIds = one.GetFieldIds();
                     for (var userId : userIds) {
-                        var user = userService.GetUserById(userId);
+                        var user = userService.GetUserById("t_user", userId);
                         String colName = Integer.toString(userId);
                         if (user != null) {
                             colName = user.getName();
@@ -228,7 +228,7 @@ public class Entry {
                 for (var commitId : one.GetAllIds()) {
                     String content = null;
                     if (commitId != 0) {
-                        var c = commitService.FindById(commitId);
+                        var c = commitService.FindById("t_commit", commitId);
                         if (c != null) {
                             content = c.getContent();
                         }

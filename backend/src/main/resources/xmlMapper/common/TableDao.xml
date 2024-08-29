@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.smlj.dailypaper.table.dao.common.TableDao">
-    <!-- https://blog.csdn.net/wzx199201/article/details/120705105 -->
+    <!--
+        https://blog.csdn.net/wzx199201/article/details/120705105
+        https://blog.csdn.net/zl18603543572/article/details/129334086
+    -->
+    
     <!-- 查看指定的表是否存在 -->
     <select id="Exist" parameterType="String" resultType="Integer">
         select count(1)

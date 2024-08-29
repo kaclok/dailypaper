@@ -44,7 +44,7 @@ let option = {
             name: '简介',
             type: 'pie',
             radius: [0, 30],
-            center: ['30%', '50%'],
+            center: ['35%', '50%'],
             data: [
                 {value: props.unAttand, name: t('cms.daily_paper.UN_ATTEND'), itemStyle: 'red'},
                 {value: props.attand, name: t('cms.daily_paper.ATTEND'), itemStyle: 'blue'}

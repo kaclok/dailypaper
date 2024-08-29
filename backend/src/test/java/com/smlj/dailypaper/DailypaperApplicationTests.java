@@ -68,7 +68,7 @@ class DailypaperApplicationTests {
         int departmentCode = 30015;
         String userAccount = "SMLJ23659";
         String tableName = "t_user_" + departmentCode;
-        ArrayList<com.smlj.dailypaper.table_3rd.entity.TUser> rlt = jt_userService.select(userAccount);
+        ArrayList<com.smlj.dailypaper.table_3rd.entity.TUser> rlt = jt_userService.selectByAccount(userAccount);
 
         ArrayList<com.smlj.dailypaper.table.entity.TUser> list = new ArrayList<>();
         for (int i = 0; i < rlt.size(); i++) {

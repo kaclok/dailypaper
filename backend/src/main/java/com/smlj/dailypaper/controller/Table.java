@@ -64,14 +64,6 @@ public class Table {
         }
     }
 
-    public void FillUser(int departmentCode, String userAccount) {
-//        String tableName = "t_user_" + departmentCode;
-//        ArrayList<TUser> list = jt_userService.select(userAccount);
-//
-//        log.info(list.toString());
-//        userService.InsertBatch(tableName, list);
-    }
-
     @GetMapping("/create_table_commit")
     private Result<Boolean> create_table_commit(@RequestParam("departmentCode") int departmentCode, @RequestParam(name = "hash", required = false) Integer hash) {
         var r = new ResultUtil<Boolean>();

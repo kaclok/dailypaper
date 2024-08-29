@@ -12,7 +12,11 @@ import java.util.ArrayList;
  * @since 2024-08-19 08:29:19
  */
 public interface TUserService {
-    ArrayList<TUser> select(@Param("userAccount") String userAccount);
+    ArrayList<TUser> selectByAccount(@Param("userAccount") String userAccount);
+
+    int getDepartmentCode(@Param("userAccount") String userAccount);
+
+    String getDepartmentName(@Param("userAccount") String userAccount);
 
     /**
      * 通过ID查询单条数据

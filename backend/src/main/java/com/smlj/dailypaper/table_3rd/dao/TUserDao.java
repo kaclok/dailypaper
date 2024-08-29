@@ -18,7 +18,11 @@ import java.util.List;
 @Mapper
 @Repository("jtmenhu_TUserDao")
 public interface TUserDao {
-    ArrayList<TUser> select(@Param("userAccount") String userAccount);
+    ArrayList<TUser> selectByAccount(@Param("userAccount") String userAccount);
+
+    int getDepartmentCode(@Param("userAccount") String userAccount);
+
+    String getDepartmentName(@Param("userAccount") String userAccount);
 
     /**
      * 通过ID查询单条数据

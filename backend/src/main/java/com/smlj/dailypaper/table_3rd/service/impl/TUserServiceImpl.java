@@ -29,8 +29,18 @@ public class TUserServiceImpl implements TUserService {
     private TUserDao tUserDao;
 
     @Override
-    public ArrayList<TUser> select(@Param("userAccount") String userAccount) {
-        return tUserDao.select(userAccount);
+    public ArrayList<TUser> selectByAccount(@Param("userAccount") String userAccount) {
+        return tUserDao.selectByAccount(userAccount);
+    }
+
+    @Override
+    public int getDepartmentCode(@Param("userAccount") String userAccount) {
+        return tUserDao.getDepartmentCode(userAccount);
+    }
+
+    @Override
+    public String getDepartmentName(@Param("userAccount") String userAccount) {
+        return tUserDao.getDepartmentName(userAccount);
     }
 
     /**

@@ -42,7 +42,7 @@
         select code from t_department where id = (select department_id from t_user where username = #{userAccount});
     </select>
 
-    <select id="getDepartmentName">
+    <select id="getDepartmentName" resultType="java.lang.String">
         select department_title from t_user where username = #{userAccount};
     </select>
 

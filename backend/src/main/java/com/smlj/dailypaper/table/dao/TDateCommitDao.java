@@ -11,7 +11,7 @@ import java.util.ArrayList;
 @Repository
 @Mapper
 public interface TDateCommitDao extends TableCreateDao {
-    public int Insert(@Param("tableName") String tableName, @Param("date") long date);
+    public int InsertEmpty(@Param("tableName") String tableName, @Param("date") long date);
 
     public void Update(@Param("tableName") String tableName, @Param("date") long date, @Param("colName") String colName, @Param("commitId") int commitId);
 

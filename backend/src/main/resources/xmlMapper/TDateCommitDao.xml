@@ -15,70 +15,55 @@
         </set>
         where date = #{date};
     </update>
-    <insert id="Insert">
-        insert into ${tableName} (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
-                                  userId_9, userId_10, userId_11, userId_12, userId_13, userId_14, userId_15, userId_16)
-        values (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+    <!--  insert插入是，只插入部分字段数据，其他使用建表默认值
+        https://blog.csdn.net/qq_42764468/article/details/124223132
+        -->
+    <insert id="InsertEmpty">
+        insert into ${tableName} (date)
+        values (#{date})
     </insert>
 
-    <insert id="InsertBatch">
-        insert into ${tableName} (date, userId_1, userId_2, userId_3, userId_4, userId_5, userId_6, userId_7, userId_8,
-        userId_9, userId_10, userId_11, userId_12, userId_13, userId_14, userId_15, userId_16) values
-        <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
-        <foreach collection="list" item="item" index="index" separator=",">
-            (#{date}, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
-        </foreach>
-    </insert>
-
+    <!--单人导出-->
     <select id="GetRangeCommitsByUser" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
         select date, ${colName} from ${tableName}
         where #{from} &lt; date and date &lt; #{to};
     </select>
+
+    <!--全部导出-->
     <select id="GetRangeCommits" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
-        select date,
-               userId_1,
-               userId_2,
-               userId_3,
-               userId_4,
-               userId_5,
-               userId_6,
-               userId_7,
-               userId_8,
-               userId_9,
-               userId_10,
-               userId_11,
-               userId_12,
-               userId_13,
-               userId_14,
-               userId_15,
-               userId_16
+        select *
         from ${tableName}
         where #{from} &lt; date
           and date &lt; #{to};
     </select>
 
+<!--    <sql id="columnDefinition">-->
+<!--        userId_${index} int(10) UNSIGNED NULL DEFAULT 0,-->
+<!--    </sql>-->
     <!-- 创建新的日志表-->
     <update id="Create"  parameterType="String">
         CREATE TABLE ${tableName}
         (
             `date`       int(10) UNSIGNED                                                                                                 NOT NULL,
             `dateFormat` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci GENERATED ALWAYS AS (from_unixtime(`date`)) VIRTUAL NOT NULL,
-            `userId_1`   int(10) UNSIGNED                                                                                                 NULL DEFAULT 0,
-            `userId_2`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_3`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_4`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_5`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_6`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_7`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_8`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_9`   int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_10`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_11`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_12`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_13`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_14`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_15`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
-            `userId_16`  int(10) UNSIGNED                                                                                                 NULL DEFAULT NULL,
+            `userId_1` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_2` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_3` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_4` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_5` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_6` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_7` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_8` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_9` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_10` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_11` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_12` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_13` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_14` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_15` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_16` int(10) UNSIGNED NULL DEFAULT 0,
+            `userId_17` int(10) UNSIGNED NULL DEFAULT 0,
             PRIMARY KEY (`date`) USING BTREE
         ) ENGINE = InnoDB
           CHARACTER SET = utf8mb4

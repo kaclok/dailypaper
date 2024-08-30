@@ -19,8 +19,8 @@ public class TDateCommitServiceImpl implements TDateCommitService {
     private TDateCommitDao tDateCommitDao;
 
     @Override
-    public int Insert(String tableName, long date) {
-        return tDateCommitDao.Insert(tableName, date);
+    public int InsertEmpty(String tableName, long date) {
+        return tDateCommitDao.InsertEmpty(tableName, date);
     }
 
     @Override

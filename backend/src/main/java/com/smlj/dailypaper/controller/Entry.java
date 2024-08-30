@@ -8,7 +8,6 @@ import com.smlj.dailypaper.proto.to.To_ExcelRow;
 import com.smlj.dailypaper.proto.to.To_Excel;
 import com.smlj.dailypaper.proto.to.To_UserCommit;
 import com.smlj.dailypaper.proto.to.common.Result;
-import com.smlj.dailypaper.table.entity.TUser;
 import com.smlj.dailypaper.table.service.TCommitService;
 import com.smlj.dailypaper.table.service.TDateCommitService;
 import com.smlj.dailypaper.table.service.TUserService;
@@ -43,7 +42,7 @@ import java.util.ArrayList;
 @RequestMapping("/dailypaper")
 public class Entry {
     @Autowired
-    private TUserService userService;
+    private com.smlj.dailypaper.table.service.TUserService userService;
 
     @Autowired
     private com.smlj.dailypaper.table_3rd.service.TUserService jt_userService;
@@ -63,7 +62,6 @@ public class Entry {
     private final Lock lockGetall = new ReentrantLock();
     private final Lock lockEdit = new ReentrantLock();
     private final Lock lockExportAll = new ReentrantLock();
-    private final Lock lockExportOne = new ReentrantLock();
 
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
@@ -80,33 +78,12 @@ public class Entry {
         Integer departmentCode = jt_userService.getDepartmentCode(userAccount);
         // 默认：数字化中心
         departmentCode = departmentCode == null ? 30015 : departmentCode;
-
         String userTableName = Table.getUserTableName(departmentCode);
-        if (tableDao.Exist(userTableName) <= 0) {
-            // 构建部门的user表 ------------------------------------------------------------------------------------------
-            userService.Create(userTableName);
+        Table.TryFillUser(userAccount, userTableName, jt_userService, userService, tableDao);
 
-            // 填充部门的user表 ------------------------------------------------------------------------------------------
-            ArrayList<com.smlj.dailypaper.table_3rd.entity.TUser> rlts = jt_userService.selectByAccount(userAccount);
-            ArrayList<com.smlj.dailypaper.table.entity.TUser> list = new ArrayList<>();
-            for (int i = 0; i < rlts.size(); i++) {
-                var one = rlts.get(i);
-                TUser user = new TUser();
-                user.setId(i + 1);
-                user.setName(one.getNickname());
-                user.setAccount(one.getUsername());
-
-                list.add(user);
-            }
-
-            userService.InsertBatch(userTableName, list);
-        }
-
-        // 构建部门的commit表 --------------------------------------------------------------------------------------------
+        // 构建部门的commit表
         String commitTableName = Table.getCommitTableName(departmentCode);
-        if (tableDao.Exist(commitTableName) <= 0) {
-            commitService.Create(commitTableName);
-        }
+        Table.TryCreateCommit(commitTableName, commitService, tableDao);
 
         var midNight = DateTimeUtil.convertToMidnightTimestamp(date);
         var dateCommit = dateCommitService.FindBy("t_DateCommit", midNight);
@@ -123,7 +100,7 @@ public class Entry {
         if (dateCommit == null) {
             lockGetall.lock();
             try {
-                dateCommitService.Insert("t_DateCommit", midNight);
+                dateCommitService.InsertEmpty("t_DateCommit", midNight);
                 dateCommit = new TDateCommit(midNight);
             } finally {
                 lockGetall.unlock();
@@ -176,7 +153,7 @@ public class Entry {
                 var dateCommit = dateCommitService.FindBy("t_DateCommit", targetMidNight);
                 if (dateCommit == null) {
                     // 如果date对应的记录不存在的话，立即插入新纪录
-                    dateCommitService.Insert("t_DateCommit", targetMidNight);
+                    dateCommitService.InsertEmpty("t_DateCommit", targetMidNight);
                 }
 
                 TCommit cm = new TCommit();
@@ -197,51 +174,6 @@ public class Entry {
             }
         } finally {
             lockEdit.unlock();
-        }
-    }
-
-    @GetMapping("/export_one")
-    private Result<To_Excel<To_ExcelRow>> ExportOne(@RequestParam("departmentId") int departmentId, @RequestParam("userId") short userId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
-        lockExportOne.lock();
-        try {
-            log.info("ExportOne: {}", UrlUtil.GetFullUrl(request));
-
-            To_Excel<To_ExcelRow> rlt = new To_Excel<>();
-            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommitsByUser("t_DateCommit", beginDate, endDate, "userId_" + userId);
-
-            String userTableName = Table.getUserTableName(departmentId);
-            rlt.getColNames().add("日期");
-            var user = userService.GetUserById(userTableName, userId);
-            String colName = Integer.toString(userId);
-            if (user != null) {
-                colName = user.getName();
-            }
-            rlt.getColNames().add(colName);
-
-            String commitTableName = Table.getCommitTableName(departmentId);
-            for (TDateCommit row : cs) {
-                To_ExcelRow excelRow = new To_ExcelRow();
-                var commitId = row.GetBy(userId);
-                String content = null;
-                if (commitId != 0) {
-                    var c = commitService.FindById(commitTableName, commitId);
-                    if (c != null) {
-                        content = c.getContent();
-                    }
-                }
-
-                if (content != null) {
-                    excelRow.getContents().add(content);
-                    excelRow.setTime(row.getDate());
-
-                    rlt.getRows().add(excelRow);
-                }
-            }
-
-            var r = new ResultUtil<To_Excel<To_ExcelRow>>();
-            return r.setSuccessMsg("edit success", rlt);
-        } finally {
-            lockExportOne.unlock();
         }
     }
 

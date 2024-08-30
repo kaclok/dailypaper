@@ -1,93 +1,55 @@
 package com.smlj.dailypaper.controller;
 
-import com.smlj.dailypaper.proto.to.common.Result;
 import com.smlj.dailypaper.table.dao.common.TableDao;
 import com.smlj.dailypaper.table.entity.TUser;
 import com.smlj.dailypaper.table.service.TCommitService;
 import com.smlj.dailypaper.table.service.TUserService;
-import com.smlj.dailypaper.utils.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @RestController
+@EnableScheduling
 @RequestMapping("/table")
 public class Table {
-    private final Lock lockUser = new ReentrantLock();
-    private final Lock lockCommit = new ReentrantLock();
+    static public void TryFillUser(String userAccount, String userTableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao) {
+        if (tableDao.Exist(userTableName) <= 0) {
+            // 构建部门的user表
+            userService.Create(userTableName);
 
-    @Autowired
-    private TUserService userService;
+            // 填充部门的user表
+            ArrayList<com.smlj.dailypaper.table_3rd.entity.TUser> rlts = jt_userService.selectByAccount(userAccount);
+            ArrayList<com.smlj.dailypaper.table.entity.TUser> list = new ArrayList<>();
+            for (int i = 0; i < rlts.size(); i++) {
+                var one = rlts.get(i);
+                TUser user = new TUser();
+                user.setId(i + 1);
+                user.setName(one.getNickname());
+                user.setAccount(one.getUsername());
 
-    @Autowired
-    private TCommitService commitService;
-
-    @Autowired
-    private com.smlj.dailypaper.table_3rd.service.TUserService jt_userService;
-
-    @Autowired
-    private TableDao tableDao;
-
-    @GetMapping("/create_table_user")
-    private Result<Boolean> create_table_user(@RequestParam("departmentCode") int departmentCode, @RequestParam(name = "hash", required = false) Integer hash) {
-        var r = new ResultUtil<Boolean>();
-        if (hash == null || hash != (7 + departmentCode)) {
-            return r.setErrorMsg("hash not valid!", null);
-        }
-
-        return _create_table_user(departmentCode);
-    }
-
-    public Result<Boolean> _create_table_user(int departmentCode) {
-        lockUser.lock();
-        try {
-            var r = new ResultUtil<Boolean>();
-            String tableName = "t_user_" + departmentCode;
-            String db = tableDao.OwnerDB();
-            int exist = tableDao.Exist(tableName);
-            if (exist >= 1) {
-                return r.setErrorMsg("has exist table", null);
+                list.add(user);
             }
 
-            userService.Create(tableName);
-            return r.setSuccessMsg("create_table_user success", null);
-        } finally {
-            lockUser.unlock();
+            userService.InsertBatch(userTableName, list);
         }
     }
 
-    @GetMapping("/create_table_commit")
-    private Result<Boolean> create_table_commit(@RequestParam("departmentCode") int departmentCode, @RequestParam(name = "hash", required = false) Integer hash) {
-        var r = new ResultUtil<Boolean>();
-        if (hash == null || hash != (7 + departmentCode)) {
-            return r.setErrorMsg("hash not valid!", null);
-        }
-
-        return _create_table_commit(departmentCode);
+    // 10天执行一次
+    // 定期删除commit中无用的提交条目
+    @Scheduled(fixedDelay = 1000/* * 3600 * 24 * 10 */)
+    private void deleteUnusedOnCommitTable() {
+        log.info("=========");
     }
 
-    public Result<Boolean> _create_table_commit(int departmentCode) {
-        lockCommit.lock();
-        try {
-            var r = new ResultUtil<Boolean>();
-            String tableName = "t_commit_" + departmentCode;
-            int exist = tableDao.Exist(tableName);
-            if (exist >= 1) {
-                return r.setErrorMsg("has exist table", null);
-            }
-
-            commitService.Create(tableName);
-            return r.setSuccessMsg("create_table_commit success", null);
-        } finally {
-            lockCommit.unlock();
+    static public void TryCreateCommit(String commitTableName, TCommitService commitService, TableDao tableDao) {
+        if (tableDao.Exist(commitTableName) <= 0) {
+            commitService.Create(commitTableName);
         }
     }
 

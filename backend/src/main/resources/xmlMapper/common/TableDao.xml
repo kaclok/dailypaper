@@ -14,6 +14,11 @@
           AND TABLE_NAME = #{tableName}
     </select>
 
+    <!-- 表内行数 -->
+    <select id="Count" resultType="int">
+        select count(*) from ${tableName};
+    </select>
+
     <!-- 当前所在的数据库 -->
     <select id="OwnerDB" resultType="java.lang.String">
         SELECT DATABASE()

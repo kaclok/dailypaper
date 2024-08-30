@@ -11,6 +11,8 @@ public interface TableDao {
 
     int Exist(@Param("tableName") String tableName);
 
+    int Count(@Param("tableName") String tableName);
+
     void Drop(@Param("tableName") String tableName);
 
     ArrayList<TableIndex> ShowIndex(@Param("tableName") String tableName);

@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.ArrayList;
 
 public interface TDateCommitService {
-    void Create(@Param("tableName") String tableName, @Param("list") ArrayList<String> list);
+    void Create(@Param("tableName") String tableName, @Param("list") ArrayList<Integer> list);
 
     void InsertEmpty(@Param("tableName") String tableName, @Param("date") long date);
 

@@ -1,8 +1,10 @@
 package com.smlj.dailypaper;
 
 import com.smlj.dailypaper.table.dao.TCommitDao;
+import com.smlj.dailypaper.table.dao.TDateCommitDao;
 import com.smlj.dailypaper.table.dao.TUserDao;
 import com.smlj.dailypaper.table.dao.common.TableDao;
+import com.smlj.dailypaper.table.entity.TDateCommit;
 import com.smlj.dailypaper.table.entity.TUser;
 
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,9 @@ class DailypaperApplicationTests {
 
     @Autowired
     private TCommitDao commit_createDao;
+
+    @Autowired
+    private TDateCommitDao datecommit_createDao;
 
     @Autowired
     private com.smlj.dailypaper.table_3rd.service.TUserService jt_userService;
@@ -59,7 +64,7 @@ class DailypaperApplicationTests {
 
     @Test
     void CreateTable() {
-        tableDao.Drop("t_commit_hgglb");
+        // tableDao.Drop("t_commit_hgglb");
         commit_createDao.Create("t_commit_hgglb");
     }
 
@@ -82,5 +87,32 @@ class DailypaperApplicationTests {
         }
 
         tUserDao.InsertBatch(tableName, list);
+    }
+
+    @Test
+    void CreateDateCommitTable() {
+        int departmentCode = 30015;
+        String tableName = "t_datecommit_" + departmentCode;
+
+        tableDao.Drop(tableName);
+        ArrayList<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add("4");
+        list.add("5");
+        list.add("6");
+        list.add("7");
+        list.add("8");
+        list.add("9");
+        list.add("10");
+        list.add("11");
+        list.add("12");
+        list.add("13");
+        list.add("14");
+        list.add("15");
+        list.add("16");
+        list.add("17");
+        datecommit_createDao.Create(tableName, list);
     }
 }

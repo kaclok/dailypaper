@@ -9,6 +9,12 @@
         where id = #{userId};
     </select>
 
+    <!--统计总行数-->
+    <select id="Count" resultType="java.lang.Integer">
+        select count(*)
+        from ${tableName};
+    </select>
+
     <insert id="Insert">
         insert into ${tableName} (id, name, account)
         values (#{one.id}, #{one.name}, #{one.account});

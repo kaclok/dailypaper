@@ -44,7 +44,7 @@ public class Table {
     // 定期删除commit中无用的提交条目
     @Scheduled(fixedDelay = 1000 * 3600 * 24 * 10)
     private void deleteUnusedOnCommitTable() {
-        log.info("定时任务");
+        log.info("-- 定时任务 --");
     }
 
     static public void TryCreateCommit(String commitTableName, TCommitService commitService, TableDao tableDao) {

@@ -6,6 +6,7 @@ import com.smlj.dailypaper.table.dao.TDateCommitDao;
 import com.smlj.dailypaper.table.service.TDateCommitService;
 import com.smlj.dailypaper.config.db.EDatasource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,13 @@ public class TDateCommitServiceImpl implements TDateCommitService {
     private TDateCommitDao tDateCommitDao;
 
     @Override
-    public int InsertEmpty(String tableName, long date) {
-        return tDateCommitDao.InsertEmpty(tableName, date);
+    public void Create(@Param("tableName") String tableName, @Param("list") ArrayList<String> list) {
+        tDateCommitDao.Create(tableName, list);
+    }
+
+    @Override
+    public void InsertEmpty(String tableName, long date) {
+        tDateCommitDao.InsertEmpty(tableName, date);
     }
 
     @Override

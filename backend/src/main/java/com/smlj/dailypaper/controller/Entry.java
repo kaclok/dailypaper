@@ -108,7 +108,7 @@ public class Entry {
                 dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
             }
 
-            ArrayList<Integer> userIds = tableDao.KeyList(userTableName, "id");
+            ArrayList<Integer> userIds = tableDao.FieldList(userTableName, "id", false);
             for (int i = 0; i < userIds.size(); i++) {
                 var userId = userIds.get(i);
                 To_UserCommit tu = new To_UserCommit();
@@ -191,7 +191,7 @@ public class Entry {
             String datecommitTableName = Table.getDateCommitTableName(departmentId);
             String commitTableName = Table.getCommitTableName(departmentId);
             String userTableName = Table.getUserTableName(departmentId);
-            ArrayList<Integer> userIds = tableDao.KeyList(userTableName, "id");
+            ArrayList<Integer> userIds = tableDao.FieldList(userTableName, "id", false);
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<>();
 

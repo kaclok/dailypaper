@@ -19,8 +19,17 @@
         select count(*) from ${tableName};
     </select>
 
-    <select id="KeyList" resultType="java.lang.Integer">
-        select ${keyName} from ${tableName};
+    <select id="FieldList" resultType="java.lang.Integer">
+        <!--
+            select distinct ${fieldName}
+            from ${tableName};
+        -->
+
+        select ${fieldName}
+        from ${tableName}
+        <if test="distinct">
+            group by ${fieldName}
+        </if>;
     </select>
 
     <!-- 当前所在的数据库 -->

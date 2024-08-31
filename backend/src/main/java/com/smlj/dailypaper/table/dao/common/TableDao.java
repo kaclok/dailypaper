@@ -13,7 +13,7 @@ public interface TableDao {
 
     int Count(@Param("tableName") String tableName);
 
-    ArrayList<Integer> KeyList(@Param("tableName") String tableName, @Param("keyName") String keyName);
+    ArrayList<Integer> FieldList(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("distinct") boolean distinct);
 
     void Drop(@Param("tableName") String tableName);
 

@@ -101,4 +101,9 @@ class DailypaperApplicationTests {
         }
         datecommit_createDao.Create(tableName, list);
     }
+
+    @Test
+    void distinct() {
+        var ls = tableDao.FieldList("t_commit_30015", "userId", false);
+    }
 }

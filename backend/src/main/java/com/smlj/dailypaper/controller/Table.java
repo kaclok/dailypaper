@@ -7,8 +7,7 @@ import com.smlj.dailypaper.table.service.TDateCommitService;
 import com.smlj.dailypaper.table.service.TUserService;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 @EnableScheduling
 @RequestMapping("/table")
 public class Table {
-    static public void TryFillUser(String userAccount, String userTableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao, @Qualifier("redisTemplate") RedisTemplate redis, int departmentCode) {
+    static public void TryFillUser(String userAccount, String userTableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao, StringRedisTemplate redis, int departmentCode) {
         if (tableDao.Exist(userTableName) <= 0) {
             // 构建部门的user表
             userService.Create(userTableName);
@@ -45,12 +44,12 @@ public class Table {
 
                 String finalKey = hashKey + ":" + id;
                 var op = redis.opsForHash();
-                op.put(finalKey, "id", id);
+                op.put(finalKey, "id", String.valueOf(id));
                 op.put(finalKey, "name", one.getNickname());
                 op.put(finalKey, "account", one.getUsername());
 
                 var opList = redis.opsForList();
-                opList.rightPush(listKey, id);
+                opList.rightPush(listKey, String.valueOf(id));
             }
 
             userService.InsertBatch(userTableName, list);

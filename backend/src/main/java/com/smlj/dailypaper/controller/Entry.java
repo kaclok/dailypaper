@@ -15,8 +15,7 @@ import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -53,8 +52,9 @@ public class Entry {
 
     private final TableDao tableDao;
 
-    // 需要使用@Qualifier("redisTemplate")标识，或者命名固定为redisTemplate，否则会有同名bean的问题
-    private final RedisTemplate redis;
+    // Q1:需要使用@Qualifier("redisTemplate")标识，或者命名固定为redisTemplate，否则会有同名bean的问题
+    // Q1的时候会存在redis的key有乱码前缀的情况，按照https://www.cnblogs.com/candlia/p/11919884.html的解决方式，替换为StringRedisTemplate，key,value都是String，就不会存在乱码情况
+    private final StringRedisTemplate redis;
 
     private final HttpServletRequest request;
 
@@ -62,7 +62,7 @@ public class Entry {
     private final Lock lockEdit = new ReentrantLock();
     private final Lock lockExportAll = new ReentrantLock();
 
-    public Entry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao, @Qualifier("redisTemplate") RedisTemplate redis, HttpServletRequest request) {
+    public Entry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao, StringRedisTemplate redis, HttpServletRequest request) {
         this.userService = userService;
         this.jt_userService = jt_userService;
         this.dateCommitService = dateCommitService;
@@ -88,10 +88,10 @@ public class Entry {
 
             Integer departmentCode = 30015;
             if (redis.hasKey(userAccount)) {
-                departmentCode = (Integer) redis.opsForHash().get(userAccount, "depCode");
+                departmentCode = Integer.parseInt((String) redis.opsForHash().get(userAccount, "depCode"));
             } else {
                 departmentCode = jt_userService.getDepartmentCode(userAccount);
-                redis.opsForHash().put(userAccount, "depCode", departmentCode);
+                redis.opsForHash().put(userAccount, "depCode", String.valueOf(departmentCode));
             }
 
             // 默认：数字化中心
@@ -133,11 +133,11 @@ public class Entry {
 
             String hashKey = "user:" + departmentCode;
             String listKey = "depUserList:" + departmentCode;
-            List<Integer> userIds = redis.opsForList().range(listKey, 0, -1);
+            List<String> userIds = redis.opsForList().range(listKey, 0, -1);
             for (int i = 0; i < userIds.size(); i++) {
                 var userId = userIds.get(i);
                 To_UserCommit tu = new To_UserCommit();
-                tu.setUserId(userId);
+                tu.setUserId(Integer.parseInt(userId));
 
                 String finalKey = hashKey + ":" + userId;
                 String name = (String) redis.opsForHash().get(finalKey, "name");
@@ -219,7 +219,7 @@ public class Entry {
             String datecommitTableName = Table.getDateCommitTableName(departmentId);
             String commitTableName = Table.getCommitTableName(departmentId);
             String listKey = "depUserList:" + departmentId;
-            List<Integer> userIds = redis.opsForList().range(listKey, 0, -1);
+            List<String> userIds = redis.opsForList().range(listKey, 0, -1);
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<>();
             // 获取excel第一行
@@ -241,7 +241,7 @@ public class Entry {
                 boolean allEmpty = true;
 
                 for (int i = 0; i < userIds.size(); i++) {
-                    int userId = userIds.get(i);
+                    String userId = userIds.get(i);
                     String key = "userId_" + userId;
                     Long commitId = (Long) (one.get(key));
                     String content = null;

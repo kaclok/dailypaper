@@ -4,7 +4,7 @@ import {ApiDaily} from "@/cms/daily_paper/api/ApiDaily.js";
 class SysDaily {
     _result = null;
     _departmentId = null;
-    _departmentIdName = null;
+    _departmentName = null;
 
     GetCommits() {
         if (this._result === null) {
@@ -50,7 +50,7 @@ class SysDaily {
             // 网络消息回来之后，如果和之前的info.value没有区别，则不会触发UI响应式刷新
             this._result = r.data;
             this._departmentId = this._result.data.departmentId;
-            this._departmentIdName = this._result.data.departmentName;
+            this._departmentName = this._result.data.departmentName;
         }
 
         if (onAfter != null) {

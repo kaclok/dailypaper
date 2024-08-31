@@ -35,7 +35,8 @@ let selectedLegend = ref({
     [t('cms.daily_paper.ATTEND')]: true,
 });
 let loading = ref(false);
-let title = ref('');
+let departmentTitle = ref('');
+let departmentId = ref(0);
 
 function onDateChanged(date) {
     let sec = date / 1000;
@@ -46,7 +47,8 @@ function onDateChanged(date) {
 
         // 触发响应式UI刷新
         refreshCommits();
-        title.value = Singleton.getInstance(SysDaily)._departmentIdName;
+        departmentTitle.value = Singleton.getInstance(SysDaily)._departmentName;
+        departmentId.value = Singleton.getInstance(SysDaily)._departmentId;
     });
 
     selectedDate.value = sec;
@@ -195,13 +197,15 @@ onUnmounted(() => {
 <template>
     <div class="root">
         <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
-        <a href="https://www.kdocs.cn/l/cgHAbfHG8Fm2?from=docs&startTime=1724384203679" target="_blank" style="position: absolute; left: 260px; top: 30px; color: white; background: #0000FF; border-radius: 50%;">考勤表</a>
+        <a v-if="departmentId === 30015" href="https://www.kdocs.cn/l/cgHAbfHG8Fm2?from=docs&startTime=1724384203679" target="_blank"
+           style="position: absolute; left: 260px; top: 30px; color: white; background: #0000FF; border-radius: 50%;">考勤表</a>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <div style="display: flex; position: relative; left: 340px;  align-items: center;">
             <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
                 :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
-            <span style="font-size: 60px; font-style: italic; color: #a0cfff; margin-left: 100px; height: 160px; width: 580px;
-                overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;">{{ title }}</span>
+            <span style="font-size: 60px; font-style: italic; color: #a0cfff; margin-left: 100px; height: 160px; width:
+            580px;
+                overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;">{{ departmentTitle }}</span>
         </div>
         <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>
         <el-button @click="onExportAll" v-cd-s="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出

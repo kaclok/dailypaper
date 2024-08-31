@@ -9,15 +9,18 @@ import com.smlj.dailypaper.proto.to.To_UserCommit;
 import com.smlj.dailypaper.proto.to.common.Result;
 import com.smlj.dailypaper.table.service.TCommitService;
 import com.smlj.dailypaper.table.service.TDateCommitService;
+import com.smlj.dailypaper.table.service.TUserService;
 import com.smlj.dailypaper.utils.UrlUtil;
 import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -40,27 +43,34 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/dailypaper")
 public class Entry {
-    @Autowired
-    private com.smlj.dailypaper.table.service.TUserService userService;
+    private final com.smlj.dailypaper.table.service.TUserService userService;
 
-    @Autowired
-    private com.smlj.dailypaper.table_3rd.service.TUserService jt_userService;
+    private final com.smlj.dailypaper.table_3rd.service.TUserService jt_userService;
 
-    @Autowired
-    private TDateCommitService dateCommitService;
+    private final TDateCommitService dateCommitService;
 
-    @Autowired
-    private TCommitService commitService;
+    private final TCommitService commitService;
 
-    @Autowired
-    private TableDao tableDao;
+    private final TableDao tableDao;
 
-    @Autowired
-    private HttpServletRequest request;
+    // 需要使用@Qualifier("redisTemplate")标识，或者命名固定为redisTemplate，否则会有同名bean的问题
+    private final RedisTemplate redis;
+
+    private final HttpServletRequest request;
 
     private final Lock lockGetall = new ReentrantLock();
     private final Lock lockEdit = new ReentrantLock();
     private final Lock lockExportAll = new ReentrantLock();
+
+    public Entry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao, @Qualifier("redisTemplate") RedisTemplate redis, HttpServletRequest request) {
+        this.userService = userService;
+        this.jt_userService = jt_userService;
+        this.dateCommitService = dateCommitService;
+        this.commitService = commitService;
+        this.tableDao = tableDao;
+        this.redis = redis;
+        this.request = request;
+    }
 
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
@@ -76,11 +86,17 @@ public class Entry {
 
             // todo 将来redis构建userAccount和departName的关系
 
-            Integer departmentCode = jt_userService.getDepartmentCode(userAccount);
+            Integer departmentCode = 30015;
+            if (redis.hasKey(userAccount)) {
+                departmentCode = (Integer) redis.opsForHash().get(userAccount, "depCode");
+            } else {
+                departmentCode = jt_userService.getDepartmentCode(userAccount);
+                redis.opsForHash().put(userAccount, "depCode", departmentCode);
+            }
+
             // 默认：数字化中心
-            departmentCode = departmentCode == null ? 30015 : departmentCode;
             String userTableName = Table.getUserTableName(departmentCode);
-            Table.TryFillUser(userAccount, userTableName, jt_userService, userService, tableDao);
+            Table.TryFillUser(userAccount, userTableName, jt_userService, userService, tableDao, redis, departmentCode);
 
             // 构建部门的commit表
             String commitTableName = Table.getCommitTableName(departmentCode);
@@ -93,8 +109,15 @@ public class Entry {
             to.setTotal(count);
             to.setDate(midNight);
             to.setDepartmentId(departmentCode);
-            String departmentName = jt_userService.getDepartmentName(userAccount);
-            departmentName = departmentName == null ? "未知部门" : departmentName;
+
+            String departmentName = "未知部门";
+            if (redis.hasKey(userAccount) && redis.opsForHash().hasKey(userAccount, "depName")) {
+                departmentName = (String) redis.opsForHash().get(userAccount, "depName");
+            } else {
+                departmentName = jt_userService.getDepartmentName(userAccount);
+                redis.opsForHash().put(userAccount, "depName", departmentName);
+            }
+
             to.setDepartmentName(departmentName);
 
             // 构建部门的datecommit表
@@ -108,17 +131,22 @@ public class Entry {
                 dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
             }
 
-            ArrayList<Integer> userIds = tableDao.FieldList(userTableName, "id", false);
+            String hashKey = "user:" + departmentCode;
+            String listKey = "depUserList:" + departmentCode;
+            List<Integer> userIds = redis.opsForList().range(listKey, 0, -1);
             for (int i = 0; i < userIds.size(); i++) {
                 var userId = userIds.get(i);
                 To_UserCommit tu = new To_UserCommit();
-                var user = userService.GetUserById(userTableName, userId);
                 tu.setUserId(userId);
-                tu.setName(user.getName());
-                tu.setAccount(user.getAccount());
+
+                String finalKey = hashKey + ":" + userId;
+                String name = (String) redis.opsForHash().get(finalKey, "name");
+                tu.setName(name);
+                String account = (String) redis.opsForHash().get(finalKey, "account");
+                tu.setAccount(account);
 
                 String key = "userId_" + userId;
-                Long commitId = (Long)(dateCommit.get(key));
+                Long commitId = (Long) (dateCommit.get(key));
                 TCommit c = commitService.FindById(commitTableName, commitId.intValue());
                 if (c != null) {
                     tu.setTime(c.getCommitDateTime());
@@ -190,35 +218,32 @@ public class Entry {
 
             String datecommitTableName = Table.getDateCommitTableName(departmentId);
             String commitTableName = Table.getCommitTableName(departmentId);
-            String userTableName = Table.getUserTableName(departmentId);
-            ArrayList<Integer> userIds = tableDao.FieldList(userTableName, "id", false);
+            String listKey = "depUserList:" + departmentId;
+            List<Integer> userIds = redis.opsForList().range(listKey, 0, -1);
 
             To_Excel<To_ExcelRow> rlt = new To_Excel<>();
-
             // 获取excel第一行
             rlt.getColNames().add("日期");
-            for (var userId : userIds) {
-                var user = userService.GetUserById(userTableName, userId);
-                // 默认id,如果找到name则使用name
-                String colName = Integer.toString(userId);
-                if (user != null) {
-                    colName = user.getName();
+            if (userIds != null) {
+                String hashKey = "user:" + departmentId;
+                for (var userId : userIds) {
+                    String finalKey = hashKey + ":" + userId;
+                    String name = (String) redis.opsForHash().get(finalKey, "name");
+                    rlt.getColNames().add(name);
                 }
-
-                rlt.getColNames().add(colName);
             }
 
             ArrayList<HashMap<String, Object>> cs = dateCommitService.GetRangeCommits(datecommitTableName, beginDate, endDate);
             for (HashMap<String, Object> one : cs) {
                 To_ExcelRow excelRow = new To_ExcelRow();
-                Long date = (Long)one.get("date");
+                Long date = (Long) one.get("date");
                 excelRow.setTime(date.intValue());
                 boolean allEmpty = true;
 
                 for (int i = 0; i < userIds.size(); i++) {
                     int userId = userIds.get(i);
                     String key = "userId_" + userId;
-                    Long commitId = (Long)(one.get(key));
+                    Long commitId = (Long) (one.get(key));
                     String content = null;
                     if (commitId != 0) {
                         var c = commitService.FindById(commitTableName, commitId.intValue());

@@ -7,6 +7,8 @@ import com.smlj.dailypaper.table.service.TDateCommitService;
 import com.smlj.dailypaper.table.service.TUserService;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,22 +21,36 @@ import java.util.ArrayList;
 @EnableScheduling
 @RequestMapping("/table")
 public class Table {
-    static public void TryFillUser(String userAccount, String userTableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao) {
+    static public void TryFillUser(String userAccount, String userTableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao, @Qualifier("redisTemplate") RedisTemplate redis, int departmentCode) {
         if (tableDao.Exist(userTableName) <= 0) {
             // 构建部门的user表
             userService.Create(userTableName);
 
+            // Dictionary<depCode:Dictionary<userId, User>>
+            String hashKey = "user:" + departmentCode;
+            // Dictionary<depCode:List>
+            String listKey = "depUserList:" + departmentCode;
             // 填充部门的user表
             ArrayList<com.smlj.dailypaper.table_3rd.entity.TUser> rlts = jt_userService.selectByAccount(userAccount);
             ArrayList<com.smlj.dailypaper.table.entity.TUser> list = new ArrayList<>();
             for (int i = 0; i < rlts.size(); i++) {
                 var one = rlts.get(i);
+                int id = i + 1;
                 TUser user = new TUser();
-                user.setId(i + 1);
+                user.setId(id);
                 user.setName(one.getNickname());
                 user.setAccount(one.getUsername());
 
                 list.add(user);
+
+                String finalKey = hashKey + ":" + id;
+                var op = redis.opsForHash();
+                op.put(finalKey, "id", id);
+                op.put(finalKey, "name", one.getNickname());
+                op.put(finalKey, "account", one.getUsername());
+
+                var opList = redis.opsForList();
+                opList.rightPush(listKey, id);
             }
 
             userService.InsertBatch(userTableName, list);

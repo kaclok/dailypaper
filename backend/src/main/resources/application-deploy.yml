@@ -38,12 +38,12 @@ spring:
             test-on-return: false
             test-while-idle: true
 
-  #data:
-    #redis:  # Redis
-      #host: 10.8.54.127
-      #port: 6391
-      #username: root
-      #password: smlj@123456
+  data:
+    redis:  # Redis
+      host: localhost
+      port: 6379
+#      username: root
+#      password: smlj@123456
 
 logging:
   file:

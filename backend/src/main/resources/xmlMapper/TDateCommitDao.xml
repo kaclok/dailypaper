@@ -3,8 +3,8 @@
 <!-- mapper namespace作用是：代码和xml进行关联 -->
 <!-- https://blog.csdn.net/xu962336414/article/details/105624371 -->
 <mapper namespace="com.smlj.dailypaper.table.dao.TDateCommitDao">
-    <select id="FindBy" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
-        select * /*date, commitIds*/
+    <select id="FindBy" resultType="HashMap">
+        select *
         from ${tableName}
         where date = #{date};
     </select>
@@ -25,13 +25,13 @@
     </insert>
 
     <!--单人导出-->
-    <select id="GetRangeCommitsByUser" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
+    <select id="GetRangeCommitsByUser" resultType="HashMap">
         select date, ${colName} from ${tableName}
         where #{from} &lt; date and date &lt; #{to};
     </select>
 
     <!--全部导出-->
-    <select id="GetRangeCommits" resultType="com.smlj.dailypaper.table.entity.TDateCommit">
+    <select id="GetRangeCommits" resultType="HashMap">
         select *
         from ${tableName}
         where #{from} &lt; date

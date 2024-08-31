@@ -1,7 +1,6 @@
 package com.smlj.dailypaper.controller;
 
 import com.smlj.dailypaper.table.dao.common.TableDao;
-import com.smlj.dailypaper.table.entity.TDateCommit;
 import com.smlj.dailypaper.table.entity.TCommit;
 import com.smlj.dailypaper.proto.to.To_DateCommit;
 import com.smlj.dailypaper.proto.to.To_ExcelRow;
@@ -10,7 +9,6 @@ import com.smlj.dailypaper.proto.to.To_UserCommit;
 import com.smlj.dailypaper.proto.to.common.Result;
 import com.smlj.dailypaper.table.service.TCommitService;
 import com.smlj.dailypaper.table.service.TDateCommitService;
-import com.smlj.dailypaper.table.service.TUserService;
 import com.smlj.dailypaper.utils.UrlUtil;
 import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
@@ -19,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -68,67 +67,72 @@ public class Entry {
     private Result<To_DateCommit> GetAll(@RequestParam("userAccount") String userAccount, @RequestParam("date") long date) {
         log.info("GetAll:{}", UrlUtil.GetFullUrl(request));
 
-        var r = new ResultUtil<To_DateCommit>();
-        if (userAccount == null || userAccount.isEmpty() || date <= 0) {
-            return r.setErrorMsg("args invalid!", null);
-        }
-
-        // todo 将来redis构建userAccount和departName的关系
-
-        Integer departmentCode = jt_userService.getDepartmentCode(userAccount);
-        // 默认：数字化中心
-        departmentCode = departmentCode == null ? 30015 : departmentCode;
-        String userTableName = Table.getUserTableName(departmentCode);
-        Table.TryFillUser(userAccount, userTableName, jt_userService, userService, tableDao);
-
-        // 构建部门的commit表
-        String commitTableName = Table.getCommitTableName(departmentCode);
-        Table.TryCreateCommit(commitTableName, commitService, tableDao);
-
-        var midNight = DateTimeUtil.convertToMidnightTimestamp(date);
-        var dateCommit = dateCommitService.FindBy("t_DateCommit", midNight);
-
-        To_DateCommit to = new To_DateCommit();
-        to.setTotal(TDateCommit.GetFieldCount());
-        to.setDate(midNight);
-        to.setDepartmentId(departmentCode);
-        String departmentName = jt_userService.getDepartmentName(userAccount);
-        departmentName = departmentName == null ? "未知部门" : departmentName;
-        to.setDepartmentName(departmentName);
-
-        String dateCommitTableName = "t_datecommit_" + departmentCode;
-        if (dateCommit == null) {
-            lockGetall.lock();
-            try {
-                dateCommitService.InsertEmpty("t_DateCommit", midNight);
-                dateCommit = new TDateCommit(midNight);
-            } finally {
-                lockGetall.unlock();
-            }
-        }
-
-        ArrayList<Integer> commitIds = dateCommit.GetAllIds();
-        var userIds = dateCommit.GetFieldIds();
-        for (int i = 0; i < commitIds.size(); i++) {
-            var userId = userIds.get(i);
-            To_UserCommit tu = new To_UserCommit();
-            var user = userService.GetUserById(userTableName, userId);
-            tu.setUserId(userId);
-            tu.setName(user.getName());
-            tu.setAccount(user.getAccount());
-
-            var commitId = commitIds.get(i);
-            TCommit c = commitService.FindById(commitTableName, commitId);
-            if (c != null) {
-                tu.setTime(c.getCommitDateTime());
-                tu.setContent(c.getContent());
+        lockGetall.lock();
+        try {
+            var r = new ResultUtil<To_DateCommit>();
+            if (userAccount == null || userAccount.isEmpty() || date <= 0) {
+                return r.setErrorMsg("args invalid!", null);
             }
 
-            to.getCommits().add(tu);
-        }
+            // todo 将来redis构建userAccount和departName的关系
 
-        // log.info("getAll-> to:{}", to);
-        return r.setData(to, "getAll");
+            Integer departmentCode = jt_userService.getDepartmentCode(userAccount);
+            // 默认：数字化中心
+            departmentCode = departmentCode == null ? 30015 : departmentCode;
+            String userTableName = Table.getUserTableName(departmentCode);
+            Table.TryFillUser(userAccount, userTableName, jt_userService, userService, tableDao);
+
+            // 构建部门的commit表
+            String commitTableName = Table.getCommitTableName(departmentCode);
+            Table.TryCreateCommit(commitTableName, commitService, tableDao);
+
+            int midNight = (int) DateTimeUtil.convertToMidnightTimestamp(date);
+            int count = tableDao.Count(userTableName);
+
+            To_DateCommit to = new To_DateCommit();
+            to.setTotal(count);
+            to.setDate(midNight);
+            to.setDepartmentId(departmentCode);
+            String departmentName = jt_userService.getDepartmentName(userAccount);
+            departmentName = departmentName == null ? "未知部门" : departmentName;
+            to.setDepartmentName(departmentName);
+
+            // 构建部门的datecommit表
+            String dateCommitTableName = Table.getDateCommitTableName(departmentCode);
+            Table.TryCreateDateCommit(dateCommitTableName, dateCommitService, tableDao, count);
+
+            HashMap<String, Object> dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
+            if (dateCommit == null) {
+                dateCommitService.InsertEmpty(dateCommitTableName, midNight);
+                // 重新db中查找
+                dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
+            }
+
+            ArrayList<Integer> userIds = tableDao.KeyList(userTableName, "id");
+            for (int i = 0; i < userIds.size(); i++) {
+                var userId = userIds.get(i);
+                To_UserCommit tu = new To_UserCommit();
+                var user = userService.GetUserById(userTableName, userId);
+                tu.setUserId(userId);
+                tu.setName(user.getName());
+                tu.setAccount(user.getAccount());
+
+                String key = "userId_" + userId;
+                Long commitId = (Long)(dateCommit.get(key));
+                TCommit c = commitService.FindById(commitTableName, commitId.intValue());
+                if (c != null) {
+                    tu.setTime(c.getCommitDateTime());
+                    tu.setContent(c.getContent());
+                }
+
+                to.getCommits().add(tu);
+            }
+
+            // log.info("getAll-> to:{}", to);
+            return r.setData(to, "getAll");
+        } finally {
+            lockGetall.unlock();
+        }
     }
 
     @GetMapping("/edit")
@@ -149,8 +153,9 @@ public class Entry {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("Can not edit because not today!", null);
             } else {
+                String datecommitTableName = Table.getDateCommitTableName(departmentId);
                 var targetMidNight = DateTimeUtil.convertToMidnightTimestamp(date);
-                var dateCommit = dateCommitService.FindBy("t_DateCommit", targetMidNight);
+                var dateCommit = dateCommitService.FindBy(datecommitTableName, targetMidNight);
                 if (dateCommit == null) {
                     // 如果date对应的记录不存在的话，立即插入新纪录
                     dateCommitService.InsertEmpty("t_DateCommit", targetMidNight);
@@ -168,7 +173,7 @@ public class Entry {
                 int lastId = cm.getId();
                 log.info("edit insert id: {}", lastId);
                 // 更新datecommit表
-                dateCommitService.Update("t_DateCommit", targetMidNight, "userId_" + userId, lastId);
+                dateCommitService.Update(datecommitTableName, targetMidNight, "userId_" + userId, lastId);
 
                 return r.setSuccessMsg("edit success", null);
             }
@@ -183,42 +188,46 @@ public class Entry {
         try {
             log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));
 
-            To_Excel<To_ExcelRow> rlt = new To_Excel<>();
-            ArrayList<TDateCommit> cs = dateCommitService.GetRangeCommits("t_DateCommit", beginDate, endDate);
-            boolean hasGetColNames = false;
+            String datecommitTableName = Table.getDateCommitTableName(departmentId);
             String commitTableName = Table.getCommitTableName(departmentId);
             String userTableName = Table.getUserTableName(departmentId);
-            for (TDateCommit one : cs) {
-                To_ExcelRow excelRow = new To_ExcelRow();
-                excelRow.setTime(one.getDate());
-                boolean allEmpty = true;
+            ArrayList<Integer> userIds = tableDao.KeyList(userTableName, "id");
 
-                if (!hasGetColNames) {
-                    rlt.getColNames().add("日期");
-                    var userIds = one.GetFieldIds();
-                    for (var userId : userIds) {
-                        var user = userService.GetUserById(userTableName, userId);
-                        String colName = Integer.toString(userId);
-                        if (user != null) {
-                            colName = user.getName();
-                        }
+            To_Excel<To_ExcelRow> rlt = new To_Excel<>();
 
-                        rlt.getColNames().add(colName);
-                    }
-
-                    hasGetColNames = true;
+            // 获取excel第一行
+            rlt.getColNames().add("日期");
+            for (var userId : userIds) {
+                var user = userService.GetUserById(userTableName, userId);
+                // 默认id,如果找到name则使用name
+                String colName = Integer.toString(userId);
+                if (user != null) {
+                    colName = user.getName();
                 }
 
-                for (var commitId : one.GetAllIds()) {
+                rlt.getColNames().add(colName);
+            }
+
+            ArrayList<HashMap<String, Object>> cs = dateCommitService.GetRangeCommits(datecommitTableName, beginDate, endDate);
+            for (HashMap<String, Object> one : cs) {
+                To_ExcelRow excelRow = new To_ExcelRow();
+                Long date = (Long)one.get("date");
+                excelRow.setTime(date.intValue());
+                boolean allEmpty = true;
+
+                for (int i = 0; i < userIds.size(); i++) {
+                    int userId = userIds.get(i);
+                    String key = "userId_" + userId;
+                    Long commitId = (Long)(one.get(key));
                     String content = null;
                     if (commitId != 0) {
-                        var c = commitService.FindById(commitTableName, commitId);
+                        var c = commitService.FindById(commitTableName, commitId.intValue());
                         if (c != null) {
                             content = c.getContent();
                         }
                     }
 
-                    allEmpty &= (content == null);
+                    allEmpty &= (content == null || content.isEmpty());
                     excelRow.getContents().add(content);
                 }
 

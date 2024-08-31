@@ -1,7 +1,6 @@
 package com.smlj.dailypaper.table.service.impl;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.smlj.dailypaper.table.entity.TDateCommit;
 import com.smlj.dailypaper.table.dao.TDateCommitDao;
 import com.smlj.dailypaper.table.service.TDateCommitService;
 import com.smlj.dailypaper.config.db.EDatasource;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Slf4j
 @Service
@@ -35,17 +35,17 @@ public class TDateCommitServiceImpl implements TDateCommitService {
     }
 
     @Override
-    public TDateCommit FindBy(String tableName, long date) {
+    public HashMap<String, Object> FindBy(String tableName, long date) {
         return tDateCommitDao.FindBy(tableName, date);
     }
 
     @Override
-    public ArrayList<TDateCommit> GetRangeCommitsByUser(String tableName, long from, long to, String colName) {
+    public ArrayList<HashMap<String, Long>> GetRangeCommitsByUser(String tableName, long from, long to, String colName) {
         return tDateCommitDao.GetRangeCommitsByUser(tableName, from, to, colName);
     }
 
     @Override
-    public ArrayList<TDateCommit> GetRangeCommits(String tableName, long from, long to) {
+    public ArrayList<HashMap<String, Object>> GetRangeCommits(String tableName, long from, long to) {
         return tDateCommitDao.GetRangeCommits(tableName, from, to);
     }
 }

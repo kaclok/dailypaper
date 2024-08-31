@@ -19,6 +19,10 @@
         select count(*) from ${tableName};
     </select>
 
+    <select id="KeyList" resultType="java.lang.Integer">
+        select ${keyName} from ${tableName};
+    </select>
+
     <!-- 当前所在的数据库 -->
     <select id="OwnerDB" resultType="java.lang.String">
         SELECT DATABASE()

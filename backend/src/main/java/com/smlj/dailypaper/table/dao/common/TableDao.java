@@ -13,6 +13,8 @@ public interface TableDao {
 
     int Count(@Param("tableName") String tableName);
 
+    ArrayList<Integer> KeyList(@Param("tableName") String tableName, @Param("keyName") String keyName);
+
     void Drop(@Param("tableName") String tableName);
 
     ArrayList<TableIndex> ShowIndex(@Param("tableName") String tableName);

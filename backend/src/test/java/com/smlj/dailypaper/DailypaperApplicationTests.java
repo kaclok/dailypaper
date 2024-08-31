@@ -4,7 +4,6 @@ import com.smlj.dailypaper.table.dao.TCommitDao;
 import com.smlj.dailypaper.table.dao.TDateCommitDao;
 import com.smlj.dailypaper.table.dao.TUserDao;
 import com.smlj.dailypaper.table.dao.common.TableDao;
-import com.smlj.dailypaper.table.entity.TDateCommit;
 import com.smlj.dailypaper.table.entity.TUser;
 
 import org.junit.jupiter.api.Test;

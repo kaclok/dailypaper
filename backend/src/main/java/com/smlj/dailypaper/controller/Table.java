@@ -3,6 +3,7 @@ package com.smlj.dailypaper.controller;
 import com.smlj.dailypaper.table.dao.common.TableDao;
 import com.smlj.dailypaper.table.entity.TUser;
 import com.smlj.dailypaper.table.service.TCommitService;
+import com.smlj.dailypaper.table.service.TDateCommitService;
 import com.smlj.dailypaper.table.service.TUserService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,6 +51,16 @@ public class Table {
     static public void TryCreateCommit(String commitTableName, TCommitService commitService, TableDao tableDao) {
         if (tableDao.Exist(commitTableName) <= 0) {
             commitService.Create(commitTableName);
+        }
+    }
+
+    static public void TryCreateDateCommit(String datecommitTableName, TDateCommitService datecommitService, TableDao tableDao, int count) {
+        if (tableDao.Exist(datecommitTableName) <= 0) {
+            ArrayList<Integer> list = new ArrayList<>(count);
+            for (int i = 1; i < count + 1; ++i) {
+                list.add(i);
+            }
+            datecommitService.Create(datecommitTableName, list);
         }
     }
 

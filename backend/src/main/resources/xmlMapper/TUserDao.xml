@@ -42,6 +42,11 @@
         -->
         CREATE TABLE ${tableName} (
             `id` tinyint(3) UNSIGNED NOT NULL,
+            <!-- 
+                选择最长的name的length
+                SELECT MAX(LENGTH(nickname)) FROM t_user;
+            SELECT nickname FROM t_user WHERE LENGTH(nickname) = (SELECT MAX(LENGTH(nickname)) FROM t_user); 
+            -->
             `name` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
             `account` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
             PRIMARY KEY (`id`) USING BTREE

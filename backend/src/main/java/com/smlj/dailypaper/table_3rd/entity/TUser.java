@@ -3,7 +3,6 @@ package com.smlj.dailypaper.table_3rd.entity;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.io.Serializable;
-import java.io.Serial;
 
 import org.springframework.stereotype.Component;
 import lombok.Data;
@@ -17,9 +16,6 @@ import lombok.Data;
 @Data
 @Component("jtmenhu_TUser")
 public class TUser implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1; // -87089175252424814L;
-
     private String id;
     private String create_by;
     private Date create_time;

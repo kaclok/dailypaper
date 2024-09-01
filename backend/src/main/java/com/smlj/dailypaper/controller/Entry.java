@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -87,8 +88,8 @@ public class Entry {
             // todo 将来redis构建userAccount和departName的关系
 
             Integer departmentCode = 30015;
-            if (redis.hasKey(userAccount)) {
-                departmentCode = Integer.parseInt((String) redis.opsForHash().get(userAccount, "depCode"));
+            if (Boolean.TRUE.equals(redis.hasKey(userAccount))) {
+                departmentCode = Integer.parseInt((String) Objects.requireNonNull(redis.opsForHash().get(userAccount, "depCode")));
             } else {
                 departmentCode = jt_userService.getDepartmentCode(userAccount);
                 redis.opsForHash().put(userAccount, "depCode", String.valueOf(departmentCode));
@@ -96,14 +97,18 @@ public class Entry {
 
             // 默认：数字化中心
             String userTableName = Table.getUserTableName(departmentCode);
-            Table.TryFillUser(userAccount, userTableName, jt_userService, userService, tableDao, redis, departmentCode);
+            try {
+                Table.TryFillUser(userAccount, userTableName, jt_userService, userService, tableDao, redis, departmentCode);
+            } catch (Exception e) {
+                log.info(e.getMessage());
+            }
 
             // 构建部门的commit表
             String commitTableName = Table.getCommitTableName(departmentCode);
             Table.TryCreateCommit(commitTableName, commitService, tableDao);
 
             int midNight = (int) DateTimeUtil.convertToMidnightTimestamp(date);
-            int count = tableDao.Count(userTableName);
+            int count = redis.opsForList().size("depUserList:" + departmentCode).intValue();
 
             To_DateCommit to = new To_DateCommit();
             to.setTotal(count);

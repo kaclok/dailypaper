@@ -2,6 +2,8 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import '../../assets/main.css'
 
+import WebOfficeSDK from '../../../src/plugins/web_office/web-office-sdk-solution-v2.0.6.es.js'
+
 // import {router} from '@/cms/daily_paper/router/Index.js'
 // import直接引用一个文件时，会执行一遍这个文件，而不获取任何文件对象, 比如：import './lib/init.js';
 import {RegisterDirective} from "@/framework/directives/DirectiveList.js";
@@ -30,5 +32,12 @@ async function setupAll(app) {
     // mount在最后
     app.mount('#app');
 }
+
+const instance = WebOfficeSDK.init({
+    officeType: 'w',
+    appId: 'SX20240901PYIAIE',
+    fileId: 'grgEoegNzUMzVgHuBmiQotxHlCNhLeUh',
+    mount: '#app'
+  })
 
 setupAll(app).then(r => {});

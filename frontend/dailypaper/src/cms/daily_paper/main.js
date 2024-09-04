@@ -20,6 +20,13 @@ app.config.warnHandler = (msg, instance, trace) => {
 };
 app.config.performance = true;
 
+/* const jssdk = WebOfficeSDK.init({
+    officeType: WebOfficeSDK.OfficeType.Writer,
+    appId: 'SX20240901PYIAIE',
+    fileId: 'grgEoegNzUMzVgHuBmiQotxHlCNhLeUh',
+    mount: '#app'
+}) */
+
 async function setupAll(app) {
     // navigator.language
     await Switch(app, import.meta.env.VITE_LOCALE);
@@ -29,15 +36,10 @@ async function setupAll(app) {
     // 路由
     // app.use(router);
 
+    //await jssdk.ready()
+
     // mount在最后
     app.mount('#app');
 }
-
-const instance = WebOfficeSDK.init({
-    officeType: 'w',
-    appId: 'SX20240901PYIAIE',
-    fileId: 'grgEoegNzUMzVgHuBmiQotxHlCNhLeUh',
-    mount: '#app'
-  })
-
+  
 setupAll(app).then(r => {});

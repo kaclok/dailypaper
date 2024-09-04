@@ -72,7 +72,7 @@ onBeforeUpdate(() => {
                   resize="none"
                   :disabled="!isSelf() || !isToday()"
 
-                  style="width: 240px; font-size: 14px;"
+                  style="position: relative; left: -16px; top: -8px; width: 280px; font-size: 14px;"
         />
 
         <!-- 空状态 -->

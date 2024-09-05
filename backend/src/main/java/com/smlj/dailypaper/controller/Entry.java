@@ -236,7 +236,8 @@ public class Entry {
                 for (var userId : userIds) {
                     String finalKey = hashKey + ":" + userId;
                     String name = (String) redis.opsForHash().get(finalKey, "name");
-                    rlt.getColNames().add(name);
+                    rlt.getColNames().add(name + ":今日");
+                    rlt.getColNames().add(name + ":明日");
                 }
             }
 
@@ -257,13 +258,15 @@ public class Entry {
                         var c = commitService.FindById(commitTableName, commitId.intValue());
                         if (c != null) {
                             content = c.getContent();
+                            content = content == null ? "" : content;
                             tomorrowPlan = c.getTomorrowPlan();
+                            tomorrowPlan = tomorrowPlan == null ? "" : tomorrowPlan;
                         }
                     }
 
                     allEmpty &= (content == null || content.isEmpty());
-                    String finalContent = content + "\n  明日计划：-> " + tomorrowPlan;
-                    excelRow.getContents().add(finalContent);
+                    excelRow.getContents().add(content);
+                    excelRow.getContents().add(tomorrowPlan);
                 }
 
                 if (!allEmpty) {

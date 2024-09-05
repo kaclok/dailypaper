@@ -156,6 +156,7 @@ public class Entry {
                 if (c != null) {
                     tu.setTime(c.getCommitDateTime());
                     tu.setContent(c.getContent());
+                    tu.setTomorrowPlan(c.getTomorrowPlan());
                 }
 
                 to.getCommits().add(tu);
@@ -169,7 +170,7 @@ public class Entry {
     }
 
     @GetMapping("/edit")
-    private Result<To_DateCommit> Edit(@RequestParam("departmentId") int departmentId, @RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content,
+    private Result<To_DateCommit> Edit(@RequestParam("departmentId") int departmentId, @RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content, @RequestParam("tomorrowPlan") String tomorrowPlan,
                                        @RequestParam(name = "hash", required = false) Integer hash) {
         lockEdit.lock();
         try {
@@ -198,6 +199,7 @@ public class Entry {
                 cm.setUserId(userId);
                 cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
                 cm.setContent(content);
+                cm.setTomorrowPlan(tomorrowPlan);
 
                 String commitTableName = Table.getCommitTableName(departmentId);
                 // 插入commit表
@@ -250,15 +252,18 @@ public class Entry {
                     String key = "userId_" + userId;
                     Long commitId = (Long) (one.get(key));
                     String content = null;
-                    if (commitId != 0) {
+                    String tomorrowPlan = null;
+                    if (commitId != null && commitId != 0) {
                         var c = commitService.FindById(commitTableName, commitId.intValue());
                         if (c != null) {
                             content = c.getContent();
+                            tomorrowPlan = c.getTomorrowPlan();
                         }
                     }
 
                     allEmpty &= (content == null || content.isEmpty());
-                    excelRow.getContents().add(content);
+                    String finalContent = content + "\n  明日计划：-> " + tomorrowPlan;
+                    excelRow.getContents().add(finalContent);
                 }
 
                 if (!allEmpty) {

@@ -79,14 +79,14 @@ function refreshCommits() {
     }
 }
 
-function onEdit(userId, cardAccount, oldContent, content) {
+function onEdit(userId, cardAccount, oldContent, content, oldTomorrowPlan, tomorrowPlan) {
     if (curAccount.value && (curAccount.value !== cardAccount)) {
         window.alert('只能提交自己的日报内容');
         return;
     }
 
     if (content != null && content.trim() !== "") {
-        if (content === oldContent) {
+        if (content === oldContent && oldTomorrowPlan === tomorrowPlan) {
             window.alert('提交内容无改动');
             /*            ElMessage({
                             showClose: false,
@@ -98,7 +98,7 @@ function onEdit(userId, cardAccount, oldContent, content) {
             return;
         }
 
-        Singleton.getInstance(SysDaily).RequestEdit(selectedDate.value, userId, content, editCtrl.signal, () => {
+        Singleton.getInstance(SysDaily).RequestEdit(selectedDate.value, userId, content, tomorrowPlan, editCtrl.signal, () => {
             loading.value = true;
         }, (r) => {
             loading.value = false;
@@ -135,27 +135,6 @@ function onEdit(userId, cardAccount, oldContent, content) {
             duration: 2000,
         });*/
     }
-}
-
-function onExportOne(id, name, account) {
-    if (beginTimestamp == null || endTimestamp == null) {
-        window.alert('请选择导出时间区间');
-        return;
-    }
-    Singleton.getInstance(SysDaily).RequestExportOne(id, beginTimestamp, endTimestamp, exportOneCtrl.signal, () => {
-        loading.value = true;
-    }, (r) => {
-        loading.value = false;
-
-        let final = r.data.rows.map((ele) => {
-            let d = DateTimeUtil.toDateTime(ele.time);
-            d = DateTimeUtil.formatDate(d);
-            let arr = Object.values(ele.contents);
-            arr.unshift(d);
-            return arr;
-        });
-        ExcelService.ExportAOAToExcel1(final, r.data.colNames, 'export_one', true);
-    });
 }
 
 function onExportAll() {
@@ -219,10 +198,11 @@ onUnmounted(() => {
                     :id="card.userId"
                     :name="card.name"
                     :account="card.account"
+                    :tomorrowPlan="card.tomorrowPlan"
                     :time="card.time"
                     :content="card.content"
                     @onEdit="onEdit"
-                    @onExportOne="onExportOne"/>
+            />
         </div>
     </div>
 </template>

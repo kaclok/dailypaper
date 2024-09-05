@@ -10,6 +10,7 @@ public class To_UserCommit implements Serializable, Comparable<To_UserCommit> {
     private String name = null;
     private String account = null;
     private String content = null;
+    private String tomorrowPlan = null;
     private long time = 0;
 
     @Override

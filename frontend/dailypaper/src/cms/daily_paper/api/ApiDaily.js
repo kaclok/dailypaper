@@ -14,13 +14,14 @@ export class ApiDaily {
     }
 
     // 提交某日某人写的某内容数据
-    static Edit(departmentId, date, userId, content, signal) {
+    static Edit(departmentId, date, userId, content, tomorrowPlan, signal) {
         return axiosR.get("dailypaper/edit", {
             params: {
                 departmentId: departmentId,
                 date: date,
                 userId: userId,
                 content: content,
+                tomorrowPlan: tomorrowPlan,
                 hash: 7 + content.length,
             },
             signal: signal,

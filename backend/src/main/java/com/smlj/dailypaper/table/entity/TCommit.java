@@ -8,4 +8,5 @@ public class TCommit {
     private int userId;
     private long commitDateTime;
     private String content;
+    private String tomorrowPlan;
 }

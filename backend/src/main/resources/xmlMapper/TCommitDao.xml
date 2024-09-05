@@ -8,30 +8,30 @@
 <mapper namespace="com.smlj.dailypaper.table.dao.TCommitDao">
     <!-- id自增，所以使用：useGeneratedKeys="true" keyProperty="id" -->
     <insert id="Insert" useGeneratedKeys="true" keyProperty="id">
-        insert into ${tableName} (userId, commitDateTime, content)
+        insert into ${tableName} (userId, commitDateTime, content, tomorrowPlan)
         values (#{userId}, #{commitDateTime}, #{content});
     </insert>
 
     <!-- id自增，所以使用：useGeneratedKeys="true" keyProperty="id" -->
     <insert id="InsertOutKey" useGeneratedKeys="true" keyProperty="one.id">
-        insert into ${tableName} (userId, commitDateTime, content)
-        values (#{one.userId}, #{one.commitDateTime}, #{one.content});
+        insert into ${tableName} (userId, commitDateTime, content, tomorrowPlan)
+        values (#{one.userId}, #{one.commitDateTime}, #{one.content}, #{one.tomorrowPlan});
     </insert>
 
     <!--https://blog.csdn.net/qq_43718048/article/details/123681806-->
     <!-- 用这种方式限制id：useGeneratedKeys="true" keyProperty="list.id-->
     <insert id="InsertBatch">
-        insert into ${tableName} (userId, commitDateTime, content) values
+        insert into ${tableName} (userId, commitDateTime, content, tomorrowPlan) values
         <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
         <foreach collection="list" item="item" index="index" separator=",">
             <if test="item != null">
-                (#{item.userId}, #{item.commitDateTime}, #{item.content})
+                (#{item.userId}, #{item.commitDateTime}, #{item.content}, #{item.tomorrowPlan})
             </if>
         </foreach>
     </insert>
 
     <select id="FindById" resultType="com.smlj.dailypaper.table.entity.TCommit">
-        select id, userId, commitDateTime, content
+        select id, userId, commitDateTime, content, tomorrowPlan
         from ${tableName}
         where id = #{id};
     </select>
@@ -48,6 +48,7 @@
             `commitDateTime` int(10) UNSIGNED NOT NULL COMMENT '提交时间',
             `commitDateTimeFormat` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci GENERATED ALWAYS AS (from_unixtime(`commitDateTime`)) VIRTUAL NOT NULL,
             `content` varchar(300) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '提交内容',
+            `tomorrowPlan` varchar(300) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
             PRIMARY KEY (`id`) USING BTREE
         ) ENGINE = InnoDB AUTO_INCREMENT = 239 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
     </update>

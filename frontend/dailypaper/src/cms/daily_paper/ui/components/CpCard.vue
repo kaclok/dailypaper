@@ -3,12 +3,13 @@ import {onBeforeUpdate, ref} from 'vue'
 import {DateTimeUtil} from '@/framework/utils/DateTimeUtil'
 import {t} from "@/framework/services/LocaleService";
 
-const props = defineProps(["date", "curAccount", "id", "name", "account", "time", "content"]);
+const props = defineProps(["date", "curAccount", "id", "name", "account", "time", "content", "tomorrowPlan"]);
 defineEmits(['onEdit', 'onExportOne']);
 
 // https://cn.vuejs.org/guide/components/props.html
 // props.content只是提供一个初始值，以后refTextContent和prop的更新无关了
 let refTextContent = ref(props.content);
+let refTextTomorrowPlan = ref(props.tomorrowPlan);
 
 function isSelf() {
     if (!props.curAccount) {
@@ -40,6 +41,7 @@ function hasEdited() {
 onBeforeUpdate(() => {
     // 父组件变更的时候，通知子组件的props, 但是子组件的v-model绑定的不是props, 所以需要在此更新
     refTextContent.value = props.content;
+    refTextTomorrowPlan.value = props.tomorrowPlan;
 });
 
 </script>
@@ -49,22 +51,17 @@ onBeforeUpdate(() => {
         <template #header>
             <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}({{ props.account }})</span>
             <span class="flag">{{ getEditText() }}</span>
-<!--            <el-button @click="$emit('onExportOne', props.id, props.name, props.account)" v-if="isSelf() && isToday()"
-                       type="warning"
-                       v-cd-s="3"
-                       circle :dark="true" style="position: relative; left: 130px; top: -15px">导出
-            </el-button>-->
-            <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent)" v-if="isSelf() && isToday()"
+            <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent, props.tomorrowPlan, refTextTomorrowPlan)" v-if="isSelf() && isToday()"
                        type="success"
                        v-cd-s="3"
-                       circle :dark="true" style="position: relative; left: 40px; top: 30px">{{t('cms.daily_paper.SUBMIT')}}
+                       circle :dark="true" style="position: relative; left: 40px; top: 20px">{{t('cms.daily_paper.SUBMIT')}}
             </el-button>
         </template>
 
         <!-- 非空状态 -->
         <el-input v-if="(isToday() || (!isToday() && hasContent()))"
                   v-model="refTextContent"
-                  :rows="12"
+                  :rows="7"
                   type="textarea"
                   :placeholder="t('cms.daily_paper.INPUT_DAILY_CONTENT')"
                   clearable
@@ -72,7 +69,20 @@ onBeforeUpdate(() => {
                   resize="none"
                   :disabled="!isSelf() || !isToday()"
 
-                  style="position: relative; left: -16px; top: -8px; width: 280px; font-size: 14px;"
+                  style="position: relative; left: -16px; top: -15px; width: 280px; font-size: 14px;"
+        />
+
+        <el-input v-if="(isToday() || (!isToday() && hasContent()))"
+            v-model="refTextTomorrowPlan"
+            :rows="6"
+            type="textarea"
+            placeholder="请输入明日工作计划"
+            resize="none"
+            clearable
+            :show-word-limit="true"
+            :disabled="!isSelf() || !isToday()"
+
+            style="position: relative; left: -16px; top: -13px; width: 280px; font-size: 13px;"
         />
 
         <!-- 空状态 -->

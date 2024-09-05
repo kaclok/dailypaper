@@ -7,7 +7,7 @@ import com.smlj.dailypaper.table.entity.TCommit;
 import java.util.ArrayList;
 
 public interface TCommitService {
-    int Insert(@Param("tableName") String tableName, @Param("userId") int userId, @Param("commitDateTime") int commitDateTime, @Param("content") String content);
+    int Insert(@Param("tableName") String tableName, @Param("userId") int userId, @Param("commitDateTime") int commitDateTime, @Param("content") String content, @Param("tomorrowPlan") String tomorrowPlan);
 
     public void Create(@Param("tableName") String tableName);
 

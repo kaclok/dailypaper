@@ -21,8 +21,8 @@ public class TCommitServiceImpl implements TCommitService {
     private TCommitDao tCommitDao;
 
     @Override
-    public int Insert(String tableName, int userId, int commitDateTime, String content) {
-        return tCommitDao.Insert(tableName, userId, commitDateTime, content);
+    public int Insert(String tableName, int userId, int commitDateTime, String content, String tomorrowPlan) {
+        return tCommitDao.Insert(tableName, userId, commitDateTime, content, tomorrowPlan);
     }
 
     public void Create(String tableName) {

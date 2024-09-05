@@ -58,17 +58,17 @@ class SysDaily {
         }
     }
 
-    async RequestEdit(date, userId, content, signal, onBefore, onAfter) {
+    async RequestEdit(date, userId, content, tomorrowPlan, signal, onBefore, onAfter) {
         if (onBefore != null) {
             onBefore();
         }
-        let rlt = await ApiDaily.Edit(this._departmentId, date, userId, content, signal);
+        let rlt = await ApiDaily.Edit(this._departmentId, date, userId, content, tomorrowPlan, signal);
 
         // 同步时间
         TimeService.initTime(rlt.data.timestamp);
 
         if (rlt.data.result) {
-            this.UpdateCommit(date, userId, content);
+            this.UpdateCommit(date, userId, content, tomorrowPlan);
         }
 
         if (onAfter != null) {
@@ -102,13 +102,14 @@ class SysDaily {
         return this._result;
     }
 
-    UpdateCommit(date, userId, content) {
+    UpdateCommit(date, userId, content, tomorrowPlan) {
         let c = this.GetCommits();
         if (c != null) {
             for (let i = 0; i < c.length; i++) {
                 let cur = c[i];
                 if (cur.userId === userId) {
                     cur.content = content;
+                    cur.tomorrowPlan = tomorrowPlan;
                     cur.time = TimeService.getSvrTime();
                     break;
                 }

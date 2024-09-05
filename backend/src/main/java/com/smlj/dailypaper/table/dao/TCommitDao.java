@@ -1,7 +1,6 @@
 package com.smlj.dailypaper.table.dao;
 
 import com.smlj.dailypaper.table.dao.common.TableCreateDao;
-import com.smlj.dailypaper.table.entity.TUser;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.smlj.dailypaper.table.entity.TCommit;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 @Repository
 @Mapper
 public interface TCommitDao extends TableCreateDao {
-    public int Insert(@Param("tableName") String tableName, @Param("userId") int userId, @Param("commitDateTime") int commitDateTime, @Param("content") String content);
+    public int Insert(@Param("tableName") String tableName, @Param("userId") int userId, @Param("commitDateTime") int commitDateTime, @Param("content") String content, @Param("tomorrowPlan") String tomorrowPlan);
 
     public void InsertOutKey(@Param("tableName") String tableName, @Param("one") TCommit one);
 

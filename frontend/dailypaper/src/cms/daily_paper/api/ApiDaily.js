@@ -14,7 +14,7 @@ export class ApiDaily {
     }
 
     // 提交某日某人写的某内容数据
-    static Edit(departmentId, date, userId, content, tomorrowPlan, signal) {
+    static Edit(departmentId, date, userId, content="", tomorrowPlan="", signal) {
         return axiosR.get("dailypaper/edit", {
             params: {
                 departmentId: departmentId,

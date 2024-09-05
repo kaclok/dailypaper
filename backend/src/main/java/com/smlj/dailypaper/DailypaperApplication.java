@@ -1,6 +1,7 @@
 package com.smlj.dailypaper;
 
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -16,6 +17,10 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 @MapperScan({"com.smlj.dailypaper.table.dao", "com.smlj.dailypaper.table.dao.common", "com.smlj.dailypaper.table_3rd.dao"})
 public class DailypaperApplication {
     public static void main(String[] args) {
-        SpringApplication.run(DailypaperApplication.class, args);
+        SpringApplication app = new SpringApplication(DailypaperApplication.class);
+        // https://mp.weixin.qq.com/s/q8_KWBD-zS9OIKd8oJ4Eag
+        // 关闭banner
+        app.setBannerMode(Banner.Mode.OFF);
+        app.run(args);
     }
 }

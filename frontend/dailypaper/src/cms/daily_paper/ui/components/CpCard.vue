@@ -49,13 +49,15 @@ onBeforeUpdate(() => {
 <template>
     <el-card class="card_root">
         <template #header>
-            <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}({{ props.account }})</span>
-            <span class="flag">{{ getEditText() }}</span>
-            <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent, props.tomorrowPlan, refTextTomorrowPlan)" v-if="isSelf() && isToday()"
-                       type="success"
-                       v-cd-s="3"
-                       circle :dark="true" style="position: relative; left: 40px; top: 20px">{{t('cms.daily_paper.SUBMIT')}}
-            </el-button>
+            <div style="height: 16px">
+                <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}({{ props.account }})</span>
+                <span class="flag">{{ getEditText() }}</span>
+                <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent, props.tomorrowPlan, refTextTomorrowPlan)" v-if="isSelf() && isToday()"
+                        type="success"
+                        v-cd-s="3"
+                        circle :dark="true" style="position: relative; left: 40px; top: 0px">{{t('cms.daily_paper.SUBMIT')}}
+                </el-button>
+            </div>
         </template>
 
         <!-- 非空状态 -->
@@ -69,7 +71,7 @@ onBeforeUpdate(() => {
                   resize="none"
                   :disabled="!isSelf() || !isToday()"
 
-                  style="position: relative; left: -16px; top: -15px; width: 280px; font-size: 14px;"
+                  style="position: relative; left: -16px; top: -17px; width: 280px; font-size: 14px;"
         />
 
         <el-input v-if="(isToday() || (!isToday() && hasContent()))"
@@ -82,7 +84,7 @@ onBeforeUpdate(() => {
             :show-word-limit="true"
             :disabled="!isSelf() || !isToday()"
 
-            style="position: relative; left: -16px; top: -13px; width: 280px; font-size: 13px;"
+            style="position: relative; left: -16px; top: -14px; width: 280px; font-size: 14px;"
         />
 
         <!-- 空状态 -->

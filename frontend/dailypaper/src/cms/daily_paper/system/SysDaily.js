@@ -42,7 +42,9 @@ class SysDaily {
         if (onBefore != null) {
             onBefore();
         }
-        let r = await ApiDaily.GetAll(userAccount, date, signal);
+        let r = await ApiDaily.GetAll(userAccount, date, signal).catch(fail => {
+            onAfter(false);
+        });
         // 同步时间
         TimeService.initTime(r.data.timestamp);
 
@@ -62,7 +64,9 @@ class SysDaily {
         if (onBefore != null) {
             onBefore();
         }
-        let rlt = await ApiDaily.Edit(this._departmentId, date, userId, content, tomorrowPlan, signal);
+        let rlt = await ApiDaily.Edit(this._departmentId, date, userId, content, tomorrowPlan, signal).catch(fail => {
+            onAfter(false);
+        });
 
         // 同步时间
         TimeService.initTime(rlt.data.timestamp);
@@ -81,17 +85,6 @@ class SysDaily {
             onBefore();
         }
         let r = await ApiDaily.ExportAll(this._departmentId, beginDate, endDate, signal);
-        TimeService.initTime(r.data.timestamp);
-        if (onAfter != null) {
-            onAfter(r.data);
-        }
-    }
-
-    async RequestExportOne(userId, beginDate, endDate, signal, onBefore, onAfter) {
-        if (!onBefore) {
-            onBefore();
-        }
-        let r = await ApiDaily.ExportOne(this._departmentId, userId, beginDate, endDate, signal);
         TimeService.initTime(r.data.timestamp);
         if (onAfter != null) {
             onAfter(r.data);

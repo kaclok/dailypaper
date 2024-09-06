@@ -45,10 +45,12 @@ function onDateChanged(date) {
     }, (r) => {
         loading.value = false;
 
-        // 触发响应式UI刷新
-        refreshCommits();
-        departmentTitle.value = Singleton.getInstance(SysDaily)._departmentName;
-        departmentId.value = Singleton.getInstance(SysDaily)._departmentId;
+        if(r) {
+            // 触发响应式UI刷新
+            refreshCommits();
+            departmentTitle.value = Singleton.getInstance(SysDaily)._departmentName;
+            departmentId.value = Singleton.getInstance(SysDaily)._departmentId;
+        }
     });
 
     selectedDate.value = sec;

@@ -16,6 +16,7 @@ import com.smlj.dailypaper.utils.ResultUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -170,8 +171,9 @@ public class Entry {
     }
 
     @GetMapping("/edit")
-    private Result<To_DateCommit> Edit(@RequestParam("departmentId") int departmentId, @RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content, @RequestParam("tomorrowPlan") String tomorrowPlan,
-                                       @RequestParam(name = "hash", required = false) Integer hash) {
+    @Transactional
+    public Result<To_DateCommit> Edit(@RequestParam("departmentId") int departmentId, @RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content, @RequestParam("tomorrowPlan") String tomorrowPlan,
+                                      @RequestParam(name = "hash", required = false) Integer hash) {
         lockEdit.lock();
         try {
             var now = System.currentTimeMillis() / 1000;

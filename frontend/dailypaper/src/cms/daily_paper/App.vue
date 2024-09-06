@@ -87,14 +87,14 @@ function onEdit(userId, cardAccount, oldContent, content, oldTomorrowPlan, tomor
 
     if (content != null && content.trim() !== "") {
         if (content === oldContent && oldTomorrowPlan === tomorrowPlan) {
-            window.alert('提交内容无改动');
-            /*            ElMessage({
-                            showClose: false,
-                            message: '提交内容无改动',
-                            type: 'error',
-                            center: true,
-                            duration: 300000,
-                        });*/
+            //window.alert('提交内容无改动');
+            ElMessage({
+                showClose: true,
+                message: '提交内容无改动',
+                type: 'error',
+                center: true,
+                duration: 2000,
+            });
             return;
         }
 
@@ -107,39 +107,46 @@ function onEdit(userId, cardAccount, oldContent, content, oldTomorrowPlan, tomor
                 // 因为commits.value监听dailyLogic.result.date.commits, 每次edit修改某个commit之后也会
                 // 触发commits.value的响应式UI刷新
                 // window.alert('编辑成功');
-                /*ElMessage({
-                    showClose: false,
+                ElMessage({
+                    showClose: true,
                     message: '编辑成功',
                     type: 'success',
                     center: true,
                     duration: 2000,
-                });*/
+                });
             } else {
-                window.alert('提交失败');
-                /*ElMessage({
-                    showClose: false,
+                // window.alert('提交失败');
+                ElMessage({
+                    showClose: true,
                     message: '编辑失败',
                     type: 'error',
                     center: true,
                     duration: 2000,
-                })*/
+                })
             }
         });
     } else {
-        window.alert('提交内容不能为空');
-        /*ElMessage({
-            showClose: false,
+        // window.alert('提交内容不能为空');
+        ElMessage({
+            showClose: true,
             message: '编辑内容不能为空',
             type: 'warning',
             center: true,
             duration: 2000,
-        });*/
+        });
     }
 }
 
 function onExportAll() {
     if (beginTimestamp == null || endTimestamp == null) {
-        window.alert('请选择导出时间区间');
+        // window.alert('请选择导出时间区间');
+        ElMessage({
+            showClose: true,
+            message: '请选择导出时间区间',
+            type: 'warning',
+            center: true,
+            duration: 2000,
+        });
         return;
     }
 

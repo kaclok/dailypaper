@@ -6,12 +6,18 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.ArrayList;
 
-public interface TableDao {
+public interface TableDao<Tkey, TLine> {
     String OwnerDB();
 
     int Exist(@Param("tableName") String tableName);
 
     int Count(@Param("tableName") String tableName);
+
+    void DeleteByField(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("fieldValue") Tkey fieldValue);
+
+    TLine SelectByKey(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("fieldValue") Tkey fieldValue);
+
+    ArrayList<TLine> SelectByKeys(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("list") ArrayList<Tkey> list);
 
     ArrayList<Integer> FieldList(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("distinct") boolean distinct);
 

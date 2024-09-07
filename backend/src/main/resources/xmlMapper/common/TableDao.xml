@@ -89,4 +89,22 @@
     <update id="ModifyTableName">
         ALTER TABLE ${oldTableName} RENAME TO ${newTableName}
     </update>
+
+    <delete id="DeleteByField">
+        DELETE FROM ${tableName}
+        WHERE ${fieldName} = #{fieldValue}
+    </delete>
+
+    <select id="SelectByKey">
+        SELECT * FROM ${tableName}
+        WHERE ${fieldName} = #{fieldValue}
+    </select>
+
+    <select id="SelectByKeys">
+        SELECT * FROM ${tableName}
+        WHERE ${fieldName} in
+        <foreach item="item" collection="list" separator="," open="(" close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

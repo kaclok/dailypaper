@@ -25,6 +25,7 @@ let endTimestamp = null;
 
 let selectedDate = ref(0);
 
+// window.location.href
 let params = new URLSearchParams(window.location.search);
 let account = params.get('username');
 let curAccount = ref(account);

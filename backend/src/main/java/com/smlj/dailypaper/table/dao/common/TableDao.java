@@ -13,12 +13,6 @@ public interface TableDao<Tkey, TLine> {
 
     int Count(@Param("tableName") String tableName);
 
-    void DeleteByField(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("fieldValue") Tkey fieldValue);
-
-    TLine SelectByKey(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("fieldValue") Tkey fieldValue);
-
-    ArrayList<TLine> SelectByKeys(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("list") ArrayList<Tkey> list);
-
     ArrayList<Integer> FieldList(@Param("tableName") String tableName, @Param("fieldName") String fieldName, @Param("distinct") boolean distinct);
 
     void Drop(@Param("tableName") String tableName);

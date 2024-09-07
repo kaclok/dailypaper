@@ -50,7 +50,7 @@ class DailypaperApplicationTests {
 
         System.out.println("============");
 
-        for (String one : tableDao.ShowComment("t_commit")) {
+        for (var one : tableDao.ShowComment("t_commit")) {
             System.out.println(one);
         }
 

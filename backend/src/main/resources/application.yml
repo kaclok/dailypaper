@@ -25,6 +25,11 @@ spring:
   profiles: # 测试、开发、部署环境切换
     active: dev
 
+  thymeleaf: # 模版引擎
+    cache:
+      false # Thymeleaf默认会开启页面缓存，提高页面并发能力。但会导致我们修改页面不会立即被展现，因此我们关闭缓存
+    check-template-location: false
+
   datasource: # https://github.com/alibaba/druid/blob/master/druid-spring-boot-3-starter/src/test/resources/application-multi-datasource.properties
     # https://github.com/alibaba/druid/tree/master/druid-spring-boot-3-starter
     type: com.alibaba.druid.pool.DruidDataSource
@@ -36,9 +41,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-  thymeleaf:
-    check-template-location: false
 
   data:
     redis:

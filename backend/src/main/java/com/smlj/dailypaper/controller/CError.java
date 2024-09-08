@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 // 全局异常处理器
 // 处理404、错误等情况， 可以利用Thymeleaf返回404.html或者error.html
-@Controller
 @Slf4j
+@Controller
 public class CError implements ErrorController {
     // 测试服务器是否启动成功
     @GetMapping("/")
     private String defaultIndex(Model model) {
-        /* 测试异常被捕获
+        /*  // 测试异常被捕获
             Integer i = 10;
             i = i / 0;
         */
@@ -54,11 +54,11 @@ public class CError implements ErrorController {
         }
     }
 
-    // 全局异常捕获
-    //    @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
-    //    public void exception(Exception e) {
-    //        log.info("-------exception begin-------");
-    //        e.printStackTrace();
-    //        log.info("-------exception   end-------");
-    //    }
+//    // 全局异常捕获
+//    @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
+//    public void exception(Exception e) {
+//        log.info("-------exception begin-------");
+//        e.printStackTrace();
+//        log.info("-------exception   end-------");
+//    }
 }

@@ -7,6 +7,10 @@ server:
   servlet:
     context-path: /
 
+  error:
+    whitelabel:
+      enabled: true # 服务器运行错误的时候，是否直接显示错误堆栈到网页上
+
   shutdown: graceful # 优雅停机 关闭容器后默认等待30秒继续执行没处理完的任务 避免数据不一致
   tomcat:
     uri-encoding: UTF-8

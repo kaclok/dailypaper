@@ -43,7 +43,7 @@ import java.util.ArrayList;
 @Slf4j
 @RestController
 @RequestMapping("/dailypaper")
-public class Entry {
+public class CEntry {
     private final com.smlj.dailypaper.table.service.TUserService userService;
 
     private final com.smlj.dailypaper.table_3rd.service.TUserService jt_userService;
@@ -64,7 +64,7 @@ public class Entry {
     private final Lock lockEdit = new ReentrantLock();
     private final Lock lockExportAll = new ReentrantLock();
 
-    public Entry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao, StringRedisTemplate redis, HttpServletRequest request) {
+    public CEntry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao, StringRedisTemplate redis, HttpServletRequest request) {
         this.userService = userService;
         this.jt_userService = jt_userService;
         this.dateCommitService = dateCommitService;

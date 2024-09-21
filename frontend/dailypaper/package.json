@@ -10,7 +10,7 @@
     "build": "vite build",
     "push remote": "scp -r dist/* root@10.8.54.127:/data/deploy/dailyPaper/dist",
     "preview": "vite preview",
-    "start springBootServer": "E:\\Javas\\jdk\\22\\bin\\java.exe -jar F:\\Projects\\SMLJ\\svn\\DailyPaper\\backend\\target\\com.smlj.dailypaper*.jar --spring.profiles.active=dev"
+    "start springBootServer": "E:\\Javas\\jdk\\22\\bin\\java.exe --enable-preview -jar F:\\Projects\\SMLJ\\svn\\DailyPaper\\backend\\target\\com.smlj.dailypaper*.jar --spring.profiles.active=dev"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 @EnableScheduling
 @RequestMapping("/table")
 public class Table {
-    static public void TryFillUser(String userAccount, String userTableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao, StringRedisTemplate redis, int departmentCode) {
+    static public void TryFillUser(String userAccount, String userTableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao, StringRedisTemplate redis, String departmentCode) {
         if (tableDao.Exist(userTableName) <= 0) {
             // 构建部门的user表
             userService.Create(userTableName);
@@ -37,16 +37,16 @@ public class Table {
                 int id = i + 1;
                 TUser user = new TUser();
                 user.setId(id);
-                user.setName(one.getNickname());
-                user.setAccount(one.getUsername());
+                user.setName(one.getName());
+                user.setAccount(one.getAccount());
 
                 list.add(user);
 
                 String finalKey = hashKey + ":" + id;
                 var op = redis.opsForHash();
                 op.put(finalKey, "id", String.valueOf(id));
-                op.put(finalKey, "name", one.getNickname());
-                op.put(finalKey, "account", one.getUsername());
+                op.put(finalKey, "name", one.getName());
+                op.put(finalKey, "account", one.getAccount());
 
                 var opList = redis.opsForList();
                 opList.rightPush(listKey, String.valueOf(id));
@@ -79,15 +79,15 @@ public class Table {
         }
     }
 
-    static public String getUserTableName(int departmentCode) {
+    static public String getUserTableName(String departmentCode) {
         return "t_user_" + departmentCode;
     }
 
-    static public String getCommitTableName(int departmentCode) {
+    static public String getCommitTableName(String departmentCode) {
         return "t_commit_" + departmentCode;
     }
 
-    static public String getDateCommitTableName(int departmentCode) {
+    static public String getDateCommitTableName(String departmentCode) {
         return "t_datecommit_" + departmentCode;
     }
 }

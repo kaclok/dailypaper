@@ -20,28 +20,24 @@ public class TUser implements Serializable {
     @Serial
     private static final long serialVersionUID = 1; // -87089175252424814L;
 
-    private String id;
-    private String create_by;
-    private Date create_time;
-    private String update_by;
-    private Date update_time;
-    private String address;
-    private String avatar;
-    private String description;
-    private String email;
+    private String account;
+
+    private String name;
+
+    private String pwd;
+
+    private String deptCode;
+
+    private String orgCode;
+
     private String mobile;
-    private String nickname;
-    private String password;
-    private String sex;
-    private Integer status;
-    private Integer type;
-    private String username;
-    private Integer del_flag;
-    private String department_id;
-    private String street;
-    private String pass_strength;
-    private String department_title;
-    private LocalDateTime birth;
-    private Integer open_status;
+
+    private String card;
+
+    private Integer role;
+
+    private boolean openStatus;
+
+    private boolean isChangedPwd;
 }
 

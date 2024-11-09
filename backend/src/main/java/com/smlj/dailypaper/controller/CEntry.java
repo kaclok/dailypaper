@@ -15,7 +15,9 @@ import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,13 +62,9 @@ public class CEntry {
 
     private final HttpServletRequest request;
 
-    private final Lock lockGetall = new ReentrantLock();
-    private final Lock lockEdit = new ReentrantLock();
-    private final Lock lockExportAll = new ReentrantLock();
-
-    public CEntry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao, StringRedisTemplate redis, HttpServletRequest request) {
+    public CEntry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jtUserService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao, StringRedisTemplate redis, HttpServletRequest request) {
         this.userService = userService;
-        this.jt_userService = jt_userService;
+        jt_userService = jtUserService;
         this.dateCommitService = dateCommitService;
         this.commitService = commitService;
         this.tableDao = tableDao;
@@ -79,21 +77,18 @@ public class CEntry {
     private Result<To_DateCommit> GetAll(@RequestParam("userAccount") String userAccount, @RequestParam("date") long date) {
         log.info("GetAll:{}", UrlUtil.GetFullUrl(request));
 
-        lockGetall.lock();
         try {
             var r = new ResultUtil<To_DateCommit>();
             if (userAccount == null || userAccount.isEmpty() || date <= 0) {
                 return r.setErrorMsg("args invalid!", null);
             }
 
-            // todo 将来redis构建userAccount和departName的关系
-
-            Integer departmentCode = 30015;
+            String departmentCode = "";
             if (Boolean.TRUE.equals(redis.hasKey(userAccount))) {
-                departmentCode = Integer.parseInt((String) Objects.requireNonNull(redis.opsForHash().get(userAccount, "depCode")));
+                departmentCode = (String) Objects.requireNonNull(redis.opsForHash().get(userAccount, "depCode"));
             } else {
-                departmentCode = jt_userService.getDepartmentCode(userAccount);
-                redis.opsForHash().put(userAccount, "depCode", String.valueOf(departmentCode));
+                departmentCode = jt_userService.selectByAccount(userAccount).getFirst().getDeptCode();
+                redis.opsForHash().put(userAccount, "depCode", departmentCode);
             }
 
             // 默认：数字化中心
@@ -117,7 +112,7 @@ public class CEntry {
             to.setDepartmentId(departmentCode);
 
             String departmentName = "未知部门";
-            if (redis.hasKey(userAccount) && redis.opsForHash().hasKey(userAccount, "depName")) {
+            if (redis.opsForHash().hasKey(userAccount, "depName")) {
                 departmentName = (String) redis.opsForHash().get(userAccount, "depName");
             } else {
                 departmentName = jt_userService.getDepartmentName(userAccount);
@@ -166,15 +161,13 @@ public class CEntry {
             // log.info("getAll-> to:{}", to);
             return r.setData(to, "getAll");
         } finally {
-            lockGetall.unlock();
         }
     }
 
     @GetMapping("/edit")
     @Transactional
-    public Result<To_DateCommit> Edit(@RequestParam("departmentId") int departmentId, @RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content, @RequestParam("tomorrowPlan") String tomorrowPlan,
+    public Result<To_DateCommit> Edit(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content, @RequestParam("tomorrowPlan") String tomorrowPlan,
                                       @RequestParam(name = "hash", required = false) Integer hash) {
-        lockEdit.lock();
         try {
             var now = System.currentTimeMillis() / 1000;
             var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
@@ -215,13 +208,11 @@ public class CEntry {
                 return r.setSuccessMsg("edit success", null);
             }
         } finally {
-            lockEdit.unlock();
         }
     }
 
     @GetMapping("/export_all")
-    private Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("departmentId") int departmentId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
-        lockExportAll.lock();
+    private Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("departmentId") String departmentId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         try {
             log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));
 
@@ -279,7 +270,6 @@ public class CEntry {
             var r = new ResultUtil<To_Excel<To_ExcelRow>>();
             return r.setSuccessMsg("edit success", rlt);
         } finally {
-            lockExportAll.unlock();
         }
     }
 }

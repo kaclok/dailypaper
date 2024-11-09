@@ -25,9 +25,9 @@ spring:
             test-on-return: false
             test-while-idle: true
         jtmenhu:
-          url: jdbc:mysql://10.8.54.111:3306/jtmenhu?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
-          username: jtmenhu
-          password: 123456
+          url: jdbc:mysql://10.8.54.127:3306/train?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+          username: confluence
+          password: smlj@123456
           driver-class-name: com.mysql.cj.jdbc.Driver
           druid:
             initial-size: 5

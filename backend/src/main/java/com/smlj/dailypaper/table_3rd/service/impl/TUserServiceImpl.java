@@ -21,7 +21,7 @@ import java.util.ArrayList;
  * @since 2024-08-19 08:43:23
  */
 @Slf4j
-@DS(EDatasource.jtmenhu)
+@DS(EDatasource.train)
 @Service("jtmenhu_TUserService")
 public class TUserServiceImpl implements TUserService {
     @Autowired
@@ -34,58 +34,12 @@ public class TUserServiceImpl implements TUserService {
     }
 
     @Override
-    public Integer getDepartmentCode(@Param("userAccount") String userAccount) {
+    public String getDepartmentCode(@Param("userAccount") String userAccount) {
         return tUserDao.getDepartmentCode(userAccount);
     }
 
     @Override
     public String getDepartmentName(@Param("userAccount") String userAccount) {
         return tUserDao.getDepartmentName(userAccount);
-    }
-
-    /**
-     * 通过ID查询单条数据
-     *
-     * @param id 主键
-     * @return 实例对象
-     */
-    @Override
-    public TUser queryById(String id) {
-        return this.tUserDao.queryById(id);
-    }
-
-    /**
-     * 新增数据
-     *
-     * @param tUser 实例对象
-     * @return 实例对象
-     */
-    @Override
-    public TUser insert(TUser tUser) {
-        this.tUserDao.insert(tUser);
-        return tUser;
-    }
-
-    /**
-     * 修改数据
-     *
-     * @param tUser 实例对象
-     * @return 实例对象
-     */
-    @Override
-    public TUser update(TUser tUser) {
-        this.tUserDao.update(tUser);
-        return this.queryById(tUser.getId());
-    }
-
-    /**
-     * 通过主键删除数据
-     *
-     * @param id 主键
-     * @return 是否成功
-     */
-    @Override
-    public boolean deleteById(String id) {
-        return this.tUserDao.deleteById(id) > 0;
     }
 }

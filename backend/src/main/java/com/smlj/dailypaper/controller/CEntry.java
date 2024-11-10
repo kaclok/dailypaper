@@ -74,7 +74,7 @@ public class CEntry {
 
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
-    private Result<To_DateCommit> GetAll(@RequestParam("userAccount") String userAccount, @RequestParam("date") long date) {
+    public Result<To_DateCommit> GetAll(@RequestParam("userAccount") String userAccount, @RequestParam("date") long date) {
         log.info("GetAll:{}", UrlUtil.GetFullUrl(request));
 
         try {
@@ -212,7 +212,7 @@ public class CEntry {
     }
 
     @GetMapping("/export_all")
-    private Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("departmentId") String departmentId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+    public Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("departmentId") String departmentId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
         try {
             log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));
 

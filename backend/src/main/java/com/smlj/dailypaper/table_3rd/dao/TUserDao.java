@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.ArrayList;
 
 @Mapper
-@Repository("jtmenhu_TUserDao")
+@Repository("train_TUserDao")
 public interface TUserDao {
     ArrayList<TUser> selectByAccount(@Param("userAccount") String userAccount);
 

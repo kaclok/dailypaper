@@ -38,7 +38,7 @@ public class Table {
                 TUser user = new TUser();
                 user.setId(id);
                 user.setName(one.getName());
-                user.setAccount(one.getAccount());
+                user.setAccount(one.getCard());
 
                 list.add(user);
 
@@ -46,7 +46,7 @@ public class Table {
                 var op = redis.opsForHash();
                 op.put(finalKey, "id", String.valueOf(id));
                 op.put(finalKey, "name", one.getName());
-                op.put(finalKey, "account", one.getAccount());
+                op.put(finalKey, "account", one.getCard());
 
                 var opList = redis.opsForList();
                 opList.rightPush(listKey, String.valueOf(id));

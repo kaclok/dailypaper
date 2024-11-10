@@ -22,10 +22,10 @@ import java.util.ArrayList;
  */
 @Slf4j
 @DS(EDatasource.train)
-@Service("jtmenhu_TUserService")
+@Service("train_TUserService")
 public class TUserServiceImpl implements TUserService {
     @Autowired
-    @Qualifier("jtmenhu_TUserDao")
+    @Qualifier("train_TUserDao")
     private TUserDao tUserDao;
 
     @Override

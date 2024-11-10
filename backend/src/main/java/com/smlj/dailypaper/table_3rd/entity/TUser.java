@@ -15,7 +15,7 @@ import lombok.Data;
  * @since 2024-08-19 08:29:19
  */
 @Data
-@Component("jtmenhu_TUser")
+@Component("train_TUser")
 public class TUser implements Serializable {
     @Serial
     private static final long serialVersionUID = 1; // -87089175252424814L;

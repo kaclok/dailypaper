@@ -37,7 +37,7 @@ let selectedLegend = ref({
 });
 let loading = ref(false);
 let departmentTitle = ref('');
-let departmentId = ref(0);
+let departmentId = ref("");
 
 function onDateChanged(date) {
     let sec = date / 1000;
@@ -186,7 +186,8 @@ onUnmounted(() => {
 <template>
     <div class="root">
         <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
-        <a v-if="departmentId === 30015" href="https://www.kdocs.cn/l/cgHAbfHG8Fm2?from=docs&startTime=1724384203679" target="_blank"
+        <a v-if="departmentId === '1030016010' || departmentId === '30015'"
+           href="https://www.kdocs.cn/l/cgHAbfHG8Fm2?from=docs&startTime=1724384203679" target="_blank"
            style="position: absolute; left: 260px; top: 30px; color: white; background: #0000FF; border-radius: 50%;">考勤表</a>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <div style="display: flex; position: relative; left: 340px;  align-items: center;">

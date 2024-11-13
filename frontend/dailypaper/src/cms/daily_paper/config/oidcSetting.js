@@ -1,10 +1,11 @@
 import Oidc from 'oidc-client';
+import {wg} from '@/cms/daily_paper/config/oidc.js';
 
 let url = window.location.origin;
 const store = Oidc.Global.localStorage;
 const prefix = window.g.storagePrefix;
 
-let settings = {
+let oidcSettings = {
     // 认证中心地址
     authority: window.g.unified_authority_api_url + '/auth',
     // 应用标识码
@@ -36,8 +37,9 @@ Oidc.Log.logger = console;
 Oidc.Log.level = Oidc.Log.DEBUG;
 
 // 创建 oidc 对象
-let oidcMgr = new Oidc.UserManager(settings);
+let oidcMgr = new Oidc.UserManager(oidcSettings);
 
 export {
-    oidcMgr
+    oidcMgr,
+    oidcSettings,
 };

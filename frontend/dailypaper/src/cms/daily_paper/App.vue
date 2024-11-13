@@ -1,6 +1,7 @@
 <script setup>
 import {Singleton, getInstance} from "@/framework/services/Singleton.js";
 import {JwtService} from "@/framework/services/JwtService.js";
+import {oidcService} from "@/framework/services/oidcService.js";
 
 /*import oidc from "@/cms/daily_paper/config/oidc.js";
 import {oidcMgr} from "@/cms/daily_paper/config/oidcSetting.js";*/
@@ -16,7 +17,27 @@ import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
 import {t} from "@/framework/services/LocaleService";
 import {ExcelService} from "@/framework/services/ExcelService";
 
-let commits = ref(null);
+await oidcService.signInRedirect("http://10.8.54.127:5175", "dailypaper", onAuthSuccess, onAuthFail);
+
+function onAuthFail(err) {
+    console.log("onAuthFail");
+}
+
+async function onAuthSuccess() {
+    console.log("onAuthSuccess");
+    await oidcService.getUser(onGetSuccess, onGetFail);
+}
+
+function onGetSuccess(user) {
+    console.log("onGetSuccess");
+}
+
+function onGetFail(err) {
+    console.log("onGetFail");
+}
+
+
+/*let commits = ref(null);
 
 // https://www.axios-http.cn/docs/cancellation
 let getAllCtrl = new AbortController();
@@ -63,7 +84,7 @@ function onDateChanged(date) {
         loading.value = true;
     }, (r) => {
         loading.value = false;
-        
+
         if (r) {
             // 触发响应式UI刷新
             refreshCommits();
@@ -188,7 +209,7 @@ function onExportAll() {
 }
 
 onMounted(() => {
-    /* 因为未onMounted之前，组件不会触发事件，所以需要手动触发*/
+    /!* 因为未onMounted之前，组件不会触发事件，所以需要手动触发*!/
     onDateChanged(DateTimeUtil.nowDate());
 });
 
@@ -198,7 +219,7 @@ onUnmounted(() => {
     editCtrl.abort();
     exportAllCtrl.abort();
     exportOneCtrl.abort();
-});
+});*/
 </script>
 
 <template>

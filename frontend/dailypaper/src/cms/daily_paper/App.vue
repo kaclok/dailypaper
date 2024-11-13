@@ -1,5 +1,9 @@
 <script setup>
 import {Singleton, getInstance} from "@/framework/services/Singleton.js";
+import {JwtService} from "@/framework/services/JwtService.js";
+
+/*import oidc from "@/cms/daily_paper/config/oidc.js";
+import {oidcMgr} from "@/cms/daily_paper/config/oidcSetting.js";*/
 
 import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
 
@@ -27,7 +31,21 @@ let selectedDate = ref(0);
 
 // window.location.href
 let params = new URLSearchParams(window.location.search);
-let account = params.get('username');
+let token = params.get('token');
+let account = null;
+
+console.log("token: " + token);
+if (token === null) {
+    account = params.get('username');
+    if (account === null) {
+        account = "SMLJ23659";
+    }
+} else {
+    account = JwtService.getPayload(token).account;
+}
+
+console.log("account: " + account);
+
 let curAccount = ref(account);
 
 // 默认饼图legend都选中
@@ -45,8 +63,8 @@ function onDateChanged(date) {
         loading.value = true;
     }, (r) => {
         loading.value = false;
-
-        if(r) {
+        
+        if (r) {
             // 触发响应式UI刷新
             refreshCommits();
             departmentTitle.value = Singleton.getInstance(SysDaily)._departmentName;
@@ -192,7 +210,7 @@ onUnmounted(() => {
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <div style="display: flex; position: relative; left: 340px;  align-items: center;">
             <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
-                :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
+                   :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
             <span style="font-size: 60px; font-style: italic; color: #a0cfff; margin-left: 100px; height: 160px; width:
             580px;
                 overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;">{{ departmentTitle }}</span>
@@ -200,7 +218,7 @@ onUnmounted(() => {
         <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>
         <el-button @click="onExportAll" v-cd-s="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
         </el-button>
-        
+
         <div class="infinite-list-root" v-loading="loading">
             <CpCard v-for="card in commits"
                     :key="card.userId"

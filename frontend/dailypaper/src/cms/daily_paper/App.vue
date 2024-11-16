@@ -41,16 +41,16 @@ let account = null;
     })
 }*/
 function onGotAuthCode(authCode, onSuccess) {
-    axios.post("http://10.8.54.110:8790/auth/token", {
+    axios.post("http://10.8.54.110:8790/auth/token", {}, {
         params: {
             code: authCode,
             grant_type: "authorization_code",
             client_id: "dailypaper",
             redirect_uri: "http://10.8.54.127:5175"
-        },
+        }
     }).then((response) => {
         console.table(response.data);
-        if (response.status === 0) {
+        if (response.data.status === 0) {
             onSuccess(response);
         } else {
             if (account === null) {
@@ -66,19 +66,19 @@ function onGotAuthCode(authCode, onSuccess) {
 }
 
 function onGotToken(r) {
-    console.log("token: " + r.data.access_token);
     let headers = {
         'Content-Type': 'application/json',
-        "Authorization": `Bearer ${r.data.access_token}`
+        "Authorization": `${r.data.token_type} ${r.data.access_token}`
     }
 
     axios.post("http://10.8.54.110:8790/auth/userinfo/v2", {}, {headers: headers}).then((response) => {
-        account = response.data.account;
+        account = response.data.data.account;
         curAccount = ref(account);
 
         console.log("onGotToken: " + account);
+
+        _onMounted();
     })
-    _onMounted();
 }
 
 onGotAuthCode(authCode, onGotToken);

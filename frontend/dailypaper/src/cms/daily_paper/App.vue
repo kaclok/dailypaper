@@ -1,7 +1,6 @@
 <script setup>
 import {Singleton, getInstance} from "@/framework/services/Singleton.js";
 import {JwtService} from "@/framework/services/JwtService.js";
-import {oidcService} from "@/framework/services/oidcService.js";
 
 /*import oidc from "@/cms/daily_paper/config/oidc.js";
 import {oidcMgr} from "@/cms/daily_paper/config/oidcSetting.js";*/
@@ -16,28 +15,75 @@ import CpPie from '@/cms/daily_paper/ui/components/CpPie.vue'
 import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
 import {t} from "@/framework/services/LocaleService";
 import {ExcelService} from "@/framework/services/ExcelService";
+import {axiosInstance as axiosR} from "@/framework/services/net/NAxios.js";
+import axios from "axios";
 
-await oidcService.signInRedirect("http://10.8.54.127:5175", "dailypaper", onAuthSuccess, onAuthFail);
+// window.location.href
+let params = new URLSearchParams(window.location.search);
+let authCode = params.get('code');
+console.log("code: " + authCode);
+let account = null;
 
-function onAuthFail(err) {
-    console.log("onAuthFail");
+// http://10.8.54.110:8790/auth/authorize?response_type=code&scope=openid&client_id=dailypaper&redirect_uri=http://10.8.54.127:5175
+/*function reqAuthCode(onSuccess) {
+
+    axios.get("http://10.8.54.110:8790/auth/authorize", {
+        params: {
+            response_type: "code",
+            scope: "openid",
+            client_id: "dailypaper",
+            redirect_uri: "http://10.8.54.127:5175"
+        },
+    }).then((response) => {
+        onSuccess(response);
+    }).catch((error) => {
+        console.log("reqAuthCode: " + error);
+    })
+}*/
+function onGotAuthCode(authCode, onSuccess) {
+    axios.post("http://10.8.54.110:8790/auth/token", {
+        params: {
+            code: authCode,
+            grant_type: "authorization_code",
+            client_id: "dailypaper",
+            redirect_uri: "http://10.8.54.127:5175"
+        },
+    }).then((response) => {
+        console.table(response.data);
+        if (response.status === 0) {
+            onSuccess(response);
+        } else {
+            if (account === null) {
+                account = "SMLJ23659";
+
+                // 暂时屏蔽，让所有人都可以编辑日报，否则只能"SMLJ23659"可以编辑
+                // curAccount = ref(account);
+            }
+
+            _onMounted();
+        }
+    })
 }
 
-async function onAuthSuccess() {
-    console.log("onAuthSuccess");
-    await oidcService.getUser(onGetSuccess, onGetFail);
+function onGotToken(r) {
+    console.log("token: " + r.data.access_token);
+    let headers = {
+        'Content-Type': 'application/json',
+        "Authorization": `Bearer ${r.data.access_token}`
+    }
+
+    axios.post("http://10.8.54.110:8790/auth/userinfo/v2", {}, {headers: headers}).then((response) => {
+        account = response.data.account;
+        curAccount = ref(account);
+
+        console.log("onGotToken: " + account);
+    })
+    _onMounted();
 }
 
-function onGetSuccess(user) {
-    console.log("onGetSuccess");
-}
+onGotAuthCode(authCode, onGotToken);
 
-function onGetFail(err) {
-    console.log("onGetFail");
-}
-
-
-/*let commits = ref(null);
+let commits = ref(null);
 
 // https://www.axios-http.cn/docs/cancellation
 let getAllCtrl = new AbortController();
@@ -49,24 +95,6 @@ let beginTimestamp = null;
 let endTimestamp = null;
 
 let selectedDate = ref(0);
-
-// window.location.href
-let params = new URLSearchParams(window.location.search);
-let token = params.get('token');
-let account = null;
-
-console.log("token: " + token);
-if (token === null) {
-    account = params.get('username');
-    if (account === null) {
-        account = "SMLJ23659";
-    }
-} else {
-    account = JwtService.getPayload(token).account;
-}
-
-console.log("account: " + account);
-
 let curAccount = ref(account);
 
 // 默认饼图legend都选中
@@ -208,10 +236,10 @@ function onExportAll() {
     });
 }
 
-onMounted(() => {
+function _onMounted() {
     /!* 因为未onMounted之前，组件不会触发事件，所以需要手动触发*!/
     onDateChanged(DateTimeUtil.nowDate());
-});
+}
 
 // 清理定时器，事件监听器，异步函数
 onUnmounted(() => {
@@ -219,7 +247,7 @@ onUnmounted(() => {
     editCtrl.abort();
     exportAllCtrl.abort();
     exportOneCtrl.abort();
-});*/
+});
 </script>
 
 <template>

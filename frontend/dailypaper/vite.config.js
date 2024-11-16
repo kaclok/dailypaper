@@ -86,7 +86,13 @@ export default defineConfig((env) => {
                     changeOrigin: true,// 开启跨域
                     // 去除前缀api
                     rewrite: (path) => path.replace(/^\/api/, '')
-                }
+                }/*,
+                '/auth': {
+                    target: 'http://10.8.54.110:8790', // 这是你要跨域请求的地址前缀
+                    changeOrigin: true,// 开启跨域
+                    // 去除前缀api
+                    rewrite: (path) => path.replace(/^\/api/, '')
+                }*/
             },
         },
         preview: {

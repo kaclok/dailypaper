@@ -1,9 +1,6 @@
 <script setup>
 import {Singleton, getInstance} from "@/framework/services/Singleton.js";
-import {JwtService} from "@/framework/services/JwtService.js";
-
-/*import oidc from "@/cms/daily_paper/config/oidc.js";
-import {oidcMgr} from "@/cms/daily_paper/config/oidcSetting.js";*/
+import {SessionStorageService} from "@/framework/services/SessionStorageService.js";
 
 import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
 
@@ -18,11 +15,18 @@ import {ExcelService} from "@/framework/services/ExcelService";
 import {axiosInstance as axiosR} from "@/framework/services/net/NAxios.js";
 import axios from "axios";
 
-// window.location.href
-let params = new URLSearchParams(window.location.search);
-let authCode = params.get('code');
-console.log("code: " + authCode);
-let account = null;
+let canMounted = false;
+let account = SessionStorageService.getStore("Account");
+console.log("account: " + account);
+if (account === null) {
+    // window.location.href
+    let params = new URLSearchParams(window.location.search);
+    let authCode = params.get('code');
+
+    onGotAuthCode(authCode, onGotToken);
+} else {
+    canMounted = true;
+}
 
 // http://10.8.54.110:8790/auth/authorize?response_type=code&scope=openid&client_id=dailypaper&redirect_uri=http://10.8.54.127:5175
 /*function reqAuthCode(onSuccess) {
@@ -75,13 +79,12 @@ function onGotToken(r) {
         account = response.data.data.account;
         curAccount = ref(account);
 
+        sessionStorage.setItem("Account", account);
         console.log("onGotToken: " + account);
 
         _onMounted();
     })
 }
-
-onGotAuthCode(authCode, onGotToken);
 
 let commits = ref(null);
 
@@ -241,12 +244,20 @@ function _onMounted() {
     onDateChanged(DateTimeUtil.nowDate());
 }
 
+onMounted(() => {
+    if (canMounted) {
+        _onMounted();
+    }
+});
+
 // 清理定时器，事件监听器，异步函数
 onUnmounted(() => {
     getAllCtrl.abort();
     editCtrl.abort();
     exportAllCtrl.abort();
     exportOneCtrl.abort();
+
+    SessionStorageService.removeStore("AuthCode");
 });
 </script>
 

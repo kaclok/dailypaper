@@ -66,8 +66,7 @@ export default defineConfig((env) => {
             // origin: config['VITE_BASE_API'],
             // 处理：Access to XMLHttpRequest at 'http://localhost:8089/dailypaper/getAll?date=1720713600' from origin 'http://localhost:5175' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
             warmup: { // 只应该预热频繁使用的文件，以免在启动时过载 Vite 开发服务器 https://cn.vitejs.dev/guide/performance.html
-                clientFiles: [
-                ],
+                clientFiles: [],
             },
             proxy: {
                 // https://www.cnblogs.com/zy0723/p/17285517.html
@@ -91,7 +90,7 @@ export default defineConfig((env) => {
                     target: 'http://10.8.54.110:8790', // 这是你要跨域请求的地址前缀
                     changeOrigin: true,// 开启跨域
                     // 去除前缀api
-                    rewrite: (path) => path.replace(/^\/api/, '')
+                    rewrite: (path) => path.replace(/^\/auth/, '')
                 }*/
             },
         },

@@ -27,7 +27,9 @@ export default defineConfig((env) => {
     // let config = loadEnv(env.mode, process.cwd(), '');
 
     // 获取VITE环境变量
-    let config = loadEnv(env.mode, './.env');
+    let curCfg = loadEnv(env.mode, './.env');
+    let developmentCfg = loadEnv("development", './.env');
+    let productionCfg = loadEnv("production", './.env');
     return {
         envDir: "./.env",
         define: globalDefine,
@@ -81,17 +83,23 @@ export default defineConfig((env) => {
                 // 猜测是服务器上的rewrite不生效
                 // 原因可能是： 1、服务器没有nodejs环境  2、服务器是linux,而开发环境是win  3、nginx管理web会有自己的cors策略
                 '/api': {
-                    target: config['VITE_BASE_API'],// 这是你要跨域请求的地址前缀
+                    target: curCfg['VITE_BASE_API'],// 这是你要跨域请求的地址前缀
                     changeOrigin: true,// 开启跨域
                     // 去除前缀api
                     rewrite: (path) => path.replace(/^\/api/, '')
-                }/*,
-                '/auth': {
-                    target: 'http://10.8.54.110:8790', // 这是你要跨域请求的地址前缀
+                },
+                '/development': {
+                    target: developmentCfg['VITE_BASE_API'],
                     changeOrigin: true,// 开启跨域
                     // 去除前缀api
-                    rewrite: (path) => path.replace(/^\/auth/, '')
-                }*/
+                    rewrite: (path) => path.replace(/^\/development/, '')
+                },
+                '/production': {
+                    target: productionCfg['VITE_BASE_API'],
+                    changeOrigin: true,// 开启跨域
+                    // 去除前缀api
+                    rewrite: (path) => path.replace(/^\/production/, '')
+                }
             },
         },
         preview: {
@@ -109,7 +117,7 @@ export default defineConfig((env) => {
         // 解决：https://blog.csdn.net/Dawnchen1/article/details/118994062
         build: {
             manifest: true,
-            outDir: (config.VITE_OUT_DIR || 'dist') + '-0.0.1-cors',
+            outDir: (curCfg.VITE_OUT_DIR || 'dist') + '-0.0.1-cors',
             chunkSizeWarningLimit: 500,
             rollupOptions: {
                 input: { // https://cn.vitejs.dev/guide/build#multi-page-app

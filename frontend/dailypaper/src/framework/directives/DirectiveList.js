@@ -4,6 +4,7 @@ import Cancer from "@/framework/directives/cancel-when-unmount/CancelWhenUnmount
 import HasPermission from "@/framework/directives/HasPermission.js";
 import HasRole from "@/framework/directives/HasRole.js";
 import ButtonCDer from "@/framework/directives/ButtonCDer.js";
+import DraggableFloat from "@/framework/directives/DraggableFloat.ts";
 
 const list = [
     {
@@ -25,6 +26,10 @@ const list = [
     {
         name: "has-role",
         directive: HasRole.directive,
+    },
+    {
+        name: "draggableFloat",
+        directive: DraggableFloat.directive,
     },
 ]
 

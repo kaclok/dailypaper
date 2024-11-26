@@ -21,6 +21,9 @@
 				},
 				{
 					"name": "v-has-role"
+				},
+				{
+					"name": "v-draggableFloat"
 				}
 			]
 		}

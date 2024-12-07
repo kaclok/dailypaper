@@ -49,7 +49,10 @@ public class CError implements ErrorController {
             return "views/404";
         } else {
             Exception exception = (Exception) request.getAttribute("jakarta.servlet.error.exception");
-            model.addAttribute("exceptionMessage", exception.toString());
+            if(exception != null) {
+                model.addAttribute("exceptionMessage", exception.toString());
+            }
+
             return "views/error";
         }
     }

@@ -4,7 +4,7 @@ import {ref, computed} from "vue"
 
 const _loadingCnt = ref(0);
 
-const loading = computed({
+const globalLoading = computed({
     get() {
         return _loadingCnt.value > 0;
     },
@@ -15,6 +15,6 @@ const loading = computed({
 })
 
 export {
-    loading
+    globalLoading,
 }
 

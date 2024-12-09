@@ -3,22 +3,22 @@
 
 import {ref} from "vue"
 
-function useResetableRefFunc<T>(cb: () => T) {
+function useResetableRefFunc(cb) {
     const state = ref(cb());
 
-    function reset<T>() {
+    function reset() {
         state.value = cb();
     }
 
     return {state, reset}
 }
 
-function useResetableRef<T>(value: T) {
-    const initValue = JSON.parse(Json.stringify(value));
+function useResetableRef(value) {
+    const initValue = JSON.parse(JSON.stringify(value));
     const state = ref(value);
 
-    function reset<T>() {
-        state.value = JSON.parse(Json.stringify(initValue));
+    function reset() {
+        state.value = JSON.parse(JSON.stringify(initValue));
     }
 
     return {state, reset}

@@ -17,31 +17,65 @@ function changeBaseURL(targetBaseURL) {
     axiosInstance.defaults.baseURL = targetBaseURL;
 }
 
+let netCodeMap = null;
+
+function changeNetCodeMap(targetNetCodeMap) {
+    netCodeMap = targetNetCodeMap;
+}
+
+let httpCodeMap = null;
+
+function changeHttpCodeMap(targetHttpCodeMap) {
+    httpCodeMap = targetHttpCodeMap;
+}
+
 // https://www.axios-http.cn/docs/interceptors
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
-axiosInstance.interceptors.response.use(
-    success => {
-        // 2xx 范围内的状态码都会触发该函数, 对响应数据做点什么
-        return success;
-    }, fail => {
-        console.log(fail);
-        // 异步状态转换为失败状态，走到catch分支
-        return Promise.reject(fail);
+axiosInstance.interceptors.response.use(success => {
+    // 如果是文件下载等情况，直接返回
+    if (success.data instanceof Blob) {
+        return success.data;
     }
-)
 
-axiosInstance.interceptors.request.use(
-    success => {
-        // 2xx 范围内的状态码都会触发该函数, 对响应数据做点什么
-        return success;
-    }, fail => {
-        console.log(fail);
-        // 异步状态转换为失败状态，走到catch分支
-        return Promise.reject(fail);
+    const {code} = success.data;
+    if (code === 200) {
+        // 成功处理，走then分支
+        return success.data;
     }
-)
+
+    // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
+    // 处理错误码情况
+    netCodeMap?.[code]?.(success, success.data);
+    // 也当做失败处理，让走catch分支
+    return Promise.reject(success);
+
+}, fail => {
+    console.log(fail);
+
+    // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
+    httpCodeMap?.[code]?.(fail);
+    // 异步状态转换为失败状态，走到catch分支
+    return Promise.reject(fail);
+})
+
+axiosInstance.interceptors.request.use(success => {
+    /* https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
+    const token = getToken();
+    if(!token) {
+        logout();
+    }else {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    */
+
+    // 2xx 范围内的状态码都会触发该函数, 对响应数据做点什么
+    return success;
+}, fail => {
+    console.log(fail);
+    // 异步状态转换为失败状态，走到catch分支
+    return Promise.reject(fail);
+})
 
 export {
-    axiosInstance,
-    changeBaseURL,
+    axiosInstance, changeBaseURL, changeNetCodeMap, changeHttpCodeMap,
 }

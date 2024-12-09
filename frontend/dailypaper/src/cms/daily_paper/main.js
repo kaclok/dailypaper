@@ -7,6 +7,8 @@ import '../../assets/main.css'
 import {RegisterDirective} from "@/framework/directives/DirectiveList.js";
 import {Switch} from "@/framework/services/LocaleService.js";
 
+import "@/framework/services/net/Init.js";
+
 // 创建实例
 const app = createApp(App)
 // 局处理组件渲染和事件处理过程中的错误
@@ -31,4 +33,8 @@ async function setupAll(app) {
     app.mount('#app');
 }
 
-setupAll(app).then(r => {});
+setupAll(app).then(r => {
+    //
+}).catch(e => {
+    //
+});

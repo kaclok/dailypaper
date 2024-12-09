@@ -1,5 +1,7 @@
 import {TimeService} from "@/framework/services/TimeService.js";
 import {ApiDaily} from "@/cms/daily_paper/api/ApiDaily.js";
+import {onceAsync} from "@/framework/utils/OnceAsync.js";
+import {Singleton} from "@/framework/services/Singleton.js";
 
 class SysDaily {
     _result = null;
@@ -160,6 +162,8 @@ class SysDaily {
 
         return rlt;
     }
+
+    RequestGetAllOnce = onceAsync(this.RequestGetAll);
 }
 
 export {

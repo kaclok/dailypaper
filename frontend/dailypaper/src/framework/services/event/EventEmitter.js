@@ -1,6 +1,6 @@
 import {UnorderList} from "@/framework/data-structure/UnorderList.js";
 
-export class EventEmitter {
+class EventEmitter {
     constructor() {
         this.events = {};
     }
@@ -49,7 +49,7 @@ export class EventEmitter {
         return false;
     }
 
-    fire(eventId, arg1, arg2, arg3, arg4, arg5) {
+    fire(eventId, ...args) {
         if (!eventId) {
             return false;
         }
@@ -61,8 +61,12 @@ export class EventEmitter {
 
         for (let i = 0; i < cbs.length(); i++) {
             let cb = cbs.get(i);
-            cb(arg1, arg2, arg3, arg4, arg5);
+            cb(args);
         }
         return true;
     }
+}
+
+export {
+    EventEmitter
 }

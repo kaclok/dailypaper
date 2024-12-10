@@ -121,6 +121,8 @@ export default defineConfig((env) => {
             chunkSizeWarningLimit: 500,
             rollupOptions: {
                 input: { // https://cn.vitejs.dev/guide/build#multi-page-app
+                    // https://www.bilibili.com/video/BV1Ru4y1Q7SQ/?vd_source=5c9f5bd891aee351c325bcf632b5550f
+                    index: resolve(__dirname, './index.html'),
                     main: resolve(__dirname, './index.html'),
                     second: resolve(__dirname, './pages/login.html'),
                 },

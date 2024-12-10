@@ -52,7 +52,8 @@ onBeforeUpdate(() => {
             <div style="height: 16px">
                 <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}({{ props.account }})</span>
                 <span class="flag">{{ getEditText() }}</span>
-                <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent, props.tomorrowPlan, refTextTomorrowPlan)" v-if="isSelf() && isToday()"
+                <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent, props.tomorrowPlan,
+                refTextTomorrowPlan)" v-if="isSelf() && isToday()"
                         type="success"
                         v-cd-s="3"
                         circle :dark="true" style="position: relative; left: 40px; top: 0px">{{t('cms.daily_paper.SUBMIT')}}

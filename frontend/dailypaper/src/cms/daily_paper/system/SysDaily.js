@@ -1,6 +1,6 @@
 import {TimeService} from "@/framework/services/TimeService.js";
 import {ApiDaily} from "@/cms/daily_paper/api/ApiDaily.js";
-import {onceAsync} from "@/framework/services/OnceAsync.js";
+import {onceAsync} from "@/framework/utils/OnceAsync.js";
 import {Singleton} from "@/framework/services/Singleton.js";
 
 class SysDaily {

@@ -1,3 +1,6 @@
+// https://www.bytezonex.com/archives/1pWVGfLf.html
+// vue3提供了 v-debounce和v-throttle用于节流和防抖
+
 const directive = {
     timer: null,
     mounted: (el, bindings) => {
@@ -5,13 +8,14 @@ const directive = {
             // e是点击事件参数，内容为鼠标点击位置之类的信息
             el.disabled = true;
             // 这里不能是this.timer
-            directive.timer = setTimeout(() => {
+            this.timer = setTimeout(() => {
                 el.disabled = false;
+                this.timer = null;
             }, bindings.value * 1000);
         })
     },
     unmounted: (el) => {
-        clearTimeout(directive.timer);
+        clearTimeout(this.timer);
     },
 };
 

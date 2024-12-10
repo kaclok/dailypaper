@@ -276,7 +276,7 @@ onUnmounted(() => {
                 overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;">{{ departmentTitle }}</span>
         </div>
         <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>
-        <el-button @click="onExportAll" v-cd-s="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
+        <el-button @click="onExportAll" v-cd="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
         </el-button>
 
         <div class="infinite-list-root" v-loading="loading">

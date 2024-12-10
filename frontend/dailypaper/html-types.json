@@ -8,22 +8,28 @@
 			"js-types-syntax": "typescript",
 			"attributes": [
 				{
-					"name": "v-resize-e"
+					"name": "v-listenResize"
 				},
 				{
-					"name": "v-cancel-when-unmount"
+					"name": "v-cancelWhenUnmount"
 				},
 				{
-					"name": "v-cd-s"
+					"name": "v-cd"
 				},
 				{
-					"name": "v-has-permission"
+					"name": "v-hasPermission"
 				},
 				{
-					"name": "v-has-role"
+					"name": "v-hasRole"
 				},
 				{
 					"name": "v-draggableFloat"
+				},
+				{
+					"name": "v-throttle"
+				},
+				{
+					"name": "v-debounce"
 				}
 			]
 		}

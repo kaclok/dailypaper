@@ -1,35 +1,45 @@
 // 自定义指令
-import Resizer from "@/framework/directives/Resizer.js";
-import Cancer from "@/framework/directives/cancel-when-unmount/CancelWhenUnmount.js";
-import HasPermission from "@/framework/directives/HasPermission.js";
-import HasRole from "@/framework/directives/HasRole.js";
-import ButtonCDer from "@/framework/directives/ButtonCDer.js";
-import DraggableFloat from "@/framework/directives/DraggableFloat.ts";
+import vListenResize from "@/framework/directives/vListenResize.js";
+import vCancelWhenUnmount from "@/framework/directives/cancel-when-unmount/vCancelWhenUnmount.js";
+import vHasPermission from "@/framework/directives/vHasPermission.js";
+import vHasRole from "@/framework/directives/vHasRole.js";
+import vCd from "@/framework/directives/vCd.js";
+import vDraggableFloat from "@/framework/directives/vDraggableFloat.ts";
+import vThrottle from "@/framework/directives/vThrottle.js";
+import vDebounce from "@/framework/directives/vDebounce.js";
 
 const list = [
     {
-        name: "resize-e",
-        directive: Resizer.directive,
+        name: "v-listenResize",
+        directive: vListenResize.directive,
     },
     {
-        name: "cancel-when-unmount",
-        directive: Cancer.directive,
+        name: "v-cancelWhenUnmount",
+        directive: vCancelWhenUnmount.directive,
     },
     {
-        name: "cd-s",
-        directive: ButtonCDer.directive,
+        name: "v-cd",
+        directive: vCd.directive,
     },
     {
-        name: "has-permission",
-        directive: HasPermission.directive,
+        name: "v-hasPermission",
+        directive: vHasPermission.directive,
     },
     {
-        name: "has-role",
-        directive: HasRole.directive,
+        name: "v-hasRole",
+        directive: vHasRole.directive,
     },
     {
-        name: "draggableFloat",
-        directive: DraggableFloat.directive,
+        name: "v-draggableFloat",
+        directive: vDraggableFloat.directive,
+    },
+    {
+        name: "v-throttle",
+        directive: vThrottle.directive,
+    },
+    {
+        name: "v-debounce",
+        directive: vDebounce.directive,
     },
 ]
 

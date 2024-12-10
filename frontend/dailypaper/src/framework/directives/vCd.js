@@ -4,6 +4,7 @@
 const directive = {
     timer: null,
     mounted: (el, bindings) => {
+        const delay = bindings.value * 1000
         el.addEventListener('click', (e) => {
             // e是点击事件参数，内容为鼠标点击位置之类的信息
             el.disabled = true;
@@ -11,7 +12,7 @@ const directive = {
             this.timer = setTimeout(() => {
                 el.disabled = false;
                 this.timer = null;
-            }, bindings.value * 1000);
+            }, delay);
         })
     },
     unmounted: (el) => {

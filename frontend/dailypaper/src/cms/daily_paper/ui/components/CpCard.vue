@@ -55,7 +55,7 @@ onBeforeUpdate(() => {
                 <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent, props.tomorrowPlan,
                 refTextTomorrowPlan)" v-if="isSelf() && isToday()"
                         type="success"
-                        v-cd-s="3"
+                        v-cd="3"
                         circle :dark="true" style="position: relative; left: 40px; top: 0px">{{t('cms.daily_paper.SUBMIT')}}
                 </el-button>
             </div>

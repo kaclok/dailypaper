@@ -1,6 +1,6 @@
-import {changeNetCodeMap, changeHttpCodeMap} from "@/framework/services/net/NAxios.js";
-import {netCodeMap} from "@/framework/services/net/NetCodeMap.js";
+import {changeNwCodeMap, changeHttpCodeMap} from "@/framework/services/net/NAxios.js";
+import {NwCodeMap} from "@/framework/services/net/NwCodeMap.js";
 import {httpCodeMap} from "@/framework/services/net/HttpCodeMap.js";
 
-changeNetCodeMap(netCodeMap);
+changeNwCodeMap(NwCodeMap);
 changeHttpCodeMap(httpCodeMap);

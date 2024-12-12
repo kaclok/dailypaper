@@ -5,4 +5,6 @@ export default {
     __APP_VERSION__: JSON.stringify('v0.0.1'),
     __DEV__: process.env.NODE_ENV !== 'production',
     __OK__: 200,
+    __REFRESH_TOKEN_CODE__: 10000,
+    __HEART_BEAT_CODE__: 10001,
 }

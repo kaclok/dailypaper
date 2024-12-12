@@ -1,26 +1,35 @@
 import axios from "axios"
 
+import {useCache, ECacheType} from '@/framework/utils/use/useCache.ts'
+
+const {wsCache} = useCache()
+
 // https://www.axios-http.cn/docs/urlencoded 默认情况下，axios将 JavaScript 对象序列化为 JSON 。 要以application/x-www-form-urlencoded格式发送数据，您可以使用以下选项之一。
 // 当请求头中的 content-type 是 application/x-www-form-urlencoded 时，Axios 将自动地将普通对象序列化成 urlencoded 的格式。
 
 // https://www.axios-http.cn/docs/multipart 从 v0.27.0 版本开始，当请求头中的 Content-Type 是 multipart/form-data 时，Axios 支持自动地将普通对象序列化成一个 FormData 对象
 
-
 // https://www.axios-http.cn/docs/instance
 // https://www.axios-http.cn/docs/config_defaults
 const springBootURL = import.meta.env.VITE_BASE_API;
 let baseURL = "/api";
-const axiosInstance = axios.create({baseURL: baseURL, timeout: 50000});
+const url = wsCache.get(ECacheType.REMOTE_URL);
+if (url) {
+    baseURL = url;
+}
+
+const axiosInstance = axios.create({baseURL: baseURL, timeout: 60000});
 
 function changeBaseURL(targetBaseURL) {
     baseURL = targetBaseURL;
+    wsCache.set(ECacheType.REMOTE_URL, targetBaseURL);
     axiosInstance.defaults.baseURL = targetBaseURL;
 }
 
-let netCodeMap = null;
+let nwCodeMap = null;
 
-function changeNetCodeMap(targetNetCodeMap) {
-    netCodeMap = targetNetCodeMap;
+function changeNwCodeMap(targetNwCodeMap) {
+    nwCodeMap = targetNwCodeMap;
 }
 
 let httpCodeMap = null;
@@ -45,10 +54,9 @@ axiosInstance.interceptors.response.use(success => {
 
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
     // 处理错误码情况
-    netCodeMap?.[code]?.(success, success.data);
+    nwCodeMap?.[code]?.(success, success.data);
     // 也当做失败处理，让走catch分支
     return Promise.reject(success);
-
 }, fail => {
     console.log(fail);
 
@@ -78,5 +86,5 @@ axiosInstance.interceptors.request.use(success => {
 })
 
 export {
-    axiosInstance, changeBaseURL, changeNetCodeMap, changeHttpCodeMap,
+    axiosInstance, changeBaseURL, changeNwCodeMap, changeHttpCodeMap,
 }

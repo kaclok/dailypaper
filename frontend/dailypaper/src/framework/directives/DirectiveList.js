@@ -7,7 +7,7 @@ import vCd from "@/framework/directives/vCd.js";
 import vDraggableFloat from "@/framework/directives/vDraggableFloat.ts";
 import vThrottle from "@/framework/directives/vThrottle.js";
 import vDebounce from "@/framework/directives/vDebounce.js";
-import VLongPress from "@/framework/directives/VLongPress.js";
+import VLongPress from "@/framework/directives/vLongPress.js";
 
 const list = [
     {

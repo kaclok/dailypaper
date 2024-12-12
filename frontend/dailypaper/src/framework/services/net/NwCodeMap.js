@@ -19,6 +19,7 @@ const NwCodeMap = {
 
                 // 重新请求上次失败的req:originalRequest
                 originalRequest.headers.Token = token
+                originalRequest.headers.Authorization = `Bearer ${token}`;
                 axiosInstance(originalRequest)
             })
             // eslint-disable-next-line no-unused-vars

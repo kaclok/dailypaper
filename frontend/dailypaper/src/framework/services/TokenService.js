@@ -10,6 +10,10 @@ class TokenService {
     static getLocalToken() {
         return wsCache.get(ECacheType.ACCESS_TOKEN)
     }
+
+    static getTokenExpireAt() {
+        return wsCache.get(ECacheType.ACCESS_TOKEN_EXPIRE_AT)
+    }
 }
 
 export {

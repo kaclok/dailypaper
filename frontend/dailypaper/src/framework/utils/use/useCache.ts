@@ -7,13 +7,13 @@ import WebStorageCache from 'web-storage-cache'
 type cacheType = 'localStorage' | 'sessionStorage'
 
 const ECacheType = {
-    REMOTE_URL: "REMOTE_URL",
+    REMOTE_URL: "REMOTE_URL", // springboot服务器所在网址
 
-    ACCOUNT: "ACCOUNT",
-    USER_NAME: "USER_NAME",
-    ACCESS_TOKEN: "ACCESS_TOKEN",
+    ACCOUNT: "ACCOUNT", // 账户
+    USER_NAME: "USER_NAME", // 名字
 
-    CONNECT_DEV_SERVER: "CONNECT_DEV_SERVER",
+    ACCESS_TOKEN: "ACCESS_TOKEN", // token
+    ACCESS_TOKEN_EXPIRE_AT: "ACCESS_TOKEN_EXPIRE_AT", // token过期时间
 }
 
 const useCache = (type: cacheType = 'localStorage') => {

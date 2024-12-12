@@ -48,17 +48,17 @@ class SysDaily {
             onAfter(false);
         });
         // 同步时间
-        TimeService.initTime(r.data.timestamp);
+        TimeService.initTime(r.timestamp);
 
-        if (r.data.result && date === r.data.data.date) {
+        if (r.result && date === r.data.date) {
             // 网络消息回来之后，如果和之前的info.value没有区别，则不会触发UI响应式刷新
-            this._result = r.data;
+            this._result = r;
             this._departmentId = this._result.data.departmentId;
             this._departmentName = this._result.data.departmentName;
         }
 
         if (onAfter != null) {
-            onAfter(r.data.result);
+            onAfter(r.result);
         }
     }
 
@@ -71,14 +71,14 @@ class SysDaily {
         });
 
         // 同步时间
-        TimeService.initTime(rlt.data.timestamp);
+        TimeService.initTime(rlt.timestamp);
 
-        if (rlt.data.result) {
+        if (rlt.result) {
             this.UpdateCommit(date, userId, content, tomorrowPlan);
         }
 
         if (onAfter != null) {
-            onAfter(rlt.data.result);
+            onAfter(rlt.result);
         }
     }
 
@@ -87,9 +87,9 @@ class SysDaily {
             onBefore();
         }
         let r = await ApiDaily.ExportAll(this._departmentId, beginDate, endDate, signal);
-        TimeService.initTime(r.data.timestamp);
+        TimeService.initTime(r.timestamp);
         if (onAfter != null) {
-            onAfter(r.data);
+            onAfter(r);
         }
     }
 

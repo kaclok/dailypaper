@@ -1,5 +1,6 @@
 // https://www.bytezonex.com/archives/1pWVGfLf.html
 // vue3提供了 v-debounce和v-throttle用于节流和防抖
+// https://mp.weixin.qq.com/s/Ulo4HaPOq6cBD3om9Nkopg
 
 const directive = {
     timer: null,

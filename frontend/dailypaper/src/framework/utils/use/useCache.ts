@@ -7,8 +7,13 @@ import WebStorageCache from 'web-storage-cache'
 type cacheType = 'localStorage' | 'sessionStorage'
 
 const ECacheType = {
-    ACCESS_TOKEN: "ACCESS_TOKEN",
     REMOTE_URL: "REMOTE_URL",
+
+    ACCOUNT: "ACCOUNT",
+    USER_NAME: "USER_NAME",
+    ACCESS_TOKEN: "ACCESS_TOKEN",
+
+    CONNECT_DEV_SERVER: "CONNECT_DEV_SERVER",
 }
 
 const useCache = (type: cacheType = 'localStorage') => {

@@ -33,12 +33,12 @@ function changeHttpCodeMap(targetHttpCodeMap) {
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
 axiosInstance.interceptors.response.use(success => {
     // 如果是文件下载等情况，直接返回
-    if (success.data instanceof Blob) {
+    if ((success.data instanceof Blob) || (success.data instanceof ArrayBuffer)) {
         return success.data;
     }
 
     const {code} = success.data;
-    if (code === 200) {
+    if (code === __OK__) {
         // 成功处理，走then分支
         return success.data;
     }
@@ -52,8 +52,9 @@ axiosInstance.interceptors.response.use(success => {
 }, fail => {
     console.log(fail);
 
+    const {status} = fail;
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
-    httpCodeMap?.[code]?.(fail);
+    httpCodeMap?.[status]?.(fail);
     // 异步状态转换为失败状态，走到catch分支
     return Promise.reject(fail);
 })

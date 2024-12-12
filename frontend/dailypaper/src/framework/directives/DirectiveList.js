@@ -10,35 +10,35 @@ import vDebounce from "@/framework/directives/vDebounce.js";
 
 const list = [
     {
-        name: "v-listenResize",
+        name: "listenResize",
         directive: vListenResize.directive,
     },
     {
-        name: "v-cancelWhenUnmount",
+        name: "cancelWhenUnmount",
         directive: vCancelWhenUnmount.directive,
     },
     {
-        name: "v-cd",
+        name: "cd",
         directive: vCd.directive,
     },
     {
-        name: "v-hasPermission",
+        name: "hasPermission",
         directive: vHasPermission.directive,
     },
     {
-        name: "v-hasRole",
+        name: "hasRole",
         directive: vHasRole.directive,
     },
     {
-        name: "v-draggableFloat",
+        name: "draggableFloat",
         directive: vDraggableFloat.directive,
     },
     {
-        name: "v-throttle",
+        name: "throttle",
         directive: vThrottle.directive,
     },
     {
-        name: "v-debounce",
+        name: "debounce",
         directive: vDebounce.directive,
     },
 ]

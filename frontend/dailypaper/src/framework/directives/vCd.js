@@ -9,9 +9,9 @@ const directive = {
             // e是点击事件参数，内容为鼠标点击位置之类的信息
             el.disabled = true;
             // 这里不能是this.timer
-            this.timer = setTimeout(() => {
+            directive.timer = setTimeout(() => {
                 el.disabled = false;
-                this.timer = null;
+                directive.timer = null;
             }, delay);
         })
     },

@@ -1,6 +1,7 @@
 import axios from "axios"
 
 import {useCache, ECacheType} from '@/framework/utils/use/useCache.ts'
+import {TokenService} from "@/framework/services/TokenService.js";
 
 const {wsCache} = useCache()
 
@@ -38,6 +39,8 @@ function changeHttpCodeMap(targetHttpCodeMap) {
     httpCodeMap = targetHttpCodeMap;
 }
 
+// https://mp.weixin.qq.com/s/sWDnhq6MCUusQ0-aUpfNPw
+// 参考：实现token无感刷新 https://github.com/yudaocode/yudao-ui-admin-vue3/blob/master/src/config/axios/service.ts#L117
 // https://www.axios-http.cn/docs/interceptors
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
 axiosInstance.interceptors.response.use(success => {
@@ -58,7 +61,7 @@ axiosInstance.interceptors.response.use(success => {
     // 也当做失败处理，让走catch分支
     return Promise.reject(success);
 }, fail => {
-    console.log(fail);
+    console.error(fail);
 
     const {status} = fail;
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
@@ -67,20 +70,17 @@ axiosInstance.interceptors.response.use(success => {
     return Promise.reject(fail);
 })
 
+// request拦截器, 让每个请求添加token
+// https://www.axios-http.cn/docs/interceptors
+// 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
 axiosInstance.interceptors.request.use(success => {
-    /* https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
-    const token = getToken();
-    if(!token) {
-        logout();
-    }else {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    */
-
-    // 2xx 范围内的状态码都会触发该函数, 对响应数据做点什么
+    // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
+    const token = TokenService.getLocalToken();
+    success.headers.Token = token;
+    success.headers.Authorization = `Bearer ${token}`;
     return success;
 }, fail => {
-    console.log(fail);
+    console.error(fail);
     // 异步状态转换为失败状态，走到catch分支
     return Promise.reject(fail);
 })

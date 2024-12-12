@@ -10,7 +10,7 @@ import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 
 // vite.config.js中不能用@表示src目录，因为@表达src就是在此配置的resolve.alias
-import globalDefine from './vite.config-define.js'
+import defines from './vite.config-define.js'
 import vueAutoImport from './src/framework/auto-import/vue-auto-import.js'
 
 // https://vitejs.cn/vite3-cn/config/#conditional-config
@@ -32,7 +32,7 @@ export default defineConfig((env) => {
     let productionCfg = loadEnv("production", './.env');
     return {
         envDir: "./.env",
-        define: globalDefine,
+        define: defines,
         plugins: [
             vue(),
             AutoImport({

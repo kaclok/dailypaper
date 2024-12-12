@@ -33,7 +33,6 @@ const directive = {
     unmounted: (el) => {
         clearTimeout(directive.timer);
     },
-
 };
 
 

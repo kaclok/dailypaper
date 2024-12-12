@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "v-debounce"
+				},
+				{
+					"name": "v-longPress"
 				}
 			]
 		}

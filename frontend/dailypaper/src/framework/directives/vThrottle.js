@@ -28,9 +28,7 @@ const directive = {
     unmounted: (el) => {
         clearTimeout(directive.timer);
     },
-
 };
-
 
 export default {
     directive,

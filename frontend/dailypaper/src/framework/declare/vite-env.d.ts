@@ -7,6 +7,12 @@ interface ImportMetaEnv {
     readonly VITE_APP_TITLE: string
     readonly VITE_OUT_DIR: string
     readonly VITE_LOCALE: string
+
+    readonly VITE_MINIO_URL: string
+    readonly VITE_ACCESS_KEY: string
+    readonly VITE_SECRET_KEY: string
+    readonly VITE_SECURE: boolean
+    readonly VITE_BUCKET_NAME: string
     // 更多环境变量...
 }
 

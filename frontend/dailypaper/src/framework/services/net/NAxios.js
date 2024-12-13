@@ -1,4 +1,5 @@
 import axios from "axios"
+import {config} from './config.js'
 
 import {useCache, ECacheType} from '@/framework/utils/use/useCache.ts'
 import {TokenService} from "@/framework/services/TokenService.js";
@@ -13,7 +14,7 @@ const {wsCache} = useCache()
 // https://www.axios-http.cn/docs/instance
 // https://www.axios-http.cn/docs/config_defaults
 const springBootURL = import.meta.env.VITE_BASE_API;
-let baseURL = "/api";
+let baseURL = config.base_url;
 const url = wsCache.get(ECacheType.REMOTE_URL);
 if (url) {
     baseURL = url;

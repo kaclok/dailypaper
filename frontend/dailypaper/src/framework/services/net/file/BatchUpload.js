@@ -5,19 +5,38 @@ import {upload as baseUpload, post} from "@/framework/services/net/Request.js"
 // https://www.51cto.com/article/664707.html
 // https://www.bilibili.com/video/BV1q8411R7Cb/?spm_id_from=333.337.search-card.all.click&vd_source=5c9f5bd891aee351c325bcf632b5550f
 class BatchUpload {
-    constructor (file, onUploadProgress) {
+    constructor(file, onUploadProgress) {
         this.file = file
         this.onUploadProgress = onUploadProgress
-        // 进度条
-        this.progress = 0
+        this.chunkCount = Math.ceil(this.file.size / __CHUNK_SIZE__)
+        this.curChunkIndex = 0
+        this.curChunkLoaded = 0
+
+        this.cancelAbort = new AbortController()
+    }
+
+    calcLoaded() {
+        if (this.chunkCount <= 1) {
+            return this.curChunkLoaded;
+        }
+        return this.curChunkIndex * this.chunkCount + this.curChunkLoaded;
+    }
+
+    onProgressing(progressEvent) {
+        this.curChunkLoaded = progressEvent.loaded
+
+        const loaded = this.calcLoaded();
+        const total = this.file.size;
+        this.onUploadProgress?.(loaded, total, loaded / total);
     }
 
     async cancel() {
-        await post('uploadCancel', this.file.name);
+        this.cancelAbort.abort()
+        await post('batchUploadCancel', this.file.name);
     }
 
     async merge() {
-        await post('uploadMerge', this.file.name);
+        await post('batchUploadMerge', this.file.name);
     }
 
     async upload() {
@@ -26,6 +45,7 @@ class BatchUpload {
         }
 
         if (this.file.size < __CHUNK_SIZE__) { // 文件大小小于切片大小，直接上传
+            this.curChunkIndex = 0;
             await this._upload();
         } else {
             await this._batchUpload() // 大文件切片上传
@@ -33,17 +53,19 @@ class BatchUpload {
     }
 
     async _batchUpload() {
-        const chunkCount = Math.ceil(this.file.size / __CHUNK_SIZE__)
-        for (let i = 0; i < chunkCount; i++) {
-            const res = await this._uploadChunk(i,).then(
+        for (let i = 0; i < this.chunkCount; i++) {
+            this.curChunkIndex = i;
+
+            const res = await this._uploadChunk(i).then(
                 async success => {
-                    if (i === chunkCount - 1) {
+                    if (i === this.chunkCount - 1) {
                         // 最后一片切片上传成功
-                        await this.merge()
+                        await this.merge().catch(error => {
+                            this.cancel()
+                        })
                     }
                 }
             ).catch(err => {
-                // 切片上传失败
                 this.cancel()
             })
         }
@@ -60,13 +82,13 @@ class BatchUpload {
             chunkIndex: chunkIndex,
             temp: true
         }
-        return await baseUpload('uploadChunk', {
-            onUploadProgress : this.onUploadProgress,
+        return await baseUpload('batchUploadChunk', {
+            onUploadProgress: this.onProgressing,
             data: form
         })
     }
 
     async _upload() {
-        await baseUpload({onUploadProgress : this.onUploadProgress});
+        await baseUpload({onUploadProgress: this.onProgressing});
     }
 }

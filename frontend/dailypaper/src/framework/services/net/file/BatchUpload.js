@@ -77,18 +77,23 @@ class BatchUpload {
         const chunkFile = this.file.slice(start, end)
 
         const form = {
-            fileName: this.file.name + chunkIndex,
-            file: chunkFile,
+            chunkFileName: this.file.name + chunkIndex,
             chunkIndex: chunkIndex,
+            chunkFile: chunkFile,
+            chunkCount: this.chunkCount,
             temp: true
         }
         return await baseUpload('batchUploadChunk', {
             onUploadProgress: this.onProgressing,
+            signal: this.cancelAbort.signal,
             data: form
         })
     }
 
     async _upload() {
-        await baseUpload({onUploadProgress: this.onProgressing});
+        await baseUpload({
+            onUploadProgress: this.onProgressing,
+            signal: this.cancelAbort.signal
+        });
     }
 }

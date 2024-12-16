@@ -7,4 +7,5 @@ export default {
     __OK__: 200,
     __TOKEN_EXPIRE_CODE__: 10000,
     __HEART_BEAT_CODE__: 10001,
+    __CHUNK_SIZE__: 2 * 1024 * 1024 // 2M
 }

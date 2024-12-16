@@ -1,6 +1,6 @@
 import { axiosInstance } from './NAxios.js'
 
-import { config } from './config'
+import { config } from './Config.js'
 
 const { default_headers } = config
 
@@ -24,7 +24,7 @@ async function get(option) {
     return res.data
 }
 
-async function pos(option) {
+async function post(option) {
     const res = await _request({ method: 'POST', ...option })
     return res.data
 }
@@ -56,4 +56,4 @@ async function upload(option) {
     return _request({method: 'POST', ...option});
 }
 
-export { get, pos, postOriginal, _delete, put, download, upload }
+export { get, post, postOriginal, _delete, put, download, upload }

@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.smlj.dailypaper.table_3rd.dao.TUserDao">
-    <select id="selectByAccount" resultType="com.smlj.dailypaper.table_3rd.entity.TUser">
+    <select id="selectMembersByAccount" resultType="com.smlj.dailypaper.table_3rd.entity.TUser">
         SELECT
             *
         FROM
             t_user
         WHERE
-            deptCode = (select deptCode from t_user where card = #{userAccount});
+            deptCode = (select deptCode from t_user where card = #{userId})
+    </select>
+
+    <select id="getLeader" resultType="com.smlj.dailypaper.table_3rd.entity.TUser">
+        SELECT *
+        FROM t_user
+        where account = (SELECT org_res_code
+               FROM t_org
+               WHERE dept_code = #{deptCode})
     </select>
 
     <select id="getDepartmentCode" resultType="java.lang.String">
-        select deptCode from t_user where card = #{userAccount};
+        select deptCode
+        from t_user
+        where card = #{userId}
     </select>
 
     <select id="getDepartmentName" resultType="java.lang.String">
-        select org_name from t_org where dept_code = (select deptCode from t_user where card = #{userAccount});
+        select org_name
+        from t_org
+        where dept_code = #{deptCode}
     </select>
 </mapper>
 

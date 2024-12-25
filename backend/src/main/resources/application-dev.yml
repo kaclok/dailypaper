@@ -38,13 +38,6 @@ spring:
             test-on-return: false
             test-while-idle: true
 
-  data:
-    redis:  # Redis
-      host: localhost
-      port: 6379
-#      username: root
-#      password: root
-
 logging:
   # level:
     # root: debug # 指定日志级别 把springboot的所有日志修改成为debug

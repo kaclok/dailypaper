@@ -20,7 +20,7 @@ public class TDateCommitServiceImpl implements TDateCommitService {
     private TDateCommitDao tDateCommitDao;
 
     @Override
-    public void Create(@Param("tableName") String tableName, @Param("list") ArrayList<Integer> list) {
+    public void Create(@Param("tableName") String tableName, @Param("list") ArrayList<String> list) {
         tDateCommitDao.Create(tableName, list);
     }
 

@@ -12,9 +12,11 @@ import java.util.ArrayList;
  * @since 2024-08-19 08:29:19
  */
 public interface TUserService {
-    ArrayList<TUser> selectByAccount(@Param("userAccount") String userAccount);
+    ArrayList<TUser> selectMembersByAccount(@Param("userId") String userId);
 
-    String getDepartmentCode(@Param("userAccount") String userAccount);
+    TUser getLeader(@Param("deptCode") String deptCode);
 
-    String getDepartmentName(@Param("userAccount") String userAccount);
+    String getDepartmentCode(@Param("userId") String userId);
+
+    String getDepartmentName(@Param("deptCode") String deptCode);
 }

@@ -11,5 +11,7 @@ public class To_DateCommit implements Serializable {
     private long date = 0;
     private String departmentId;
     private String departmentName = null;
+    private boolean curUserIsLeader = false;
+
     private ArrayList<To_UserCommit> commits = new ArrayList<To_UserCommit>(16);
 }

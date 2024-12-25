@@ -12,11 +12,12 @@ import CpPie from '@/cms/daily_paper/ui/components/CpPie.vue'
 import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
 import {t} from "@/framework/services/LocaleService";
 import {ExcelService} from "@/framework/services/ExcelService";
-import {axiosInstance as axiosR} from "@/framework/services/net/NAxios.js";
 import axios from "axios";
 
 let canMounted = false;
+let params = new URLSearchParams(window.location.search);
 let account = SessionStorageService.getStore("Account");
+// account = "SMLJ23659" // SMLJ19030
 console.log("account: " + account);
 if (account === null) {
     // window.location.href
@@ -152,7 +153,7 @@ function refreshCommits() {
     }
 }
 
-function onEdit(userId, cardAccount, oldContent, content, oldTomorrowPlan, tomorrowPlan) {
+function onEdit(userId, cardAccount, oldContent, content, oldTomorrowPlan, tomorrowPlan, oldTomorrowArrangement, tomorrowArrangement) {
     if (curAccount.value && (curAccount.value !== cardAccount)) {
         window.alert('只能提交自己的日报内容');
         return;
@@ -171,7 +172,7 @@ function onEdit(userId, cardAccount, oldContent, content, oldTomorrowPlan, tomor
             return;
         }
 
-        Singleton.getInstance(SysDaily).RequestEdit(selectedDate.value, userId, content, tomorrowPlan, editCtrl.signal, () => {
+        Singleton.getInstance(SysDaily).RequestEdit(selectedDate.value, userId, content, tomorrowPlan, tomorrowArrangement, editCtrl.signal, () => {
             loading.value = true;
         }, (r) => {
             loading.value = false;
@@ -265,15 +266,17 @@ onUnmounted(() => {
     <div class="root">
         <CpDatePicker @onDateChanged="onDateChanged" :targetDate="DateTimeUtil.nowDate()"/>
         <a v-if="departmentId === '1030016010' || departmentId === '30015'"
-           href="https://www.kdocs.cn/l/cgHAbfHG8Fm2?from=docs&startTime=1724384203679" target="_blank"
+           href="https://www.kdocs.cn/l/cgOq47yrcANr" target="_blank"
            style="position: absolute; left: 260px; top: 30px; color: white; background: #0000FF; border-radius: 50%;">考勤表</a>
         <!--cp_chart 没有搞懂这里没有ref的响应式代码，为什么也能即时刷新-->
         <div style="display: flex; position: relative; left: 340px;  align-items: center;">
             <CpPie @onLegendSelectChanged="onLegendSelectChanged" :attand="Singleton.getInstance(SysDaily).GetAttendCount(true)"
                    :unAttand="Singleton.getInstance(SysDaily).GetAttendCount(false)" :selected="selectedLegend"/>
-            <span style="font-size: 60px; font-style: italic; color: #a0cfff; margin-left: 100px; height: 160px; width:
+
+            <span style="font-size: 70px; color: #a0cfff; margin-left: 100px; height: 160px; width:
             580px;
-                overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;">{{ departmentTitle }}</span>
+                overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;">{{ departmentTitle }}
+            </span>
         </div>
         <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>
         <el-button @click="onExportAll" v-cd="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
@@ -288,8 +291,10 @@ onUnmounted(() => {
                     :name="card.name"
                     :account="card.account"
                     :tomorrowPlan="card.tomorrowPlan"
+                    :tomorrowArrangement="card.tomorrowArrangement"
                     :time="card.time"
                     :content="card.content"
+                    :isLeader="card.isLeader"
                     @onEdit="onEdit"
             />
         </div>
@@ -323,7 +328,7 @@ onUnmounted(() => {
     margin: 0;
 
     display: grid;
-    grid-template-columns: repeat(6, 300px);
+    grid-template-columns: repeat(5, 360px);
 
     overflow: auto;
     justify-content: space-evenly;

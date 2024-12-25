@@ -38,13 +38,6 @@ spring:
             test-on-return: false
             test-while-idle: true
 
-  data:
-    redis:  # Redis
-      host: localhost
-      port: 6379
-#      username: root
-#      password: smlj@123456
-
 logging:
   file:
     name: /data/deploy/dailyPaper/logs/dailyPaper.log

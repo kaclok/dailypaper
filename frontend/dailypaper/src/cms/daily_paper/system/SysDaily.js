@@ -55,6 +55,7 @@ class SysDaily {
             this._result = r;
             this._departmentId = this._result.data.departmentId;
             this._departmentName = this._result.data.departmentName;
+            this._curUserIsLeader = this._result.data.curUserIsLeader;
         }
 
         if (onAfter != null) {
@@ -62,11 +63,11 @@ class SysDaily {
         }
     }
 
-    async RequestEdit(date, userId, content, tomorrowPlan, signal, onBefore, onAfter) {
+    async RequestEdit(date, userId, content, tomorrowPlan, tomorrowArrangement, signal, onBefore, onAfter) {
         if (onBefore != null) {
             onBefore();
         }
-        let rlt = await ApiDaily.Edit(this._departmentId, date, userId, content, tomorrowPlan, signal).catch(fail => {
+        let rlt = await ApiDaily.Edit(this._departmentId, date, userId, content, tomorrowPlan, tomorrowArrangement, signal).catch(fail => {
             onAfter(false);
         });
 
@@ -74,7 +75,7 @@ class SysDaily {
         TimeService.initTime(rlt.timestamp);
 
         if (rlt.result) {
-            this.UpdateCommit(date, userId, content, tomorrowPlan);
+            this.UpdateCommit(date, userId, content, tomorrowPlan, tomorrowArrangement);
         }
 
         if (onAfter != null) {
@@ -97,7 +98,7 @@ class SysDaily {
         return this._result;
     }
 
-    UpdateCommit(date, userId, content, tomorrowPlan) {
+    UpdateCommit(date, userId, content, tomorrowPlan, tomorrowArrangement) {
         let c = this.GetCommits();
         if (c != null) {
             for (let i = 0; i < c.length; i++) {
@@ -105,6 +106,7 @@ class SysDaily {
                 if (cur.userId === userId) {
                     cur.content = content;
                     cur.tomorrowPlan = tomorrowPlan;
+                    cur.tomorrowArrangement = tomorrowArrangement;
                     cur.time = TimeService.getSvrTime();
                     break;
                 }

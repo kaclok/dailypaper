@@ -6,7 +6,7 @@ export class ApiDaily {
     static GetAll(userAccount, date, signal) {
         return axiosR.get("dailypaper/getAll", {
             params: {
-                userAccount: userAccount,
+                userCard: userAccount,
                 date: date,
             },
             signal: signal,
@@ -14,7 +14,7 @@ export class ApiDaily {
     }
 
     // 提交某日某人写的某内容数据
-    static Edit(departmentId, date, userId, content="", tomorrowPlan="", signal) {
+    static Edit(departmentId, date, userId, content, tomorrowPlan, tomorrowArrangement, signal) {
         return axiosR.get("dailypaper/edit", {
             params: {
                 departmentId: departmentId,
@@ -22,19 +22,8 @@ export class ApiDaily {
                 userId: userId,
                 content: content,
                 tomorrowPlan: tomorrowPlan,
+                tomorrowArrangement: tomorrowArrangement,
                 hash: 7 + content.length,
-            },
-            signal: signal,
-        })
-    }
-
-    static ExportOne(departmentId, userId, beginDate, endDate, signal) {
-        return axiosR.get("dailypaper/export_one", {
-            params: {
-                departmentId: departmentId,
-                userId: userId,
-                beginDate: beginDate,
-                endDate: endDate,
             },
             signal: signal,
         })

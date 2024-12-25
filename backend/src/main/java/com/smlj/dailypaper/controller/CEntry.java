@@ -1,33 +1,30 @@
 package com.smlj.dailypaper.controller;
 
-import com.smlj.dailypaper.table.dao.common.TableDao;
-import com.smlj.dailypaper.table.entity.TCommit;
 import com.smlj.dailypaper.proto.to.To_DateCommit;
-import com.smlj.dailypaper.proto.to.To_ExcelRow;
 import com.smlj.dailypaper.proto.to.To_Excel;
+import com.smlj.dailypaper.proto.to.To_ExcelRow;
 import com.smlj.dailypaper.proto.to.To_UserCommit;
 import com.smlj.dailypaper.proto.to.common.Result;
+import com.smlj.dailypaper.table.dao.common.TableDao;
+import com.smlj.dailypaper.table.entity.TCommit;
+import com.smlj.dailypaper.table.entity.TUser;
 import com.smlj.dailypaper.table.service.TCommitService;
 import com.smlj.dailypaper.table.service.TDateCommitService;
 import com.smlj.dailypaper.table.service.TUserService;
-import com.smlj.dailypaper.utils.UrlUtil;
 import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
+import com.smlj.dailypaper.utils.UrlUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 // https://www.bilibili.com/video/BV1Lq4y1J77x?p=16&spm_id_from=pageDriver&vd_source=5c9f5bd891aee351c325bcf632b5550f 整合redis
 
@@ -56,74 +53,55 @@ public class CEntry {
 
     private final TableDao tableDao;
 
-    // Q1:需要使用@Qualifier("redisTemplate")标识，或者命名固定为redisTemplate，否则会有同名bean的问题
-    // Q1的时候会存在redis的key有乱码前缀的情况，按照https://www.cnblogs.com/candlia/p/11919884.html的解决方式，替换为StringRedisTemplate，key,value都是String，就不会存在乱码情况
-    private final StringRedisTemplate redis;
-
-    private final HttpServletRequest request;
-
-    public CEntry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jtUserService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao, StringRedisTemplate redis, HttpServletRequest request) {
+    public CEntry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jtUserService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao) {
         this.userService = userService;
         jt_userService = jtUserService;
         this.dateCommitService = dateCommitService;
         this.commitService = commitService;
         this.tableDao = tableDao;
-        this.redis = redis;
-        this.request = request;
     }
 
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
-    public Result<To_DateCommit> GetAll(@RequestParam("userAccount") String userAccount, @RequestParam("date") long date) {
+    public Result<To_DateCommit> GetAll(@RequestParam("userCard") String userCard, @RequestParam("date") long date, HttpServletRequest request) {
         log.info("GetAll:{}", UrlUtil.GetFullUrl(request));
 
         try {
             var r = new ResultUtil<To_DateCommit>();
-            if (userAccount == null || userAccount.isEmpty() || date <= 0) {
+            if (userCard == null || userCard.isEmpty() || date <= 0) {
                 return r.setErrorMsg("args invalid!", null);
             }
 
-            String departmentCode = "";
-            if (Boolean.TRUE.equals(redis.hasKey(userAccount))) {
-                departmentCode = (String) Objects.requireNonNull(redis.opsForHash().get(userAccount, "depCode"));
-            } else {
-                departmentCode = jt_userService.selectByAccount(userAccount).getFirst().getDeptCode();
-                redis.opsForHash().put(userAccount, "depCode", departmentCode);
-            }
-
-            // 默认：数字化中心
-            String userTableName = Table.getUserTableName(departmentCode);
+            String departmentId = jt_userService.selectMembersByAccount(userCard).getFirst().getDeptCode();
+            String userTableName = Table.getUserTableName(departmentId);
             try {
-                Table.TryFillUser(userAccount, userTableName, jt_userService, userService, tableDao, redis, departmentCode);
+                Table.TryFillUser(userCard, userTableName, jt_userService, userService, tableDao, departmentId);
             } catch (Exception e) {
                 log.info(e.getMessage());
             }
 
             // 构建部门的commit表
-            String commitTableName = Table.getCommitTableName(departmentCode);
+            String commitTableName = Table.getCommitTableName(departmentId);
             Table.TryCreateCommit(commitTableName, commitService, tableDao);
 
             int midNight = (int) DateTimeUtil.convertToMidnightTimestamp(date);
-            int count = redis.opsForList().size("depUserList:" + departmentCode).intValue();
+            int count = userService.Count(userTableName);
 
             To_DateCommit to = new To_DateCommit();
             to.setTotal(count);
             to.setDate(midNight);
-            to.setDepartmentId(departmentCode);
+            to.setDepartmentId(departmentId);
 
-            String departmentName = "未知部门";
-            if (redis.opsForHash().hasKey(userAccount, "depName")) {
-                departmentName = (String) redis.opsForHash().get(userAccount, "depName");
-            } else {
-                departmentName = jt_userService.getDepartmentName(userAccount);
-                redis.opsForHash().put(userAccount, "depName", departmentName);
-            }
+            var isLeader = userService.GetUserById(userTableName, userCard).isLeader();
+            to.setCurUserIsLeader(isLeader);
 
+            String departmentName = jt_userService.getDepartmentName(departmentId);
             to.setDepartmentName(departmentName);
 
+            List<TUser> users = userService.FindAll(userTableName);
             // 构建部门的datecommit表
-            String dateCommitTableName = Table.getDateCommitTableName(departmentCode);
-            Table.TryCreateDateCommit(dateCommitTableName, dateCommitService, tableDao, count);
+            String dateCommitTableName = Table.getDateCommitTableName(departmentId);
+            Table.TryCreateDateCommit(dateCommitTableName, dateCommitService, tableDao, users);
 
             HashMap<String, Object> dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
             if (dateCommit == null) {
@@ -132,27 +110,26 @@ public class CEntry {
                 dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
             }
 
-            String hashKey = "user:" + departmentCode;
-            String listKey = "depUserList:" + departmentCode;
-            List<String> userIds = redis.opsForList().range(listKey, 0, -1);
-            for (int i = 0; i < userIds.size(); i++) {
-                var userId = userIds.get(i);
+            for (int i = 0; i < users.size(); i++) {
+                var user = users.get(i);
+                if (!user.isEnable()) {
+                    continue;
+                }
+
                 To_UserCommit tu = new To_UserCommit();
-                tu.setUserId(Integer.parseInt(userId));
+                tu.setUserId(user.getId());
+                tu.setName(user.getName());
+                tu.setAccount(user.getAccount());
+                tu.setLeader(user.isLeader());
 
-                String finalKey = hashKey + ":" + userId;
-                String name = (String) redis.opsForHash().get(finalKey, "name");
-                tu.setName(name);
-                String account = (String) redis.opsForHash().get(finalKey, "account");
-                tu.setAccount(account);
-
-                String key = "userId_" + userId;
+                String key = "userId_" + user.getId();
                 Long commitId = (Long) (dateCommit.get(key));
                 TCommit c = commitService.FindById(commitTableName, commitId.intValue());
                 if (c != null) {
                     tu.setTime(c.getCommitDateTime());
                     tu.setContent(c.getContent());
                     tu.setTomorrowPlan(c.getTomorrowPlan());
+                    tu.setTomorrowArrangement(c.getTomorrowArrangement());
                 }
 
                 to.getCommits().add(tu);
@@ -166,8 +143,8 @@ public class CEntry {
 
     @GetMapping("/edit")
     @Transactional
-    public Result<To_DateCommit> Edit(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") int userId, @RequestParam("content") String content, @RequestParam("tomorrowPlan") String tomorrowPlan,
-                                      @RequestParam(name = "hash", required = false) Integer hash) {
+    public Result<To_DateCommit> Edit(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") String userId, @RequestParam("content") String content, @RequestParam(value = "tomorrowPlan", required = false) String tomorrowPlan,
+                                      @RequestParam(value = "tomorrowArrangement", required = false) String tomorrowArrangement, @RequestParam(name = "hash", required = false) Integer hash, HttpServletRequest request) {
         try {
             var now = System.currentTimeMillis() / 1000;
             var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
@@ -195,6 +172,7 @@ public class CEntry {
                 cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
                 cm.setContent(content);
                 cm.setTomorrowPlan(tomorrowPlan);
+                cm.setTomorrowArrangement(tomorrowArrangement);
 
                 String commitTableName = Table.getCommitTableName(departmentId);
                 // 插入commit表
@@ -212,25 +190,24 @@ public class CEntry {
     }
 
     @GetMapping("/export_all")
-    public Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("departmentId") String departmentId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate) {
+    public Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("departmentId") String departmentId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate, HttpServletRequest request) {
         try {
             log.info("ExportAll: {}", UrlUtil.GetFullUrl(request));
 
             String datecommitTableName = Table.getDateCommitTableName(departmentId);
             String commitTableName = Table.getCommitTableName(departmentId);
-            String listKey = "depUserList:" + departmentId;
-            List<String> userIds = redis.opsForList().range(listKey, 0, -1);
+            String userTableName = Table.getUserTableName(departmentId);
 
+            List<TUser> users = userService.FindAll(userTableName);
             To_Excel<To_ExcelRow> rlt = new To_Excel<>();
             // 获取excel第一行
             rlt.getColNames().add("日期");
-            if (userIds != null) {
-                String hashKey = "user:" + departmentId;
-                for (var userId : userIds) {
-                    String finalKey = hashKey + ":" + userId;
-                    String name = (String) redis.opsForHash().get(finalKey, "name");
+            if (users != null) {
+                for (var user : users) {
+                    String name = user.getName();
                     rlt.getColNames().add(name + ":今日");
-                    rlt.getColNames().add(name + ":明日");
+                    rlt.getColNames().add(name + ":明日计划");
+                    rlt.getColNames().add(name + ":明日安排");
                 }
             }
 
@@ -241,9 +218,8 @@ public class CEntry {
                 excelRow.setTime(date.intValue());
                 boolean allEmpty = true;
 
-                for (int i = 0; i < userIds.size(); i++) {
-                    String userId = userIds.get(i);
-                    String key = "userId_" + userId;
+                for (var user : users) {
+                    String key = "userId_" + user.getId();
                     Long commitId = (Long) (one.get(key));
                     String content = null;
                     String tomorrowPlan = null;

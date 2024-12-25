@@ -11,10 +11,12 @@ import java.util.ArrayList;
 @Mapper
 @Repository("train_TUserDao")
 public interface TUserDao {
-    ArrayList<TUser> selectByAccount(@Param("userAccount") String userAccount);
+    ArrayList<TUser> selectMembersByAccount(@Param("userId") String userId);
 
-    String getDepartmentCode(@Param("userAccount") String userAccount);
+    TUser getLeader(@Param("deptCode") String deptCode);
 
-    String getDepartmentName(@Param("userAccount") String userAccount);
+    String getDepartmentCode(@Param("userId") String userId);
+
+    String getDepartmentName(@Param("deptCode") String deptCode);
 }
 

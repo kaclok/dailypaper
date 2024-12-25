@@ -6,32 +6,39 @@
     <select id="GetUserById" resultType="com.smlj.dailypaper.table.entity.TUser">
         select * /*id, name, age, identity*/
         from ${tableName}
-        where id = #{userId};
+        where account = #{userCard}
+    </select>
+
+    <select id="FindAll" resultType="com.smlj.dailypaper.table.entity.TUser">
+        select *
+        from ${tableName}
     </select>
 
     <!--统计总行数-->
     <select id="Count" resultType="java.lang.Integer">
-        select count(*)
-        from ${tableName};
+        select count(0)
+        from ${tableName}
     </select>
 
     <insert id="Insert">
-        insert into ${tableName} (id, name, account)
-        values (#{one.id}, #{one.name}, #{one.account});
+        insert into ${tableName} (id, name, account, isLeader, enable)
+        values (#{one.id}, #{one.name}, #{one.account}, #{one.isLeader}, #{one.enable})
     </insert>
 
     <insert id="InsertBatch">
-        insert into ${tableName} (id, name, account) values
+        insert into ${tableName} (id, name, account, isLeader, enable) values
         <!--https://blog.csdn.net/cxyxysam/article/details/135722109-->
         <foreach collection="list" item="item" index="index" separator=",">
             <if test="item != null">
-                (#{item.id}, #{item.name}, #{item.account})
+                (#{item.id}, #{item.name}, #{item.account}, #{item.isLeader}, #{item.enable})
             </if>
         </foreach>
         on duplicate key update
         id = values(id),
         name = values(name),
-        account = values(account)
+        account = values(account),
+        isLeader = values(isLeader),
+        enable = values(enable)
     </insert>
 
     <!-- 创建新的日志表-->
@@ -41,15 +48,17 @@
             DROP TABLE IF EXISTS ${tableName};
         -->
         CREATE TABLE ${tableName} (
-            `id` tinyint(3) UNSIGNED NOT NULL,
-            <!-- 
-                选择最长的name的length
-                SELECT MAX(LENGTH(nickname)) FROM t_user;
-            SELECT nickname FROM t_user WHERE LENGTH(nickname) = (SELECT MAX(LENGTH(nickname)) FROM t_user); 
-            -->
-            `name` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-            `account` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-            PRIMARY KEY (`id`) USING BTREE
+        `id` varchar(10) NOT NULL,
+        <!--
+            选择最长的name的length
+            SELECT MAX(LENGTH(nickname)) FROM t_user;
+        SELECT nickname FROM t_user WHERE LENGTH(nickname) = (SELECT MAX(LENGTH(nickname)) FROM t_user);
+        -->
+        `name` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+        `account` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+        `isLeader` bit(1) NOT NULL DEFAULT b'0',
+        `enable` bit(1) NOT NULL DEFAULT b'1',
+        PRIMARY KEY (`id`) USING BTREE
         ) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
     </update>
 </mapper>

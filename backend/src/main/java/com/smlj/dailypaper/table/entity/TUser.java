@@ -6,7 +6,9 @@ import lombok.Data;
 // @Data特性可以帮助自己写getter、setter等函数
 @Data
 public class TUser {
-    private int id;
+    private String id; // 集团工号
     private String name;
-    private String account;
+    private String account; // 子公司账号 SMLJ23659
+    private boolean isLeader;
+    private boolean enable;
 }

@@ -13,8 +13,7 @@ import java.util.ArrayList;
 @Mapper
 public interface TUserDao extends TableCreateDao {
     // 测试非xml配置的模式进行数据库访问
-    @Select("select * from t_user")
-    public ArrayList<TUser> FindAll();
+    public ArrayList<TUser> FindAll(@Param("tableName") String tableName);
 
     public int Count(@Param("tableName") String tableName);
 
@@ -22,5 +21,5 @@ public interface TUserDao extends TableCreateDao {
 
     public void InsertBatch(@Param("tableName") String tableName, @Param("list") ArrayList<TUser> list);
 
-    public TUser GetUserById(@Param("tableName") String tableName, @Param("userId") int userId);
+    public TUser GetUserById(@Param("tableName") String tableName, @Param("userCard") String userCard);
 }

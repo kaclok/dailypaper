@@ -1,12 +1,13 @@
 package com.smlj.dailypaper.table.service;
 
+import com.smlj.dailypaper.table.entity.TUser;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface TDateCommitService {
-    void Create(@Param("tableName") String tableName, @Param("list") ArrayList<Integer> list);
+    void Create(@Param("tableName") String tableName, @Param("list") ArrayList<String> list);
 
     void InsertEmpty(@Param("tableName") String tableName, @Param("date") long date);
 

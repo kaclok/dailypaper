@@ -31,12 +31,6 @@ class DailypaperApplicationTests {
     private com.smlj.dailypaper.table_3rd.service.TUserService jt_userService;
 
     @Test
-    void testFindAll() {
-        List<TUser> list = tUserDao.FindAll();
-        System.out.println(list);
-    }
-
-    @Test
     void ExistTable() {
         int rlt = tableDao.Exist("t_commit");
         System.out.println(rlt);

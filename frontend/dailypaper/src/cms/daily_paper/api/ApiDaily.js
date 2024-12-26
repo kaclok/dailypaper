@@ -23,7 +23,7 @@ export class ApiDaily {
                 content: content,
                 tomorrowPlan: tomorrowPlan,
                 tomorrowArrangement: tomorrowArrangement,
-                hash: 7 + content.length,
+                hash: 7 + userId.length,
             },
             signal: signal,
         })

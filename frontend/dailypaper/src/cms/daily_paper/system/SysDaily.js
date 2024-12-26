@@ -7,6 +7,8 @@ class SysDaily {
     _result = null;
     _departmentId = null;
     _departmentName = null;
+    _curUserIsLeader = null;
+    _tableList = {};
 
     GetCommits() {
         if (this._result === null) {
@@ -29,7 +31,7 @@ class SysDaily {
 
         // console.table(cs);
 
-        if(index === -1) {
+        if (index === -1) {
             return cs;
         }
 
@@ -56,6 +58,36 @@ class SysDaily {
             this._departmentId = this._result.data.departmentId;
             this._departmentName = this._result.data.departmentName;
             this._curUserIsLeader = this._result.data.curUserIsLeader;
+            this._tableList = [
+                {
+                    id: 1,
+                    content: "工作内容1",
+                    dutyPerson: "123",
+                    finishTime: "1",
+                    comment: "备注",
+                },
+                {
+                    id: 2,
+                    content: "工作内容2",
+                    dutyPerson: "123",
+                    finishTime: "2",
+                    comment: "备注",
+                },
+                {
+                    id: 3,
+                    content: "工作内容3",
+                    dutyPerson: "123",
+                    finishTime: "3",
+                    comment: "备注",
+                },
+                {
+                    id: 4,
+                    content: "工作内容4",
+                    dutyPerson: "123",
+                    finishTime: "4",
+                    comment: "备注",
+                }
+            ]
         }
 
         if (onAfter != null) {

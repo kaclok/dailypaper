@@ -57,7 +57,8 @@ onBeforeUpdate(() => {
                 <span :style="{color: hasEdited() ? 'blue' : 'red'}">{{ props.name }}({{ props.account }})</span>
                 <span class="flag">{{ getEditText() }}</span>
                 <el-button @click="$emit('onEdit', props.id, props.account, props.content, refTextContent, props.tomorrowPlan,
-                refTextTomorrowPlan, props.tomorrowArrangement, refTextTomorrowArrangement)" v-if="isSelf() && isToday()"
+                refTextTomorrowPlan, props.tomorrowArrangement, refTextTomorrowArrangement)" v-if="(isSelf() ||
+                Singleton.getInstance(SysDaily)._curUserIsLeader) && isToday()"
                            type="success"
                            v-cd="3"
                            circle :dark="true" style="position: relative; left: 40px; top: 0px">{{ t('cms.daily_paper.SUBMIT') }}
@@ -100,7 +101,7 @@ onBeforeUpdate(() => {
             />
 
             <!--  明日工作安排 -->
-            <span style="font-size: 12px; color: #000000; position: relative; left: -10px;">明日工作安排 (仅领导可编辑):
+            <span style="font-size: 12px; color: #000000; position: relative; left: -10px;">明日工作安排:
             </span>
             <el-input
                 v-model="refTextTomorrowArrangement"

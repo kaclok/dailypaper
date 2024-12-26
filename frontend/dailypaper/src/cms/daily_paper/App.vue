@@ -1,5 +1,5 @@
 <script setup>
-import {Singleton, getInstance} from "@/framework/services/Singleton.js";
+import {Singleton} from "@/framework/services/Singleton.js";
 import {SessionStorageService} from "@/framework/services/SessionStorageService.js";
 
 import {DateTimeUtil} from "@/framework/utils/DateTimeUtil.js";
@@ -15,9 +15,10 @@ import {ExcelService} from "@/framework/services/ExcelService";
 import axios from "axios";
 
 let canMounted = false;
-let params = new URLSearchParams(window.location.search);
 let account = SessionStorageService.getStore("Account");
-// account = "SMLJ23659" // SMLJ19030
+if (__DEV__) {
+    account = "SMLJ23659" // SMLJ19030
+}
 console.log("account: " + account);
 if (account === null) {
     // window.location.href
@@ -87,7 +88,8 @@ function onGotToken(r) {
     })
 }
 
-let commits = ref(null);
+let weeklyPlan = ref([]);
+let dailyPlan = ref([]);
 
 // https://www.axios-http.cn/docs/cancellation
 let getAllCtrl = new AbortController();
@@ -120,6 +122,7 @@ function onDateChanged(date) {
         if (r) {
             // 触发响应式UI刷新
             refreshCommits();
+            weeklyPlan.value = Singleton.getInstance(SysDaily)._tableList;
             departmentTitle.value = Singleton.getInstance(SysDaily)._departmentName;
             departmentId.value = Singleton.getInstance(SysDaily)._departmentId;
         }
@@ -145,23 +148,32 @@ function refreshCommits() {
     let unAttend = selectedLegend.value[t('cms.daily_paper.UN_ATTEND')];
     // 更新commits
     if (attend && unAttend) {
-        commits.value = Singleton.getInstance(SysDaily).GetSelfCommits(curAccount.value);
+        dailyPlan.value = Singleton.getInstance(SysDaily).GetSelfCommits(curAccount.value);
     } else if (attend || unAttend) {
-        commits.value = Singleton.getInstance(SysDaily).GetAttendList(attend);
+        dailyPlan.value = Singleton.getInstance(SysDaily).GetAttendList(attend);
     } else {
-        commits.value = [];
+        dailyPlan.value = [];
     }
 }
 
 function onEdit(userId, cardAccount, oldContent, content, oldTomorrowPlan, tomorrowPlan, oldTomorrowArrangement, tomorrowArrangement) {
-    if (curAccount.value && (curAccount.value !== cardAccount)) {
+    /*if (curAccount.value && (curAccount.value !== cardAccount)) {
         window.alert('只能提交自己的日报内容');
         return;
-    }
+    }*/
 
-    if (content != null && content.trim() !== "") {
-        if (content === oldContent && oldTomorrowPlan === tomorrowPlan) {
-            //window.alert('提交内容无改动');
+    if ((content === undefined || content === null || content.trim() === "") &&
+        (tomorrowArrangement === undefined || tomorrowArrangement === null || tomorrowArrangement.trim() === "")) {
+        ElMessage({
+            showClose: true,
+            message: '今日工作内容 和 明日工作安排 至少填写一个',
+            type: 'warning',
+            center: true,
+            duration: 2000,
+        });
+
+    } else {
+        if (content === oldContent && oldTomorrowPlan === tomorrowPlan && oldTomorrowArrangement === tomorrowArrangement) {
             ElMessage({
                 showClose: true,
                 message: '提交内容无改动',
@@ -199,15 +211,6 @@ function onEdit(userId, cardAccount, oldContent, content, oldTomorrowPlan, tomor
                 })
             }
         });
-    } else {
-        // window.alert('提交内容不能为空');
-        ElMessage({
-            showClose: true,
-            message: '编辑内容不能为空',
-            type: 'warning',
-            center: true,
-            duration: 2000,
-        });
     }
 }
 
@@ -236,7 +239,7 @@ function onExportAll() {
             arr.unshift(d);
             return arr;
         });
-        ExcelService.ExportAOAToExcel1(final, r.data.colNames, 'export_all', true);
+        ExcelService.ExportAOAToExcel1(final, r.data.colNames, 'export_all', false);
     });
 }
 
@@ -260,6 +263,36 @@ onUnmounted(() => {
 
     SessionStorageService.removeStore("AuthCode");
 });
+
+function onClickDelete(rowIndex, row) {
+    weeklyPlan.value.splice(rowIndex, 1)
+}
+
+function onClickSave(rowIndex, row) {
+
+}
+
+function onAddItem() {
+    weeklyPlan.value.push({});
+}
+
+function tableRowClassName(row, rowIndex) {
+    if (rowIndex === 1) {
+        return 'warning-row'
+    } else if (rowIndex === 3) {
+        return 'success-row'
+    }
+    return ''
+}
+
+function onCellEnter(row, column, cell, event) {
+    row.isEdit = true
+}
+
+function onCellLeave(row, column, cell, event) {
+    row.isEdit = false
+}
+
 </script>
 
 <template>
@@ -282,8 +315,65 @@ onUnmounted(() => {
         <el-button @click="onExportAll" v-cd="3" circle :dark="true" type="warning" style="position: absolute; right: 30px; top: 30px">导出
         </el-button>
 
+        <!--        <div style="width: 100%">
+                    &lt;!&ndash; https://element-plus.org/zh-CN/component/table.html &ndash;&gt;
+                    <el-table :data="tableList"
+                              height="200"
+                              max-height="400"
+                              stripe
+                              border
+                              :row-class-name="tableRowClassName"
+                              @cell-mouse-enter="onCellEnter"
+                              @cell-mouse-leave="onCellLeave"
+                              style="">
+                        &lt;!&ndash; <el-table-column fixed type="selection" width="40"/> &ndash;&gt;
+                        <el-table-column fixed type="index" label="序号" width="54"/>
+                        &lt;!&ndash; <el-table-column fixed prop="id" label="id" width="60"/> &ndash;&gt;
+                        <el-table-column prop="dutyPerson" label="责任人" width="90">
+                            &lt;!&ndash;                    <template slot-scope="scope">
+                                                    <el-input v-if="scope.row.isEdit" class="item" v-model="scope.row.dutyPerson" placeholder="请输入责任人"></el-input>
+                                                    <div v-else class="txt">{{ scope.row.dutyPerson }}</div>
+                                                </template>&ndash;&gt;
+                        </el-table-column>
+                        <el-table-column prop="finishTime" label="完成时间" sortable width="110">
+                            &lt;!&ndash;                    <template slot-scope="scope">
+                                                    <el-input v-if="scope.row.isEdit" class="item" v-model="scope.row.finishTime" placeholder="请输入完成时间"></el-input>
+                                                    <div v-else class="txt">{{ scope.row.finishTime }}</div>
+                                                </template>&ndash;&gt;
+                        </el-table-column>
+                        <el-table-column prop="content" label="工作内容" show-overflow-tooltip width="1360">
+                            &lt;!&ndash;                    <template slot-scope="scope">
+                                                    <el-input v-if="scope.row.isEdit" class="item" v-model="scope.row.content" placeholder="请输入工作内容"></el-input>
+                                                    <div v-else class="txt">{{ scope.row.content }}</div>
+                                                </template>&ndash;&gt;
+                        </el-table-column>
+
+                        <el-table-column prop="comment" label="备注" width="80">
+                            &lt;!&ndash;                    <template slot-scope="scope">
+                                                    <el-input v-if="scope.row.isEdit" class="item" v-model="scope.row.comment" placeholder="请输入备注"></el-input>
+                                                    <div v-else class="txt">{{ scope.row.comment }}</div>
+                                                </template>&ndash;&gt;
+                        </el-table-column>
+
+                        <el-table-column fixed="right" label="操作" min-width="66">
+                            <template #default="scope">
+                                <el-button link type="primary" :disabled="!Singleton.getInstance(SysDaily)._curUserIsLeader" size="small"
+                                           @click.prevent="onClickSave(scope.$index, scope.row)">保存
+                                </el-button>
+                                <el-button link type="danger" :disabled="!Singleton.getInstance(SysDaily)._curUserIsLeader" size="small"
+                                           @click.prevent="onClickDelete(scope.$index, scope.row)">删除
+                                </el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <el-button :disabled="!Singleton.getInstance(SysDaily)._curUserIsLeader" style="font-size: 15px; width: 100%"
+                               @click="onAddItem">添加
+                    </el-button>
+                </div>-->
+
         <div class="infinite-list-root" v-loading="loading">
-            <CpCard v-for="card in commits"
+            <CpCard v-for="card in dailyPlan"
                     :key="card.userId"
                     :date="selectedDate"
                     :curAccount="curAccount"
@@ -301,7 +391,7 @@ onUnmounted(() => {
     </div>
 </template>
 
-<style>
+<style lang='scss'>
 .root {
     background: url("@/cms/daily_paper/assets/imgs/bg-smlj.jpg") no-repeat center border-box;
     /* 背景图片全屏化 */
@@ -319,6 +409,7 @@ onUnmounted(() => {
 
 .infinite-list-root {
     position: relative;
+    top: 6px;
     left: 0;
     right: 0;
 
@@ -332,5 +423,28 @@ onUnmounted(() => {
 
     overflow: auto;
     justify-content: space-evenly;
+}
+
+.el-table .warning-row {
+    --el-table-tr-bg-color: var(--el-color-warning-light-9);
+}
+
+.el-table .success-row {
+    --el-table-tr-bg-color: var(--el-color-success-light-9);
+}
+
+.item {
+    width: 100px;
+    /* 调整elementUI中样式 如果不需要调整请忽略 */
+
+    .el-input__inner {
+        height: 24px !important;
+    }
+}
+
+.txt {
+    line-height: 24px;
+    padding: 0 9px;
+    box-sizing: border-box;
 }
 </style>

@@ -143,8 +143,8 @@ public class CEntry {
 
     @GetMapping("/edit")
     @Transactional
-    public Result<To_DateCommit> Edit(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") String userId, @RequestParam("content") String content, @RequestParam(value = "tomorrowPlan", required = false) String tomorrowPlan,
-                                      @RequestParam(value = "tomorrowArrangement", required = false) String tomorrowArrangement, @RequestParam(name = "hash", required = false) Integer hash, HttpServletRequest request) {
+    public Result<To_DateCommit> Edit(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") String userId, @RequestParam(value = "content", required = false, defaultValue = "") String content, @RequestParam(value = "tomorrowPlan", required = false, defaultValue = "") String tomorrowPlan,
+                                      @RequestParam(value = "tomorrowArrangement", required = false, defaultValue = "") String tomorrowArrangement, @RequestParam(name = "hash", required = false) Integer hash, HttpServletRequest request) {
         try {
             var now = System.currentTimeMillis() / 1000;
             var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
@@ -152,7 +152,7 @@ public class CEntry {
             log.info("Edit: {} -> now:{}, todayMidNight:{}", UrlUtil.GetFullUrl(request), now, todayMidNight);
 
             var r = new ResultUtil<To_DateCommit>();
-            if (hash == null || hash != (7 + content.length())) {
+            if (hash == null || hash != (7 + userId.length())) {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("hash not valid!", null);
             } else if (date + 86400 * 1 < todayMidNight) {
@@ -204,8 +204,11 @@ public class CEntry {
             rlt.getColNames().add("日期");
             if (users != null) {
                 for (var user : users) {
+                    if(!user.isEnable()) {
+                        continue;
+                    }
                     String name = user.getName();
-                    rlt.getColNames().add(name + ":今日");
+                    rlt.getColNames().add(name + ":今日内容");
                     rlt.getColNames().add(name + ":明日计划");
                     rlt.getColNames().add(name + ":明日安排");
                 }
@@ -219,10 +222,15 @@ public class CEntry {
                 boolean allEmpty = true;
 
                 for (var user : users) {
+                    if(!user.isEnable()) {
+                        continue;
+                    }
+
                     String key = "userId_" + user.getId();
                     Long commitId = (Long) (one.get(key));
                     String content = null;
                     String tomorrowPlan = null;
+                    String tomorrowArrangement = null;
                     if (commitId != null && commitId != 0) {
                         var c = commitService.FindById(commitTableName, commitId.intValue());
                         if (c != null) {
@@ -230,12 +238,15 @@ public class CEntry {
                             content = content == null ? "" : content;
                             tomorrowPlan = c.getTomorrowPlan();
                             tomorrowPlan = tomorrowPlan == null ? "" : tomorrowPlan;
+                            tomorrowArrangement = c.getTomorrowArrangement();
+                            tomorrowArrangement = tomorrowArrangement == null ? "" : tomorrowArrangement;
                         }
                     }
 
-                    allEmpty &= (content == null || content.isEmpty());
+                    allEmpty &= (commitId.intValue() == 0);
                     excelRow.getContents().add(content);
                     excelRow.getContents().add(tomorrowPlan);
+                    excelRow.getContents().add(tomorrowArrangement);
                 }
 
                 if (!allEmpty) {

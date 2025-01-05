@@ -5,7 +5,8 @@ export default {
     __APP_VERSION__: JSON.stringify('v0.0.1'),
     __DEV__: process.env.NODE_ENV !== 'production',
     __OK__: 200,
-    __TOKEN_EXPIRE_CODE__: 10000,
-    __HEART_BEAT_CODE__: 10001,
+    __AT_EXPIRE_CODE__: 10000,
+    __RT_EXPIRE_CODE__: 10001,
+    __HEART_BEAT_CODE__: 10003,
     __CHUNK_SIZE__: 2 * 1024 * 1024 // 2M
 }

@@ -13,6 +13,7 @@ import {SysDaily} from '@/cms/daily_paper/system/SysDaily.js'
 import {t} from "@/framework/services/LocaleService";
 import {ExcelService} from "@/framework/services/ExcelService";
 import axios from "axios";
+import {TokenService} from "@/framework/services/TokenService.js";
 
 let canMounted = false;
 let account = SessionStorageService.getStore("Account");
@@ -113,6 +114,8 @@ let departmentTitle = ref('');
 let departmentId = ref("");
 
 function onDateChanged(date) {
+    // TokenService.getRemoteAT()
+
     let sec = date / 1000;
     Singleton.getInstance(SysDaily).RequestGetAll(account, sec, getAllCtrl.signal, () => {
         loading.value = true;

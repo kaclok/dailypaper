@@ -9,13 +9,13 @@ class TokenService {
     }
 
     static async getRemoteAT() {
-        const resp = await post('/refreshATByRT', {
+        await post({
+            url: '/refreshATByRT',
             headers: {
                 rt: TokenService.getLocalRT(),
             },
             __isRT: true, // 标识是否为RT请求
         })
-        return resp.code === __OK__
     }
 
     static getLocalAT() {
@@ -46,7 +46,7 @@ class TokenService {
         return wsCache.set(ECacheType.REFRESH_TOKEN, rt)
     }
 
-    static setATExpireRt(rtAt) {
+    static setRTExpireAt(rtAt) {
         return wsCache.set(ECacheType.REFRESH_TOKEN_EXPIRE_AT, rtAt)
     }
 }

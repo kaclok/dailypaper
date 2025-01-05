@@ -46,16 +46,23 @@ function changeHttpCodeMap(targetHttpCodeMap) {
 // https://www.axios-http.cn/docs/interceptors
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
 axiosInstance.interceptors.response.use(success => {
-    if(success.headers.at) { // 尝试保存at
-        const at = success.headers.at
+    const at = success.headers.at
+    if (at) { // 尝试保存at
         TokenService.setLocalAT(at)
+        TokenService.setATExpireAt(success.headers.atAt)
 
         // 给axios设置默认的at
         axiosInstance.defaults.headers.at = at
     }
 
-    if(success.headers.rt) {  // 尝试保存rt
-        TokenService.setLocalRT(success.headers.rt)
+    const rt = success.headers.rt
+    if (rt) {  // 尝试保存rt
+        TokenService.setLocalRT(rt)
+        TokenService.setRTExpireAt(success.headers.rtAt)
+
+        // 给axios设置默认的rt
+        // 因为访问资源服务仅仅使用at, 所有一般不设置rt, 因为会导致网络协议传输过大
+        // axiosInstance.defaults.headers.rt = rt
     }
 
     // 如果是文件下载等情况，直接返回
@@ -87,11 +94,18 @@ axiosInstance.interceptors.response.use(success => {
 // request拦截器, 让每个请求添加token
 // https://www.axios-http.cn/docs/interceptors
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
-axiosInstance.interceptors.request.use(success => {
+axiosInstance.interceptors.request.use(config => {
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
-    const at = TokenService.getLocalAT();
-    success.headers.at = at;
-    return success;
+    const isRT = TokenService.isRT(config)
+    if (!isRT) {
+        const at = TokenService.getLocalAT();
+        config.headers.at = at;
+    } else {
+        const rt = TokenService.getLocalRT();
+        config.headers.rt = rt;
+    }
+    console.log("__isRT: ", isRT);
+    return config;
 }, fail => {
     console.error(fail);
     // 异步状态转换为失败状态，走到catch分支

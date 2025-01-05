@@ -3,18 +3,17 @@ import {axiosInstance} from "@/framework/services/net/NAxios.js";
 import {TokenService} from "@/framework/services/TokenService.js";
 
 const NwCodeMap = {
-    [__TOKEN_EXPIRE_CODE__]: async (resp) => {
+    [__RT_EXPIRE_CODE__]: async (resp) => {
+        // rt超时，跳转到登录页面
+    },
+    [__AT_EXPIRE_CODE__]: async (resp) => {
         if (!TokenService.isRT(resp.config)) {
             // 上次失败的请求
             let originalRequest = resp.config
-            const hasGotAT = await TokenService.getRemoteAT()
-            if (hasGotAT) {
+            TokenService.getRemoteAT().then(res => {
                 originalRequest.headers.at = TokenService.getLocalAT()
                 axiosInstance(originalRequest)
-            }
-            else {
-                // 跳转到登录页
-            }
+            })
         }
     },
     [__HEART_BEAT_CODE__]: (resp) => {

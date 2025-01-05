@@ -13,7 +13,10 @@ const ECacheType = {
     USER_NAME: "USER_NAME", // 名字
 
     ACCESS_TOKEN: "ACCESS_TOKEN", // token
-    ACCESS_TOKEN_EXPIRE_AT: "ACCESS_TOKEN_EXPIRE_AT", // token过期时间
+    ACCESS_TOKEN_EXPIRE_AT: "ACCESS_TOKEN_EXPIRE_AT",
+
+    REFRESH_TOKEN: "REFRESH_TOKEN", // token
+    REFRESH_TOKEN_EXPIRE_AT: "REFRESH_TOKEN_EXPIRE_AT",
 }
 
 const useCache = (type: cacheType = 'localStorage') => {

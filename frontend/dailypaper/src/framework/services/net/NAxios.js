@@ -46,16 +46,16 @@ function changeHttpCodeMap(targetHttpCodeMap) {
 // https://www.axios-http.cn/docs/interceptors
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
 axiosInstance.interceptors.response.use(success => {
-    if(success.headers.at) {
+    if(success.headers.at) { // 尝试保存at
         const at = success.headers.at
-        saveAT(at)
+        TokenService.setLocalAT(at)
+
         // 给axios设置默认的at
         axiosInstance.defaults.headers.at = at
     }
 
-    if(success.headers.rt) {
-        const rt = success.headers.rt
-        saveRT(rt)
+    if(success.headers.rt) {  // 尝试保存rt
+        TokenService.setLocalRT(success.headers.rt)
     }
 
     // 如果是文件下载等情况，直接返回
@@ -71,7 +71,7 @@ axiosInstance.interceptors.response.use(success => {
 
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
     // 处理错误码情况
-    nwCodeMap?.[code]?.(success, success.data);
+    nwCodeMap?.[code]?.(success);
     // 也当做失败处理，让走catch分支
     return Promise.reject(success);
 }, fail => {
@@ -89,7 +89,7 @@ axiosInstance.interceptors.response.use(success => {
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
 axiosInstance.interceptors.request.use(success => {
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
-    const at = TokenService.getLocalToken();
+    const at = TokenService.getLocalAT();
     success.headers.at = at;
     return success;
 }, fail => {
@@ -97,14 +97,6 @@ axiosInstance.interceptors.request.use(success => {
     // 异步状态转换为失败状态，走到catch分支
     return Promise.reject(fail);
 })
-
-function saveRT(rt) {
-
-}
-
-function saveAT(at) {
-
-}
 
 export {
     axiosInstance, changeBaseURL, changeNwCodeMap, changeHttpCodeMap,

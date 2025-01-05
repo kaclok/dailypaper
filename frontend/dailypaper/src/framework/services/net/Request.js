@@ -1,4 +1,4 @@
-import { axiosInstance } from './NAxios.js'
+import { axiosInst } from './AxiosInst.js'
 
 import { config } from './Config.js'
 
@@ -6,7 +6,7 @@ const { default_headers } = config
 
 function _request(option) {
     const { url, method, params, data, headersType, responseType, ...config } = option
-    return axiosInstance({
+    return axiosInst({
         url: url,
         method,
         params,

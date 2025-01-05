@@ -15,17 +15,17 @@ const {wsCache} = useCache()
 // https://www.axios-http.cn/docs/config_defaults
 const springBootURL = import.meta.env.VITE_BASE_API;
 let baseURL = config.base_url;
-const url = wsCache.get(ECacheType.REMOTE_URL);
+const url = wsCache.get(ECacheType.RES_URL);
 if (url) {
     baseURL = url;
 }
 
-const axiosInstance = axios.create({baseURL: baseURL, timeout: 60000});
+const axiosInst = axios.create({baseURL: baseURL, timeout: 60000});
 
-function changeBaseURL(targetBaseURL) {
+function changeResBaseURL(targetBaseURL) {
     baseURL = targetBaseURL;
-    wsCache.set(ECacheType.REMOTE_URL, targetBaseURL);
-    axiosInstance.defaults.baseURL = targetBaseURL;
+    wsCache.set(ECacheType.RES_URL, targetBaseURL);
+    axiosInst.defaults.baseURL = targetBaseURL;
 }
 
 let nwCodeMap = null;
@@ -40,31 +40,49 @@ function changeHttpCodeMap(targetHttpCodeMap) {
     httpCodeMap = targetHttpCodeMap;
 }
 
-// https://mp.weixin.qq.com/s/sWDnhq6MCUusQ0-aUpfNPw
-// https://v.douyin.com/iyUS3KtS/ https://v.douyin.com/iyUSqx35/
-// 参考：实现token无感刷新 https://github.com/yudaocode/yudao-ui-admin-vue3/blob/master/src/config/axios/service.ts#L117
-// https://www.axios-http.cn/docs/interceptors
-// 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
-axiosInstance.interceptors.response.use(success => {
-    const at = success.headers.at
+function _setToken(resp) {
+    const at = resp.headers.at
     if (at) { // 尝试保存at
-        TokenService.setLocalAT(at)
-        TokenService.setATExpireAt(success.headers.atAt)
+        TokenService.setAT(at)
+        TokenService.setATIssueAt(resp.headers.atIssueAt)
+        TokenService.setATExpireAt(resp.headers.atExpireAt)
 
-        // 给axios设置默认的at
-        axiosInstance.defaults.headers.at = at
+        // 给axios设置默认的at,
+        // ? 能否不设置，因为在request的拦截器中，有对于at的赋值
+        axiosInst.defaults.headers.at = at
     }
 
-    const rt = success.headers.rt
+    const rt = resp.headers.rt
     if (rt) {  // 尝试保存rt
-        TokenService.setLocalRT(rt)
-        TokenService.setRTExpireAt(success.headers.rtAt)
+        TokenService.setLRT(rt)
+        TokenService.setRTIssueAt(resp.headers.rtIssueAt)
+        TokenService.setRTExpireAt(resp.headers.rtExpireAt)
 
         // 给axios设置默认的rt
         // 因为访问资源服务仅仅使用at, 所有一般不设置rt, 因为会导致网络协议传输过大
         // axiosInstance.defaults.headers.rt = rt
     }
+}
 
+function _getToken(config) {
+    // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
+    const isRT = TokenService.isRT(config)
+    if (!isRT) {
+        config.headers.at = TokenService.getAT();
+    } else {
+        config.headers.rt = TokenService.getRT();
+    }
+    console.log("__isRT: ", isRT);
+    return config
+}
+
+// https://mp.weixin.qq.com/s/sWDnhq6MCUusQ0-aUpfNPw
+// https://v.douyin.com/iyUS3KtS/ https://v.douyin.com/iyUSqx35/
+// 参考：实现token无感刷新 https://github.com/yudaocode/yudao-ui-admin-vue3/blob/master/src/config/axios/service.ts#L117
+// https://www.axios-http.cn/docs/interceptors
+// 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
+axiosInst.interceptors.response.use(success => {
+    _setToken(success);
     // 如果是文件下载等情况，直接返回
     if ((success.data instanceof Blob) || (success.data instanceof ArrayBuffer)) {
         return success.data;
@@ -94,16 +112,8 @@ axiosInstance.interceptors.response.use(success => {
 // request拦截器, 让每个请求添加token
 // https://www.axios-http.cn/docs/interceptors
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
-axiosInstance.interceptors.request.use(config => {
-    // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
-    const isRT = TokenService.isRT(config)
-    if (!isRT) {
-        config.headers.at = TokenService.getLocalAT();
-    } else {
-        config.headers.rt = TokenService.getLocalRT();
-    }
-    console.log("__isRT: ", isRT);
-    return config;
+axiosInst.interceptors.request.use(config => {
+    return _getToken(config);
 }, fail => {
     console.error(fail);
     // 异步状态转换为失败状态，走到catch分支
@@ -111,5 +121,5 @@ axiosInstance.interceptors.request.use(config => {
 })
 
 export {
-    axiosInstance, changeBaseURL, changeNwCodeMap, changeHttpCodeMap,
+    axiosInst, changeResBaseURL, changeNwCodeMap, changeHttpCodeMap,
 }

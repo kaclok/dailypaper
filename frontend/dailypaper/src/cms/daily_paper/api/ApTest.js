@@ -1,4 +1,4 @@
-import {axiosInstance as axiosR} from "@/framework/services/net/NAxios.js"
+import {axiosInst as axiosR} from "@/framework/services/net/AxiosInst.js"
 import axios from "axios";
 
 export class ApiTest {

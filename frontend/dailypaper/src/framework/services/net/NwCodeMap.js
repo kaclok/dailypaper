@@ -12,14 +12,13 @@ const NwCodeMap = {
         await TokenService.getRemoteToken()
             .then(res => {
                 // 刷新token成功，重新请求
-                const token = res.access
+                const at = res.at
 
                 // 缓存token
-                wsCache.set(ECacheType.ACCESS_TOKEN, token)
+                wsCache.set(ECacheType.ACCESS_TOKEN, at)
 
                 // 重新请求上次失败的req:originalRequest
-                originalRequest.headers.Token = token
-                originalRequest.headers.Authorization = `Bearer ${token}`;
+                originalRequest.headers.at = at
                 axiosInstance(originalRequest)
             })
             // eslint-disable-next-line no-unused-vars

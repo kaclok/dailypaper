@@ -41,10 +41,23 @@ function changeHttpCodeMap(targetHttpCodeMap) {
 }
 
 // https://mp.weixin.qq.com/s/sWDnhq6MCUusQ0-aUpfNPw
+// https://v.douyin.com/iyUS3KtS/ https://v.douyin.com/iyUSqx35/
 // 参考：实现token无感刷新 https://github.com/yudaocode/yudao-ui-admin-vue3/blob/master/src/config/axios/service.ts#L117
 // https://www.axios-http.cn/docs/interceptors
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
 axiosInstance.interceptors.response.use(success => {
+    if(success.headers.at) {
+        const at = success.headers.at
+        saveAT(at)
+        // 给axios设置默认的at
+        axiosInstance.defaults.headers.at = at
+    }
+
+    if(success.headers.rt) {
+        const rt = success.headers.rt
+        saveRT(rt)
+    }
+
     // 如果是文件下载等情况，直接返回
     if ((success.data instanceof Blob) || (success.data instanceof ArrayBuffer)) {
         return success.data;
@@ -76,15 +89,22 @@ axiosInstance.interceptors.response.use(success => {
 // 添加响应拦截器，其实是把异步成功回调、失败回调给统一封装
 axiosInstance.interceptors.request.use(success => {
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
-    const token = TokenService.getLocalToken();
-    success.headers.Token = token;
-    success.headers.Authorization = `Bearer ${token}`;
+    const at = TokenService.getLocalToken();
+    success.headers.at = at;
     return success;
 }, fail => {
     console.error(fail);
     // 异步状态转换为失败状态，走到catch分支
     return Promise.reject(fail);
 })
+
+function saveRT(rt) {
+
+}
+
+function saveAT(at) {
+
+}
 
 export {
     axiosInstance, changeBaseURL, changeNwCodeMap, changeHttpCodeMap,

@@ -50,11 +50,11 @@ class SysDaily {
             onAfter(false);
         });
         // 同步时间
-        TimeService.initTime(r.timestamp);
+        TimeService.initTime(r.data.timestamp);
 
-        if (r.result && date === r.data.date) {
+        if (r.data.result && date === r.data.data.date) {
             // 网络消息回来之后，如果和之前的info.value没有区别，则不会触发UI响应式刷新
-            this._result = r;
+            this._result = r.data;
             this._departmentId = this._result.data.departmentId;
             this._departmentName = this._result.data.departmentName;
             this._curUserIsLeader = this._result.data.curUserIsLeader;
@@ -91,7 +91,7 @@ class SysDaily {
         }
 
         if (onAfter != null) {
-            onAfter(r.result);
+            onAfter(r.data.result);
         }
     }
 
@@ -104,14 +104,14 @@ class SysDaily {
         });
 
         // 同步时间
-        TimeService.initTime(rlt.timestamp);
+        TimeService.initTime(rlt.data.timestamp);
 
-        if (rlt.result) {
+        if (rlt.data.result) {
             this.UpdateCommit(date, userId, content, tomorrowPlan, tomorrowArrangement);
         }
 
         if (onAfter != null) {
-            onAfter(rlt.result);
+            onAfter(rlt.data.result);
         }
     }
 
@@ -120,9 +120,9 @@ class SysDaily {
             onBefore();
         }
         let r = await ApiDaily.ExportAll(this._departmentId, beginDate, endDate, signal);
-        TimeService.initTime(r.timestamp);
+        TimeService.initTime(r.data.timestamp);
         if (onAfter != null) {
-            onAfter(r);
+            onAfter(r.data);
         }
     }
 

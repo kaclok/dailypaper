@@ -73,7 +73,7 @@ axiosInstance.interceptors.response.use(success => {
     const {code} = success.data;
     if (code === __OK__) {
         // 成功处理，走then分支
-        return success.data;
+        return success;
     }
 
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f

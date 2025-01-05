@@ -98,11 +98,9 @@ axiosInstance.interceptors.request.use(config => {
     // https://www.bilibili.com/video/BV1DKDMYBETU?spm_id_from=333.788.videopod.sections&vd_source=5c9f5bd891aee351c325bcf632b5550f
     const isRT = TokenService.isRT(config)
     if (!isRT) {
-        const at = TokenService.getLocalAT();
-        config.headers.at = at;
+        config.headers.at = TokenService.getLocalAT();
     } else {
-        const rt = TokenService.getLocalRT();
-        config.headers.rt = rt;
+        config.headers.rt = TokenService.getLocalRT();
     }
     console.log("__isRT: ", isRT);
     return config;

@@ -1,7 +1,9 @@
 import {upload as baseUpload, post} from "@/framework/services/net/Request.js"
 import SparkMD5 from "spark-md5"
+import axios from "axios";
 
 // 实现大文件上传
+// https://mp.weixin.qq.com/s/PvIbABjfd7VlnEglxpU2AQ
 // https://www.npmjs.com/package/spark-md5
 // https://www.bilibili.com/video/BV1MZ421q7dr/?spm_id_from=333.788.recommend_more_video.19&vd_source=5c9f5bd891aee351c325bcf632b5550f
 // https://www.51cto.com/article/664707.html
@@ -154,3 +156,82 @@ class BatchUpload {
         });
     }
 }
+
+/*class FileUploader {
+    constructor(file) {
+        this.file = file;
+        this.identifier = this.generateUUID();
+        this.chunkSize = 1024 * 1024 * 2; // 2MB
+        this.totalChunks = Math.ceil(this.file.size / this.chunkSize);
+        this.uploadedChunks = new Set();
+        this.status = 'WAITING';
+    }
+
+    generateUUID() {
+        return "";
+    }
+
+    async upload() {
+        this.status = 'UPLOADING';
+        const uploadPromises = [];
+
+        for (let chunkNumber = 0; chunkNumber < this.totalChunks; chunkNumber++) {
+            if (!this.uploadedChunks.has(chunkNumber)) {
+                uploadPromises.push(this._uploadChunk(chunkNumber));
+            }
+        }
+
+        try {
+            await Promise.all(uploadPromises);
+            this.status = 'COMPLETED';
+        } catch (error) {
+            this.status = 'FAILED';
+            this._handleUploadError(error);
+        }
+    }
+
+    async _uploadChunk(chunkNumber) {
+        const start = chunkNumber * this.chunkSize;
+        const end = Math.min(start + this.chunkSize, this.file.size);
+        const chunk = this.file.slice(start, end);
+
+        const formData = new FormData();
+        formData.append('file', chunk);
+        formData.append('identifier', this.identifier);
+        formData.append('chunkNumber', chunkNumber);
+        formData.append('totalChunks', this.totalChunks);
+
+        return axios.post('/upload', formData, {
+            // 配置重试拦截器
+            retry: 3,
+            retryDelay: (retryCount) => {
+                return Math.pow(2, retryCount) * 1000;
+            }
+        }).then(() => {
+            this.uploadedChunks.add(chunkNumber);
+        });
+    }
+
+    _handleUploadError(error) {
+        // 上传错误处理
+        if (error.response) {
+            // 请求已发出，但服务器响应状态码不在 2xx 范围内
+            console.error('上传错误:', error.response.data);
+            this.resumeUpload();
+        } else if (error.request) {
+            // 请求已发出，但未收到响应
+            console.error('网络错误', error.request);
+            this.resumeUpload();
+        }
+    }
+
+    // 恢复上传
+    resumeUpload() {
+        axios.post('/resume', {
+            identifier: this.identifier,
+            uploadedChunks: Array.from(this.uploadedChunks)
+        }).then(r => {
+            //
+        });
+    }
+}*/

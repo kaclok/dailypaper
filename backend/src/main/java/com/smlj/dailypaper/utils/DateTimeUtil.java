@@ -27,6 +27,24 @@ public final class DateTimeUtil {
         return calendar.getTimeInMillis() / 1000;
     }
 
+    // 时间戳转换为当周0点的时间戳
+    public static long convertToWeekMidnightTimestamp(long timestamp) {
+        var calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+
+        // 设置时间为给定的时间戳
+        calendar.setTimeInMillis(timestamp * 1000);
+
+        // Calendar 类中代表星期几的常量是从 Calendar.SUNDAY（值为 1）开始的，并没有 0 这个值。正确的使用方式应该是传入从 1 到 7 之间的数字，分别对应星期日到星期六。
+        calendar.set(Calendar.DAY_OF_WEEK, 2);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // 返回当天0点的时间戳
+        return calendar.getTimeInMillis() / 1000;
+    }
+
     public static long plusDay(long timestamp, int days) {
         return timestamp + (long) days * 24 * 60 * 60;
     }

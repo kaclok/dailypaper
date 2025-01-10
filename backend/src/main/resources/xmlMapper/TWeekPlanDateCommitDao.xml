@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper namespace作用是：代码和xml进行关联 -->
+<!-- https://blog.csdn.net/xu962336414/article/details/105624371 -->
+<mapper namespace="com.smlj.dailypaper.table.dao.TWeekPlanDateCommitDao">
+    <select id="FindBy" resultType="HashMap">
+        select *
+        from ${tableName}
+        where date = #{date};
+    </select>
+
+    <update id="Update">
+        update ${tableName}
+        <set>
+            ${colName} = #{commitId}
+        </set>
+        where date = #{date};
+    </update>
+
+    <!--  insert插入是，只插入部分字段数据，其他使用建表默认值
+        https://blog.csdn.net/qq_42764468/article/details/124223132
+        -->
+    <insert id="InsertEmpty">
+        insert into ${tableName} (date)
+        values (#{date})
+    </insert>
+
+    <!--全部导出-->
+    <select id="GetRangeCommits" resultType="HashMap">
+        select *
+        from ${tableName}
+        where #{from} &lt; date
+          and date &lt; #{to};
+    </select>
+
+    <!-- 创建新的日志表-->
+    <update id="Create">
+        CREATE TABLE ${tableName}
+        (
+            `date`       int(10) UNSIGNED                                                                                                 NOT NULL,
+            `dateFormat` varchar(19) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci GENERATED ALWAYS AS (from_unixtime(`date`)) VIRTUAL NOT NULL,
+            <foreach collection="list" item="item" index="index">
+                userId_${item} int(10) UNSIGNED NULL DEFAULT 0,
+            </foreach>
+            PRIMARY KEY (`date`) USING BTREE
+        ) ENGINE = InnoDB
+          CHARACTER SET = utf8mb4
+          COLLATE = utf8mb4_general_ci
+          ROW_FORMAT = DYNAMIC;
+    </update>
+</mapper>

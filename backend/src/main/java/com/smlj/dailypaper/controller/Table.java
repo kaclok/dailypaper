@@ -2,9 +2,7 @@ package com.smlj.dailypaper.controller;
 
 import com.smlj.dailypaper.table.dao.common.TableDao;
 import com.smlj.dailypaper.table.entity.TUser;
-import com.smlj.dailypaper.table.service.TCommitService;
-import com.smlj.dailypaper.table.service.TDateCommitService;
-import com.smlj.dailypaper.table.service.TUserService;
+import com.smlj.dailypaper.table.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -28,10 +26,10 @@ public class Table {
         this.tableDao = tableDao;
     }
 
-    static public void TryFillUser(String userCard, String userTableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao, String departmentCode) {
-        if (tableDao.Exist(userTableName) <= 0) {
+    static public void TryFillUser(String userCard, String tableName, com.smlj.dailypaper.table_3rd.service.TUserService jt_userService, TUserService userService, TableDao tableDao, String departmentCode) {
+        if (tableDao.Exist(tableName) <= 0) {
             // 构建部门的user表
-            userService.Create(userTableName);
+            userService.Create(tableName);
 
             com.smlj.dailypaper.table_3rd.entity.TUser leader = jt_userService.getLeader(departmentCode);
             // 填充部门的user表
@@ -53,7 +51,7 @@ public class Table {
                 list.add(user);
             }
 
-            userService.InsertBatch(userTableName, list);
+            userService.InsertBatch(tableName, list);
         }
     }
 
@@ -64,19 +62,35 @@ public class Table {
         log.info("-- 定时任务 --");
     }
 
-    static public void TryCreateCommit(String commitTableName, TCommitService commitService, TableDao tableDao) {
-        if (tableDao.Exist(commitTableName) <= 0) {
-            commitService.Create(commitTableName);
+    static public void TryCreateCommit(String tableName, TCommitService commitService, TableDao tableDao) {
+        if (tableDao.Exist(tableName) <= 0) {
+            commitService.Create(tableName);
         }
     }
 
-    static public void TryCreateDateCommit(String datecommitTableName, TDateCommitService datecommitService, TableDao tableDao, List<TUser> users) {
-        if (tableDao.Exist(datecommitTableName) <= 0) {
+    static public void TryCreateDateCommit(String tableName, TDateCommitService datecommitService, TableDao tableDao, List<TUser> users) {
+        if (tableDao.Exist(tableName) <= 0) {
             ArrayList<String> list = new ArrayList<>(users.size());
             for (TUser user : users) {
                 list.add(user.getId());
             }
-            datecommitService.Create(datecommitTableName, list);
+            datecommitService.Create(tableName, list);
+        }
+    }
+
+    static public void TryCreateWeekPlanCommit(String tableName, TWeekPlanCommitService commitService, TableDao tableDao) {
+        if (tableDao.Exist(tableName) <= 0) {
+            commitService.Create(tableName);
+        }
+    }
+
+    static public void TryCreateWeekPlanDateCommit(String tableName, TWeekPlanDateCommitService datecommitService, TableDao tableDao, List<TUser> users) {
+        if (tableDao.Exist(tableName) <= 0) {
+            ArrayList<String> list = new ArrayList<>(users.size());
+            for (TUser user : users) {
+                list.add(user.getId());
+            }
+            datecommitService.Create(tableName, list);
         }
     }
 
@@ -90,5 +104,13 @@ public class Table {
 
     static public String getDateCommitTableName(String departmentCode) {
         return "t_datecommit_" + departmentCode;
+    }
+
+    static public String getWeekPlanDateCommitTableName(String departmentCode) {
+        return "t_weekplan_datecommit_" + departmentCode;
+    }
+
+    static public String getWeekPlanCommitTableName(String departmentCode) {
+        return "t_weekplan_commit_" + departmentCode;
     }
 }

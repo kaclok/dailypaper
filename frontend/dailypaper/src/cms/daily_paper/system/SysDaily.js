@@ -1,26 +1,17 @@
 import {TimeService} from "@/framework/services/TimeService.js";
 import {ApiDaily} from "@/cms/daily_paper/api/ApiDaily.js";
 import {onceAsync} from "@/framework/utils/OnceAsync.js";
-import {Singleton} from "@/framework/services/Singleton.js";
 
 class SysDaily {
-    _result = null;
     _departmentId = null;
     _departmentName = null;
     _curUserIsLeader = null;
-    _tableList = {};
-
-    GetCommits() {
-        if (this._result === null) {
-            return null;
-        }
-
-        let cs = this._result.data.commits;
-        return cs;
-    }
+    _weeklyPlan = {};
+    _dailyPlan = {};
+    _people = {};
 
     GetSelfCommits(userAccount) {
-        let cs = this.GetCommits();
+        let cs = this._dailyPlan;
         if (cs === null || cs.length <= 0) {
             return null;
         }
@@ -28,8 +19,6 @@ class SysDaily {
         let index = cs.findIndex((item, index, array) => {
             return item.account === userAccount;
         });
-
-        // console.table(cs);
 
         if (index === -1) {
             return cs;
@@ -54,40 +43,14 @@ class SysDaily {
 
         if (r.data.result && date === r.data.data.date) {
             // 网络消息回来之后，如果和之前的info.value没有区别，则不会触发UI响应式刷新
-            this._result = r.data;
-            this._departmentId = this._result.data.departmentId;
-            this._departmentName = this._result.data.departmentName;
-            this._curUserIsLeader = this._result.data.curUserIsLeader;
-            this._tableList = [
-                {
-                    id: 1,
-                    content: "工作内容1",
-                    dutyPerson: "123",
-                    finishTime: "1",
-                    comment: "备注",
-                },
-                {
-                    id: 2,
-                    content: "工作内容2",
-                    dutyPerson: "123",
-                    finishTime: "2",
-                    comment: "备注",
-                },
-                {
-                    id: 3,
-                    content: "工作内容3",
-                    dutyPerson: "123",
-                    finishTime: "3",
-                    comment: "备注",
-                },
-                {
-                    id: 4,
-                    content: "工作内容4",
-                    dutyPerson: "123",
-                    finishTime: "4",
-                    comment: "备注",
-                }
-            ]
+            this._departmentId = r.data.data.departmentId;
+            this._departmentName = r.data.data.departmentName;
+            this._curUserIsLeader = r.data.data.curUserIsLeader;
+            this._people = r.data.data.people;
+            this._dailyPlan = r.data.data.dailyPlan;
+            // 将自己排序到最前面
+            this._dailyPlan = this.GetSelfCommits(userAccount);
+            this._weeklyPlan = r.data.data.weeklyPlan;
         }
 
         if (onAfter != null) {
@@ -95,11 +58,21 @@ class SysDaily {
         }
     }
 
-    async RequestEdit(date, userId, content, tomorrowPlan, tomorrowArrangement, signal, onBefore, onAfter) {
+    getOccupiedPeople() {
+        let tPeople = new Set();
+        for (const plan of this._weeklyPlan) {
+            if(plan.userId) {
+                tPeople.add(plan.dutyPerson);
+            }
+        }
+        return tPeople
+    }
+
+    async RequestEditDailyPlan(date, userId, content, tomorrowPlan, tomorrowArrangement, signal, onBefore, onAfter) {
         if (onBefore != null) {
             onBefore();
         }
-        let rlt = await ApiDaily.Edit(this._departmentId, date, userId, content, tomorrowPlan, tomorrowArrangement, signal).catch(fail => {
+        let rlt = await ApiDaily.EditDailyPlan(this._departmentId, date, userId, content, tomorrowPlan, tomorrowArrangement, signal).catch(fail => {
             onAfter(false);
         });
 
@@ -107,8 +80,44 @@ class SysDaily {
         TimeService.initTime(rlt.data.timestamp);
 
         if (rlt.data.result) {
-            this.UpdateCommit(date, userId, content, tomorrowPlan, tomorrowArrangement);
+            this.UpdateDailyPlanCommit(date, userId, content, tomorrowPlan, tomorrowArrangement);
         }
+
+        if (onAfter != null) {
+            onAfter(rlt.data.result);
+        }
+    }
+
+    async RequestEditWeeklyPlan(date, userId, content, finishTime, comment, signal, onBefore, onAfter) {
+        if (onBefore != null) {
+            onBefore();
+        }
+        let rlt = await ApiDaily.EditWeeklyPlan(this._departmentId, date, userId, content, finishTime, comment, signal).catch(fail => {
+            onAfter(false);
+        });
+
+        // 同步时间
+        TimeService.initTime(rlt.data.timestamp);
+
+        if (rlt.data.result) {
+            this.UpdateWeekPlanCommit(date, userId, content, finishTime, comment);
+        }
+
+        if (onAfter != null) {
+            onAfter(rlt.data.result);
+        }
+    }
+
+    async RequestDeleteWeeklyPlan(date, userId, signal, onBefore, onAfter) {
+        if (onBefore != null) {
+            onBefore();
+        }
+        let rlt = await ApiDaily.DeleteWeeklyPlan(this._departmentId, date, userId, signal).catch(fail => {
+            onAfter(false);
+        });
+
+        // 同步时间
+        TimeService.initTime(rlt.data.timestamp);
 
         if (onAfter != null) {
             onAfter(rlt.data.result);
@@ -126,13 +135,9 @@ class SysDaily {
         }
     }
 
-    GetResult() {
-        return this._result;
-    }
-
-    UpdateCommit(date, userId, content, tomorrowPlan, tomorrowArrangement) {
-        let c = this.GetCommits();
-        if (c != null) {
+    UpdateDailyPlanCommit(date, userId, content, tomorrowPlan, tomorrowArrangement) {
+        let c = this._dailyPlan
+        if (c) {
             for (let i = 0; i < c.length; i++) {
                 let cur = c[i];
                 if (cur.userId === userId) {
@@ -146,55 +151,20 @@ class SysDaily {
         }
     }
 
-    GetTotalCount() {
-        if (this._result == null) {
-            return 0;
-        }
-        return this._result.data.total;
-    }
-
-    GetAttendCount(attend) {
-        let cms = this.GetCommits();
-        let rlt = 0;
-        if (cms != null) {
-            if (attend) {
-                for (let one of cms) {
-                    if (one.time !== 0) {
-                        ++rlt;
-                    }
-                }
-            } else {
-                for (let one of cms) {
-                    if (one.time === 0) {
-                        ++rlt;
-                    }
+    UpdateWeekPlanCommit(date, userId, content, finishTime, comment) {
+        let c = this._weeklyPlan
+        if (c) {
+            for (let i = 0; i < c.length; i++) {
+                let cur = c[i];
+                if (cur.userId === userId) {
+                    cur.content = content;
+                    cur.finishTime = finishTime;
+                    cur.comment = comment;
+                    cur.time = TimeService.getSvrTime();
+                    break;
                 }
             }
         }
-
-        return rlt;
-    }
-
-    GetAttendList(attend) {
-        let cms = this.GetCommits();
-        let rlt = [];
-        if (cms != null) {
-            if (attend) {
-                for (let one of cms) {
-                    if (one.time !== 0) {
-                        rlt.push(one);
-                    }
-                }
-            } else {
-                for (let one of cms) {
-                    if (one.time === 0) {
-                        rlt.push(one);
-                    }
-                }
-            }
-        }
-
-        return rlt;
     }
 
     RequestGetAllOnce = onceAsync(this.RequestGetAll);

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper namespace作用是：代码和xml进行关联 -->
+<!--
+    https://blog.csdn.net/xu962336414/article/details/105624371
+    https://mybatis.net.cn/dynamic-sql.html
+-->
+<mapper namespace="com.smlj.dailypaper.table.dao.TWeekPlanCommitDao">
+    <!-- id自增，所以使用：useGeneratedKeys="true" keyProperty="id" -->
+    <insert id="InsertOutKey" useGeneratedKeys="true" keyProperty="one.id">
+        insert into ${tableName} (userId, commitDateTime, content, finishTime, comment)
+        values (#{one.userId}, #{one.commitDateTime}, #{one.content}, #{one.finishTime}, #{one.comment});
+    </insert>
+
+    <select id="FindById" resultType="com.smlj.dailypaper.table.entity.TWeekPlanCommit">
+        select id, userId, commitDateTime, content, finishTime, comment
+        from ${tableName}
+        where id = #{id};
+    </select>
+
+    <!-- 创建新的日志表-->
+    <update id="Create" parameterType="String">
+        <!--
+            在 MySQL 中，不能在一个语句中同时执行 DROP TABLE 和 CREATE TABLE 操作。您需要将它们分成两个单独的语句
+            DROP TABLE IF EXISTS ${tableName};
+        -->
+        CREATE TABLE ${tableName} (
+        `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+        `userId` varchar(10) NOT NULL,
+        `commitDateTime` int(10) unsigned NOT NULL COMMENT '提交时间',
+        `commitDateTimeFormat` varchar(19) GENERATED ALWAYS AS (from_unixtime(`commitDateTime`)) VIRTUAL NOT NULL,
+        `content` varchar(300) CHARACTER SET utf8 NOT NULL,
+        `finishTime` varchar(19) CHARACTER SET utf8 DEFAULT NULL,
+        `comment` varchar(300) DEFAULT NULL COMMENT '备注',
+        PRIMARY KEY (`id`) USING BTREE
+        ) ENGINE = InnoDB AUTO_INCREMENT = 239 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+    </update>
+</mapper>

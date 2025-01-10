@@ -1,20 +1,20 @@
 package com.smlj.dailypaper.controller;
 
-import com.smlj.dailypaper.proto.to.To_DateCommit;
-import com.smlj.dailypaper.proto.to.To_Excel;
-import com.smlj.dailypaper.proto.to.To_ExcelRow;
-import com.smlj.dailypaper.proto.to.To_UserCommit;
+import com.smlj.dailypaper.proto.to.*;
 import com.smlj.dailypaper.proto.to.common.Result;
 import com.smlj.dailypaper.table.dao.common.TableDao;
 import com.smlj.dailypaper.table.entity.TCommit;
 import com.smlj.dailypaper.table.entity.TUser;
+import com.smlj.dailypaper.table.entity.TWeekPlanCommit;
 import com.smlj.dailypaper.table.service.TCommitService;
 import com.smlj.dailypaper.table.service.TDateCommitService;
-import com.smlj.dailypaper.table.service.TUserService;
+import com.smlj.dailypaper.table.service.TWeekPlanCommitService;
+import com.smlj.dailypaper.table.service.TWeekPlanDateCommitService;
 import com.smlj.dailypaper.utils.DateTimeUtil;
 import com.smlj.dailypaper.utils.ResultUtil;
 import com.smlj.dailypaper.utils.UrlUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,25 +42,17 @@ import java.util.List;
 // 3、@ConfigurationProperties， 自定义bean类类头标记， @component表示是bean类，@ConfigurationProperties一般需要指定前缀。（类名和配置的前缀绑定了，然后controller中autowired自定义bean类实例）
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/dailypaper")
 public class CEntry {
     private final com.smlj.dailypaper.table.service.TUserService userService;
-
     private final com.smlj.dailypaper.table_3rd.service.TUserService jt_userService;
-
-    private final TDateCommitService dateCommitService;
-
-    private final TCommitService commitService;
-
     private final TableDao tableDao;
 
-    public CEntry(TUserService userService, com.smlj.dailypaper.table_3rd.service.TUserService jtUserService, TDateCommitService dateCommitService, TCommitService commitService, TableDao tableDao) {
-        this.userService = userService;
-        jt_userService = jtUserService;
-        this.dateCommitService = dateCommitService;
-        this.commitService = commitService;
-        this.tableDao = tableDao;
-    }
+    private final TDateCommitService dateCommitService;
+    private final TCommitService commitService;
+    private final TWeekPlanDateCommitService weekPlanDateCommitService;
+    private final TWeekPlanCommitService weekPlanCommitService;
 
     // GetMapping如何截取url参数(考虑参数的可选还是必选)： https://blog.csdn.net/m0_51390969/article/details/135880395
     @GetMapping("/getAll")
@@ -84,13 +77,15 @@ public class CEntry {
             String commitTableName = Table.getCommitTableName(departmentId);
             Table.TryCreateCommit(commitTableName, commitService, tableDao);
 
-            int midNight = (int) DateTimeUtil.convertToMidnightTimestamp(date);
-            int count = userService.Count(userTableName);
+            String weekPlanCommitTableName = Table.getWeekPlanCommitTableName(departmentId);
+            Table.TryCreateWeekPlanCommit(weekPlanCommitTableName, weekPlanCommitService, tableDao);
 
+            int midNight = (int) DateTimeUtil.convertToMidnightTimestamp(date);
             To_DateCommit to = new To_DateCommit();
-            to.setTotal(count);
             to.setDate(midNight);
             to.setDepartmentId(departmentId);
+
+            int weekNight = (int) DateTimeUtil.convertToWeekMidnightTimestamp(date);
 
             var isLeader = userService.GetUserById(userTableName, userCard).isLeader();
             to.setCurUserIsLeader(isLeader);
@@ -103,6 +98,9 @@ public class CEntry {
             String dateCommitTableName = Table.getDateCommitTableName(departmentId);
             Table.TryCreateDateCommit(dateCommitTableName, dateCommitService, tableDao, users);
 
+            String weekPlanDateCommitTableName = Table.getWeekPlanDateCommitTableName(departmentId);
+            Table.TryCreateWeekPlanDateCommit(weekPlanDateCommitTableName, weekPlanDateCommitService, tableDao, users);
+
             HashMap<String, Object> dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
             if (dateCommit == null) {
                 dateCommitService.InsertEmpty(dateCommitTableName, midNight);
@@ -110,11 +108,24 @@ public class CEntry {
                 dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
             }
 
+            HashMap<String, Object> weekDateCommit = weekPlanDateCommitService.FindBy(weekPlanDateCommitTableName, weekNight);
+            if (weekDateCommit == null) {
+                weekPlanDateCommitService.InsertEmpty(weekPlanDateCommitTableName, weekNight);
+                // 重新db中查找
+                weekDateCommit = weekPlanDateCommitService.FindBy(weekPlanDateCommitTableName, weekNight);
+            }
+
             for (int i = 0; i < users.size(); i++) {
                 var user = users.get(i);
                 if (!user.isEnable()) {
                     continue;
                 }
+
+                var innerUser = new To_DateCommit.InnerUser();
+                innerUser.setUserId(user.getId());
+                innerUser.setUserName(user.getName());
+                innerUser.setUserAccount(user.getAccount());
+                to.getPeople().add(innerUser);
 
                 To_UserCommit tu = new To_UserCommit();
                 tu.setUserId(user.getId());
@@ -124,15 +135,31 @@ public class CEntry {
 
                 String key = "userId_" + user.getId();
                 Long commitId = (Long) (dateCommit.get(key));
-                TCommit c = commitService.FindById(commitTableName, commitId.intValue());
-                if (c != null) {
-                    tu.setTime(c.getCommitDateTime());
-                    tu.setContent(c.getContent());
-                    tu.setTomorrowPlan(c.getTomorrowPlan());
-                    tu.setTomorrowArrangement(c.getTomorrowArrangement());
+                TCommit c1 = commitService.FindById(commitTableName, commitId.intValue());
+                if (c1 != null) {
+                    tu.setTime(c1.getCommitDateTime());
+                    tu.setContent(c1.getContent());
+                    tu.setTomorrowPlan(c1.getTomorrowPlan());
+                    tu.setTomorrowArrangement(c1.getTomorrowArrangement());
                 }
 
-                to.getCommits().add(tu);
+                commitId = (Long) (weekDateCommit.get(key));
+                TWeekPlanCommit c2 = weekPlanCommitService.FindById(weekPlanCommitTableName, commitId.intValue());
+                if (c2 != null) {
+                    To_WeekPlan wp = new To_WeekPlan();
+                    wp.setUserId(user.getId());
+                    wp.setName(user.getName());
+                    wp.setDutyPerson(user.getName());
+                    wp.setAccount(user.getAccount());
+                    wp.setFinishTime(c2.getFinishTime().getTime());
+                    wp.setContent(c2.getContent());
+                    wp.setComment(c2.getComment());
+                    wp.setLeader(user.isLeader());
+
+                    to.getWeeklyPlan().add(wp);
+                }
+
+                to.getDailyPlan().add(tu);
             }
 
             // log.info("getAll-> to:{}", to);
@@ -141,10 +168,10 @@ public class CEntry {
         }
     }
 
-    @GetMapping("/edit")
+    @GetMapping("/editDailyPlan")
     @Transactional
-    public Result<To_DateCommit> Edit(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") String userId, @RequestParam(value = "content", required = false, defaultValue = "") String content, @RequestParam(value = "tomorrowPlan", required = false, defaultValue = "") String tomorrowPlan,
-                                      @RequestParam(value = "tomorrowArrangement", required = false, defaultValue = "") String tomorrowArrangement, @RequestParam(name = "hash", required = false) Integer hash, HttpServletRequest request) {
+    public Result<To_DateCommit> EditDailyPlan(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") String userId, @RequestParam(value = "content", required = false, defaultValue = "") String content, @RequestParam(value = "tomorrowPlan", required = false, defaultValue = "") String tomorrowPlan,
+                                               @RequestParam(value = "tomorrowArrangement", required = false, defaultValue = "") String tomorrowArrangement, @RequestParam(name = "hash", required = false) Integer hash, HttpServletRequest request) {
         try {
             var now = System.currentTimeMillis() / 1000;
             var todayMidNight = DateTimeUtil.convertToMidnightTimestamp(now);
@@ -189,6 +216,84 @@ public class CEntry {
         }
     }
 
+    @GetMapping("/editWeeklyPlan")
+    @Transactional
+    public Result<To_DateCommit> EditWeeklyPlan(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") String userId, @RequestParam(value = "content", required = false, defaultValue = "") String content, @RequestParam(value = "finishTime", required = false, defaultValue = "") long finishTime,
+                                                @RequestParam(value = "comment", required = false, defaultValue = "") String comment, @RequestParam(name = "hash", required = false) Integer hash, HttpServletRequest request) {
+        try {
+            var now = System.currentTimeMillis() / 1000;
+            var midNight = DateTimeUtil.convertToMidnightTimestamp(now);
+
+            log.info("Edit: {} -> now:{}, todayMidNight:{}", UrlUtil.GetFullUrl(request), now, midNight);
+
+            var r = new ResultUtil<To_DateCommit>();
+            if (hash == null || hash != (7 + userId.length())) {
+                // 往日的日报信息不能编辑
+                return r.setErrorMsg("hash not valid!", null);
+            } else if (date < midNight) {
+                // 往日的日报信息不能编辑
+                return r.setErrorMsg("Can not edit because not today!", null);
+            } else {
+                String tableName = Table.getWeekPlanDateCommitTableName(departmentId);
+                var weekNight = DateTimeUtil.convertToWeekMidnightTimestamp(date);
+                var dateCommit = weekPlanDateCommitService.FindBy(tableName, weekNight);
+                if (dateCommit == null) {
+                    // 如果date对应的记录不存在的话，立即插入新纪录
+                    weekPlanDateCommitService.InsertEmpty("t_weekplan_datecommit", weekNight);
+                }
+
+                TWeekPlanCommit cm = new TWeekPlanCommit();
+                cm.setUserId(userId);
+                cm.setCommitDateTime(DateTimeUtil.nowTimestamp());
+                cm.setContent(content);
+                cm.setFinishTime(new Date(finishTime * 1000));
+                cm.setComment(comment);
+
+                String commitTableName = Table.getWeekPlanCommitTableName(departmentId);
+                // 插入commit表
+                weekPlanCommitService.InsertOutKey(commitTableName, cm);
+                // todo 并发的时候是否会出现问题？
+                int lastId = cm.getId();
+                log.info("edit insert id: {}", lastId);
+                // 更新datecommit表
+                weekPlanDateCommitService.Update(tableName, weekNight, "userId_" + userId, lastId);
+
+                return r.setSuccessMsg("edit success", null);
+            }
+        } finally {
+        }
+    }
+
+    @GetMapping("/deleteWeeklyPlan")
+    @Transactional
+    public Result<To_DateCommit> DeleteWeeklyPlan(@RequestParam("departmentId") String departmentId, @RequestParam("date") long date, @RequestParam("userId") String userId, @RequestParam(name = "hash", required = false) Integer hash, HttpServletRequest request) {
+        try {
+            var now = System.currentTimeMillis() / 1000;
+            var midNight = DateTimeUtil.convertToMidnightTimestamp(now);
+
+            log.info("Edit: {} -> now:{}, todayMidNight:{}", UrlUtil.GetFullUrl(request), now, midNight);
+
+            var r = new ResultUtil<To_DateCommit>();
+            if (hash == null || hash != (7 + userId.length())) {
+                // 往日的日报信息不能编辑
+                return r.setErrorMsg("hash not valid!", null);
+            } else if (date < midNight) {
+                // 往日的日报信息不能编辑
+                return r.setErrorMsg("Can not edit because not today!", null);
+            } else {
+                String tableName = Table.getWeekPlanDateCommitTableName(departmentId);
+                var weekNight = DateTimeUtil.convertToWeekMidnightTimestamp(date);
+                var dateCommit = weekPlanDateCommitService.FindBy(tableName, weekNight);
+                if (dateCommit != null) {
+                    weekPlanDateCommitService.Update(tableName, weekNight, "userId_" + userId, 0);
+                }
+
+                return r.setSuccessMsg("edit success", null);
+            }
+        } finally {
+        }
+    }
+
     @GetMapping("/export_all")
     public Result<To_Excel<To_ExcelRow>> ExportAll(@RequestParam("departmentId") String departmentId, @RequestParam("beginDate") long beginDate, @RequestParam("endDate") long endDate, HttpServletRequest request) {
         try {
@@ -204,7 +309,7 @@ public class CEntry {
             rlt.getColNames().add("日期");
             if (users != null) {
                 for (var user : users) {
-                    if(!user.isEnable()) {
+                    if (!user.isEnable()) {
                         continue;
                     }
                     String name = user.getName();
@@ -222,7 +327,7 @@ public class CEntry {
                 boolean allEmpty = true;
 
                 for (var user : users) {
-                    if(!user.isEnable()) {
+                    if (!user.isEnable()) {
                         continue;
                     }
 

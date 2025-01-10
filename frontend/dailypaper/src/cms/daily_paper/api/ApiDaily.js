@@ -14,8 +14,8 @@ export class ApiDaily {
     }
 
     // 提交某日某人写的某内容数据
-    static Edit(departmentId, date, userId, content, tomorrowPlan, tomorrowArrangement, signal) {
-        return axiosR.get("dailypaper/edit", {
+    static EditDailyPlan(departmentId, date, userId, content, tomorrowPlan, tomorrowArrangement, signal) {
+        return axiosR.get("dailypaper/editDailyPlan", {
             params: {
                 departmentId: departmentId,
                 date: date,
@@ -23,6 +23,33 @@ export class ApiDaily {
                 content: content,
                 tomorrowPlan: tomorrowPlan,
                 tomorrowArrangement: tomorrowArrangement,
+                hash: 7 + userId.length,
+            },
+            signal: signal,
+        })
+    }
+
+    static EditWeeklyPlan(departmentId, date, userId, content, finishTime, comment, signal) {
+        return axiosR.get("dailypaper/editWeeklyPlan", {
+            params: {
+                departmentId: departmentId,
+                date: date,
+                userId: userId,
+                content: content,
+                finishTime: finishTime,
+                comment: comment,
+                hash: 7 + userId.length,
+            },
+            signal: signal,
+        })
+    }
+
+    static DeleteWeeklyPlan(departmentId, date, userId, signal) {
+        return axiosR.get("dailypaper/deleteWeeklyPlan", {
+            params: {
+                departmentId: departmentId,
+                date: date,
+                userId: userId,
                 hash: 7 + userId.length,
             },
             signal: signal,

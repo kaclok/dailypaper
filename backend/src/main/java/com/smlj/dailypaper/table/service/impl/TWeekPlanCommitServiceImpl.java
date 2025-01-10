@@ -1,41 +1,37 @@
 package com.smlj.dailypaper.table.service.impl;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.smlj.dailypaper.config.db.EDatasource;
 import com.smlj.dailypaper.table.dao.TCommitDao;
+import com.smlj.dailypaper.table.dao.TWeekPlanCommitDao;
 import com.smlj.dailypaper.table.entity.TCommit;
-import com.smlj.dailypaper.table.entity.TUser;
+import com.smlj.dailypaper.table.entity.TWeekPlanCommit;
 import com.smlj.dailypaper.table.service.TCommitService;
+import com.smlj.dailypaper.table.service.TWeekPlanCommitService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.smlj.dailypaper.config.db.EDatasource;
 
 import java.util.ArrayList;
 
 @Slf4j
 @Service
 @DS(EDatasource.dailypaper)
-public class TCommitServiceImpl implements TCommitService {
+public class TWeekPlanCommitServiceImpl implements TWeekPlanCommitService {
     @Autowired
-    private TCommitDao tCommitDao;
+    private TWeekPlanCommitDao tCommitDao;
 
     public void Create(String tableName) {
         tCommitDao.Create(tableName);
     }
 
     @Override
-    public void InsertOutKey(String tableName, TCommit one) {
+    public void InsertOutKey(String tableName, TWeekPlanCommit one) {
         tCommitDao.InsertOutKey(tableName, one);
     }
 
     @Override
-    public void InsertBatch(String tableName, ArrayList<TCommit> list) {
-        tCommitDao.InsertBatch(tableName, list);
-    }
-
-    @Override
-    public TCommit FindById(String tableName, int id) {
+    public TWeekPlanCommit FindById(String tableName, int id) {
         return tCommitDao.FindById(tableName, id);
     }
 }

@@ -13,7 +13,7 @@ import axios from "axios";
 let canMounted = false;
 let account = SessionStorageService.getStore("Account");
 if (__DEV__) {
-    account = "SMLJ19030" // SMLJ19030
+    account = "SMLJ19030" // SMLJ19030 // SMLJ20012
 }
 console.log("account: " + account);
 if (account === null) {
@@ -365,7 +365,6 @@ function isSelf(account) {
                 <!-- https://element-plus.org/zh-CN/component/table.html -->
                 <el-table :data="weeklyPlan"
                           min-height="200"
-                          max-height="400"
                           stripe
                           border
                           :row-class-name="tableRowClassName">
@@ -443,7 +442,6 @@ function isSelf(account) {
                 <!-- https://element-plus.org/zh-CN/component/table.html -->
                 <el-table
                     :data="dailyPlan"
-                    max-height="470"
                     border
                     :row-class-name="tableRowClassName">
                     <el-table-column fixed type="index" label="序号" width="54"/>

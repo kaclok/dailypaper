@@ -40,4 +40,13 @@ export class DateTimeUtil {
         const day = ('0' + date.getDate()).slice(-2);
         return `${year}-${month}-${day}`;
     }
+
+    static getWeekBegin(sec, offsetDay) {
+        let dt = DateTimeUtil.toDateTime(sec)
+        let dayOfWeek = dt.getDay()
+        dayOfWeek = dayOfWeek === 0 ? 7 : dayOfWeek;
+        dt.setDate(dt.getDate() - dayOfWeek + 1 + offsetDay);
+        dt.setHours(0, 0, 0, 0);
+        return dt
+    }
 }

@@ -6,9 +6,9 @@ class SysDaily {
     _departmentId = null;
     _departmentName = null;
     _curUserIsLeader = null;
-    _weeklyPlan = {};
-    _dailyPlan = {};
-    _people = {};
+    _weeklyPlan = [];
+    _dailyPlan = [];
+    _people = [];
 
     GetSelfCommits(userAccount) {
         let cs = this._dailyPlan;
@@ -58,14 +58,22 @@ class SysDaily {
         }
     }
 
-    getOccupiedPeople() {
-        let tPeople = new Set();
-        for (const plan of this._weeklyPlan) {
-            if(plan.userId) {
-                tPeople.add(plan.dutyPerson);
+    getFreedPeople() {
+        let freePeople = this._people.map((ele) => {
+            return ele.userName
+        })
+
+        for (let plan of this._weeklyPlan) {
+            if (plan.dutyPerson) {
+                const index = freePeople.findIndex((item) => {
+                    return item === plan.dutyPerson;
+                })
+                if(index !== -1) {
+                    freePeople.splice(index, 1)
+                }
             }
         }
-        return tPeople
+        return freePeople;
     }
 
     async RequestEditDailyPlan(date, userId, content, tomorrowPlan, tomorrowArrangement, signal, onBefore, onAfter) {

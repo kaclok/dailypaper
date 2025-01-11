@@ -87,7 +87,7 @@ function onGotToken(r) {
 let weeklyPlan = ref([]);
 let dailyPlan = ref([]);
 let people = ref([]);
-let occupiedPeople = ref(new Set())
+let freedPeople = ref([])
 let curIsLeader = ref(false);
 
 // https://www.axios-http.cn/docs/cancellation
@@ -102,6 +102,8 @@ let beginTimestamp = null;
 let endTimestamp = null;
 
 let selectedDate = ref(0);
+let weekBeginDate = ref(new Date());
+let weekEndDate =  ref(new Date());
 let curAccount = ref(account);
 
 // 默认饼图legend都选中
@@ -127,7 +129,7 @@ function onDateChanged(date) {
             weeklyPlan.value = Singleton.getInstance(SysDaily)._weeklyPlan;
             dailyPlan.value = Singleton.getInstance(SysDaily)._dailyPlan;
             people.value = Singleton.getInstance(SysDaily)._people;
-            occupiedPeople.value = Singleton.getInstance(SysDaily).getOccupiedPeople();
+            freedPeople.value = Singleton.getInstance(SysDaily).getFreedPeople();
 
             departmentTitle.value = Singleton.getInstance(SysDaily)._departmentName;
             departmentId.value = Singleton.getInstance(SysDaily)._departmentId;
@@ -136,6 +138,8 @@ function onDateChanged(date) {
     });
 
     selectedDate.value = sec;
+    weekBeginDate.value = DateTimeUtil.getWeekBegin(sec, 0);
+    weekEndDate.value = DateTimeUtil.getWeekBegin(sec, 7);
 }
 
 function onDateRangeChanged(dateRange) {
@@ -196,10 +200,11 @@ onUnmounted(() => {
 });
 
 function onClickWeeklySave(rowIndex, row) {
-    if (!row.dutyPerson) {
+    let sec = DateTimeUtil.toTimestamp(row.finishTime);
+    if (!row.dutyPerson || !sec) {
         ElMessage({
             showClose: true,
-            message: '责任人没有选择',
+            message: '责任人或者完成时间没有选择',
             type: 'warning',
             center: true,
             duration: 2000,
@@ -209,14 +214,10 @@ function onClickWeeklySave(rowIndex, row) {
 
     const index = people.value.findIndex(person => person.userName === row.dutyPerson);
     let userId = null
-    if (index && index !== -1) {
+    if (index !== -1) {
         userId = people.value[index].userId
     }
 
-    let sec = DateTimeUtil.toTimestamp(row.finishTime);
-    if (!sec) {
-        return;
-    }
     Singleton.getInstance(SysDaily).RequestEditWeeklyPlan(selectedDate.value, userId, row.content, sec, row.comment,
         editWeeklyCtrl.signal, () => {
             loading.value = true;
@@ -279,7 +280,13 @@ function onClickWeeklyDelete(rowIndex, row) {
     });
 }
 
-function onSelectChanged(target) {
+function onSelectChanged(row) {
+    const index = freedPeople.value.findIndex((item) => {
+        return item === row.dutyPerson;
+    })
+    if(index !== -1) {
+        freedPeople.value.splice(index, 1)
+    }
 }
 
 function onAddWeekly() {
@@ -352,7 +359,7 @@ function isSelf(account) {
             <span style="font-size: 70px; color: #a0cfff; margin-left: 100px; height: 120px; width:
             580px;
                 overflow: hidden; white-space: nowrap; padding-top: 20px; align-items: center;
-                letter-spacing: -100px; animation: expand 2s forwards;">{{ departmentTitle }}
+                letter-spacing: -100px; animation: expand 2s ease-in-out forwards;">{{ departmentTitle }}
             </span>
         </div>
         <CpDateRangePicker @onDateRangeChanged="onDateRangeChanged"/>
@@ -361,7 +368,9 @@ function isSelf(account) {
 
         <div>
             <div style="width: 100%; height: 100%;">
-                <span style="font-size: 20px; color: #a0cfff;"> 本周工作安排: </span>
+                <span style="font-size: 20px; color: #a0cfff;"> 本周工作安排({{DateTimeUtil.formatDate(weekBeginDate)}} ->
+                    {{DateTimeUtil.formatDate(weekEndDate)}}):
+                </span>
                 <!-- https://element-plus.org/zh-CN/component/table.html -->
                 <el-table :data="weeklyPlan"
                           min-height="200"
@@ -378,12 +387,12 @@ function isSelf(account) {
                                 class="item"
                                 v-model="scope1.row.dutyPerson"
                                 placeholder="请选择"
-                                @onchange="onSelectChanged"
+                                @change="onSelectChanged(scope1.row)"
                                 size="small"
                                 style="width: 80px">
                                 <el-option
-                                    v-for="(x, index) in people"
-                                    :value="x.userName"
+                                    v-for="x in freedPeople"
+                                    :value="x"
                                 />
                             </el-select>
                         </template>

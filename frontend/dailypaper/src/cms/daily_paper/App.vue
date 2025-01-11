@@ -253,6 +253,8 @@ function onClickWeeklyDelete(rowIndex, row) {
         return;
     }
 
+    freedPeople.value.push(row.dutyPerson)
+
     Singleton.getInstance(SysDaily).RequestDeleteWeeklyPlan(selectedDate.value, row.userId, deleteWeeklyCtrl.signal, () => {
         loading.value = true;
     }, (r) => {

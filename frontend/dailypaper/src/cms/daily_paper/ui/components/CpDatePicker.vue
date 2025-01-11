@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
-import zhCn from "element-plus/es/locale/lang/zh-cn";
 
 defineEmits(['onDateChanged']);
 const props = defineProps(['targetDate']);
@@ -10,17 +9,16 @@ const refTargetDate = ref(props.targetDate);
 
 <template>
     <div class="date-picker-root">
-        <el-config-provider :locale="zhCn">
-            <el-date-picker @change="$emit('onDateChanged', refTargetDate)"
-                            :clearable="false"
-                            v-model="refTargetDate"
-                            type="date"
-                            placeholder="选择日期"
-                            format="YYYY/MM/DD"
-                            value-format="x"
-                            size="small"
-            />
-        </el-config-provider>
+        <el-date-picker @change="$emit('onDateChanged', refTargetDate)"
+                        :clearable="false"
+                        v-model="refTargetDate"
+                        type="date"
+                        :editable="false"
+                        placeholder="选择日期"
+                        format="YYYY/MM/DD"
+                        value-format="x"
+                        size="small"
+        />
     </div>
 </template>
 

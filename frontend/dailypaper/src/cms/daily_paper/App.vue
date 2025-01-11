@@ -103,7 +103,7 @@ let endTimestamp = null;
 
 let selectedDate = ref(0);
 let weekBeginDate = ref(new Date());
-let weekEndDate =  ref(new Date());
+let weekEndDate = ref(new Date());
 let curAccount = ref(account);
 
 // 默认饼图legend都选中
@@ -284,7 +284,7 @@ function onSelectChanged(row) {
     const index = freedPeople.value.findIndex((item) => {
         return item === row.dutyPerson;
     })
-    if(index !== -1) {
+    if (index !== -1) {
         freedPeople.value.splice(index, 1)
     }
 }
@@ -368,8 +368,8 @@ function isSelf(account) {
 
         <div>
             <div style="width: 100%; height: 100%;">
-                <span style="font-size: 20px; color: #a0cfff;"> 本周工作安排({{DateTimeUtil.formatDate(weekBeginDate)}} ->
-                    {{DateTimeUtil.formatDate(weekEndDate)}}):
+                <span style="font-size: 20px; color: #a0cfff;"> 本周工作安排({{ DateTimeUtil.formatDate(weekBeginDate) }} ->
+                    {{ DateTimeUtil.formatDate(weekEndDate) }}):
                 </span>
                 <!-- https://element-plus.org/zh-CN/component/table.html -->
                 <el-table :data="weeklyPlan"
@@ -401,6 +401,7 @@ function isSelf(account) {
                         <template #default="scope2">
                             <el-date-picker
                                 :disabled="!(curIsLeader && isToday())"
+                                :editable="false"
                                 type="date" class="item" v-model="scope2.row.finishTime"></el-date-picker>
                         </template>
                     </el-table-column>
@@ -528,7 +529,7 @@ function isSelf(account) {
     display: grid;
     grid-template-columns: repeat(5, 360px);
 
-    overflow: auto;
+    overflow-y: auto;
     justify-content: space-evenly;
 }
 

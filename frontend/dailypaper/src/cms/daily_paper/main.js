@@ -2,6 +2,12 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import '../../assets/main.css'
 
+// https://blog.csdn.net/weixin_41765715/article/details/132346684
+// 将data-picker的第一列换成周一
+import ElementPlus from 'element-plus'
+import zhCn from "element-plus/es/locale/lang/zh-cn";
+import 'dayjs/locale/zh-cn';
+
 // import {router} from '@/cms/daily_paper/router/Index.js'
 // import直接引用一个文件时，会执行一遍这个文件，而不获取任何文件对象, 比如：import './lib/init.js';
 import {RegisterDirective} from "@/framework/directives/DirectiveList.js";
@@ -23,6 +29,12 @@ app.config.performance = true;
 async function setupAll(app) {
     // navigator.language
     await Switch(app, import.meta.env.VITE_LOCALE);
+
+    // https://blog.csdn.net/weixin_41765715/article/details/132346684
+    // 将data-picker的第一列换成周一
+    app.use(ElementPlus, {
+        locale: zhCn,
+    })
 
     // 自定义指令
     RegisterDirective(app);

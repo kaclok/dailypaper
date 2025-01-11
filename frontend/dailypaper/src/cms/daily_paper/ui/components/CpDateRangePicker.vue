@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
-import zhCn from "element-plus/es/locale/lang/zh-cn";
 import {DateTimeUtil} from '@/framework/utils/DateTimeUtil';
 
 defineEmits(['onDateRangeChanged']);
@@ -57,22 +56,21 @@ function lastMonthDate() {
 
 <template>
     <div class="date-picker-root">
-        <el-config-provider :locale="zhCn">
-            <el-date-picker @change="$emit('onDateRangeChanged', refValue)"
-                            :clearable="false"
-                            v-model="refValue"
-                            type="daterange"
-                            range-separator="至"
-                            start-placeholder="导出开始日期"
-                            end-placeholder="导出结束日期"
-                            format="YYYY/MM/DD"
-                            value-format="x"
-                            size="small"
-                            unlink-panels
-                            :shortcuts="shortcuts"
-                            :default-value="[lastMonthDate(), DateTimeUtil.nowDate()]"
-            />
-        </el-config-provider>
+        <el-date-picker @change="$emit('onDateRangeChanged', refValue)"
+                        :clearable="false"
+                        v-model="refValue"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="导出开始日期"
+                        end-placeholder="导出结束日期"
+                        format="YYYY/MM/DD"
+                        :editable="false"
+                        value-format="x"
+                        size="small"
+                        unlink-panels
+                        :shortcuts="shortcuts"
+                        :default-value="[lastMonthDate(), DateTimeUtil.nowDate()]"
+        />
     </div>
 </template>
 

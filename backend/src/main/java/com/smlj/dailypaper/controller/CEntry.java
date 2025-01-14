@@ -230,7 +230,7 @@ public class CEntry {
             if (hash == null || hash != (7 + userId.length())) {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("hash not valid!", null);
-            } else if (date < midNight) {
+            } else if (date + 86400 * 1 < midNight) {
                 // 往日的日报信息不能编辑
                 return r.setErrorMsg("Can not edit because not today!", null);
             } else {

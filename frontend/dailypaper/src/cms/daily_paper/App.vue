@@ -345,7 +345,7 @@ function tableRowClassName(row) {
 function isToday() {
     let midNight = selectedDate.value;
     let todayMidNight = DateTimeUtil.nowDate().getTime() / 1000;
-    return midNight >= todayMidNight/* - 86400 * 1*/;
+    return midNight >= todayMidNight - 86400 * 1;
 }
 
 function isSelf(account) {

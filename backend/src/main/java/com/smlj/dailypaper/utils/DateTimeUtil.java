@@ -3,6 +3,7 @@ package com.smlj.dailypaper.utils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 @Slf4j
@@ -29,7 +30,7 @@ public final class DateTimeUtil {
 
     // 时间戳转换为当周0点的时间戳
     public static long convertToWeekMidnightTimestamp(long timestamp) {
-        var calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+        var calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"), Locale.CHINA);
 
         // 设置时间为给定的时间戳
         calendar.setTimeInMillis(timestamp * 1000);

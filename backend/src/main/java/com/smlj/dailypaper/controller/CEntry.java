@@ -108,6 +108,7 @@ public class CEntry {
                 dateCommit = dateCommitService.FindBy(dateCommitTableName, midNight);
             }
 
+            log.error("weekNight: " + weekNight);
             HashMap<String, Object> weekDateCommit = weekPlanDateCommitService.FindBy(weekPlanDateCommitTableName, weekNight);
             if (weekDateCommit == null) {
                 weekPlanDateCommitService.InsertEmpty(weekPlanDateCommitTableName, weekNight);

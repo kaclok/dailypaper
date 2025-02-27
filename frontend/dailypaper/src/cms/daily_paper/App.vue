@@ -263,13 +263,7 @@ function onClickWeeklyDelete(rowIndex, row) {
             // 因为commits.value监听dailyLogic.result.date.commits, 每次edit修改某个commit之后也会
             // 触发commits.value的响应式UI刷新
             // window.alert('编辑成功');
-            ElMessage({
-                showClose: true,
-                message: '删除成功',
-                type: 'success',
-                center: true,
-                duration: 2000,
-            });
+
         } else {
             ElMessage({
                 showClose: true,

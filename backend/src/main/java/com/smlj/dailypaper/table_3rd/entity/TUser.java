@@ -34,6 +34,8 @@ public class TUser implements Serializable {
 
     private String card;
 
+    private String jobType;
+
     private Integer role;
 
     private boolean openStatus;

@@ -65,7 +65,20 @@ public class CEntry {
                 return r.setErrorMsg("args invalid!", null);
             }
 
-            String departmentId = jt_userService.selectMembersByAccount(userCard).getFirst().getDeptCode();
+            var accs = jt_userService.selectMembersByAccount(userCard);
+            if (accs == null || accs.isEmpty()) {
+                return null;
+            }
+
+            com.smlj.dailypaper.table_3rd.entity.TUser u = accs.getFirst();
+            for (int i = 1; i < accs.size(); i++) {
+                if (accs.get(i).getJobType().equals("02")) {
+                    u = accs.get(i);
+                    break;
+                }
+            }
+
+            String departmentId = u.getDeptCode();
             String userTableName = Table.getUserTableName(departmentId);
             try {
                 Table.TryFillUser(userCard, userTableName, jt_userService, userService, tableDao, departmentId);

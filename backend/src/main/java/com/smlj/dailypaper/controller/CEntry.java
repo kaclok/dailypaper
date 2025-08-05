@@ -148,8 +148,8 @@ public class CEntry {
                 tu.setLeader(user.isLeader());
 
                 String key = "userId_" + user.getId();
-                Long commitId = (Long) (dateCommit.get(key));
-                TCommit c1 = commitService.FindById(commitTableName, commitId.intValue());
+                int commitId = ((Long) (dateCommit.get(key))).intValue();
+                TCommit c1 = commitService.FindById(commitTableName, commitId);
                 if (c1 != null) {
                     tu.setTime(c1.getCommitDateTime());
                     tu.setContent(c1.getContent());
@@ -157,8 +157,8 @@ public class CEntry {
                     tu.setTomorrowArrangement(c1.getTomorrowArrangement());
                 }
 
-                commitId = (Long) (weekDateCommit.get(key));
-                TWeekPlanCommit c2 = weekPlanCommitService.FindById(weekPlanCommitTableName, commitId.intValue());
+                commitId =  ((Long) (weekDateCommit.get(key))).intValue();
+                TWeekPlanCommit c2 = weekPlanCommitService.FindById(weekPlanCommitTableName, commitId);
                 if (c2 != null) {
                     To_WeekPlan wp = new To_WeekPlan();
                     wp.setUserId(user.getId());
@@ -346,12 +346,12 @@ public class CEntry {
                     }
 
                     String key = "userId_" + user.getId();
-                    Long commitId = (Long) (one.get(key));
+                    int commitId = ((Long) (one.get(key))).intValue();
                     String content = null;
                     String tomorrowPlan = null;
                     String tomorrowArrangement = null;
-                    if (commitId != null && commitId != 0) {
-                        var c = commitService.FindById(commitTableName, commitId.intValue());
+                    if (commitId != 0) {
+                        var c = commitService.FindById(commitTableName, commitId);
                         if (c != null) {
                             content = c.getContent();
                             content = content == null ? "" : content;
@@ -362,7 +362,7 @@ public class CEntry {
                         }
                     }
 
-                    allEmpty &= (commitId.intValue() == 0);
+                    allEmpty &= (commitId == 0);
                     excelRow.getContents().add(content);
                     excelRow.getContents().add(tomorrowPlan);
                     excelRow.getContents().add(tomorrowArrangement);

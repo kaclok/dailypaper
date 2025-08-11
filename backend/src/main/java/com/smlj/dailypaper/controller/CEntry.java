@@ -99,8 +99,11 @@ public class CEntry {
             to.setDepartmentId(departmentId);
 
             int weekNight = (int) DateTimeUtil.convertToWeekMidnightTimestamp(date);
-
-            var isLeader = userService.GetUserById(userTableName, userCard).isLeader();
+            var UUU = userService.GetUserById(userTableName, userCard);
+            boolean isLeader = false;
+            if(UUU != null) {
+                isLeader = UUU.isLeader();
+            }
             to.setCurUserIsLeader(isLeader);
 
             String departmentName = jt_userService.getDepartmentName(departmentId);
